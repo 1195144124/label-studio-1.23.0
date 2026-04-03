@@ -8,7 +8,13 @@ import {
   DEFAULT_PANEL_WIDTH,
   PANEL_HEADER_HEIGHT,
 } from "../constants";
-import { Comments, Custom, History, Info, Relations } from "../DetailsPanel/DetailsPanel";
+import {
+  Comments,
+  Custom,
+  History,
+  Info,
+  Relations,
+} from "../DetailsPanel/DetailsPanel";
 import { OutlinerComponent } from "../OutlinerPanel/OutlinerPanel";
 import type { PanelProps } from "../PanelBase";
 import {
@@ -23,18 +29,28 @@ import {
   type ShowCustomTab,
 } from "./types";
 
-export const determineLeftOrRight = (event: any, droppableElement?: ReactNode) => {
+export const determineLeftOrRight = (
+  event: any,
+  droppableElement?: ReactNode,
+) => {
   const element = droppableElement || (event.target as HTMLElement);
   const dropWidth = (element as HTMLElement).clientWidth as number;
-  const x = (event.pageX as number) - (element as HTMLElement).getBoundingClientRect().left;
+  const x =
+    (event.pageX as number) -
+    (element as HTMLElement).getBoundingClientRect().left;
   const half = dropWidth / 2;
 
   return x > half ? Side.right : Side.left;
 };
 
-export const determineDroppableArea = (droppingElement: HTMLElement) => droppingElement?.id?.includes("droppable");
+export const determineDroppableArea = (droppingElement: HTMLElement) =>
+  droppingElement?.id?.includes("droppable");
 
-export const stateRemovedTab = (state: Record<string, PanelBBox>, movingPanel: string, movingTab: number) => {
+export const stateRemovedTab = (
+  state: Record<string, PanelBBox>,
+  movingPanel: string,
+  movingTab: number,
+) => {
   const newState = { ...state };
 
   if (!newState[movingPanel]) return newState;
@@ -43,12 +59,18 @@ export const stateRemovedTab = (state: Record<string, PanelBBox>, movingPanel: s
     ...newState,
     [movingPanel]: {
       ...newState[movingPanel],
-      panelViews: newState[movingPanel].panelViews.filter((_, tabIterator) => tabIterator !== movingTab),
+      panelViews: newState[movingPanel].panelViews.filter(
+        (_, tabIterator) => tabIterator !== movingTab,
+      ),
     },
   };
 };
 
-export const setActive = (state: Record<string, PanelBBox>, key: string, tabIndex: number) => {
+export const setActive = (
+  state: Record<string, PanelBBox>,
+  key: string,
+  tabIndex: number,
+) => {
   const newState = {
     ...state,
     [key]: {
@@ -111,7 +133,9 @@ export const stateAddedTab = (
   return newState;
 };
 
-export const stateRemovePanelEmptyViews = (state: Record<string, PanelBBox> | null) => {
+export const stateRemovePanelEmptyViews = (
+  state: Record<string, PanelBBox> | null,
+) => {
   const newState: Record<string, PanelBBox> = { ...state };
 
   Object.keys(newState).forEach((panel) => {
@@ -121,14 +145,23 @@ export const stateRemovePanelEmptyViews = (state: Record<string, PanelBBox> | nu
 };
 
 // Unconditionally add/remove the custom tab to/from the state at given panel
-const fixCustomTab = (state: Record<string, PanelBBox>, panelName: string, showCustomPanelWithTitle: ShowCustomTab) => {
+const fixCustomTab = (
+  state: Record<string, PanelBBox>,
+  panelName: string,
+  showCustomPanelWithTitle: ShowCustomTab,
+) => {
   const newState: Record<string, PanelBBox> = {
     ...state,
     [panelName]: {
       ...state[panelName],
       panelViews: showCustomPanelWithTitle
-        ? [...state[panelName].panelViews, { ...customPanelView, title: showCustomPanelWithTitle }]
-        : state[panelName].panelViews.filter((view) => view.name !== customPanelView.name),
+        ? [
+            ...state[panelName].panelViews,
+            { ...customPanelView, title: showCustomPanelWithTitle },
+          ]
+        : state[panelName].panelViews.filter(
+            (view) => view.name !== customPanelView.name,
+          ),
     },
   };
   return newState;
@@ -136,23 +169,36 @@ const fixCustomTab = (state: Record<string, PanelBBox>, panelName: string, showC
 
 // Check if the custom tab is present in the state and add/remove it if needed
 // We add it to "regions-relations" panel, plus we fix the title if it's different from the one we need
-const checkForCustomTab = (state: Record<string, PanelBBox>, showCustomTab: ShowCustomTab) => {
+const checkForCustomTab = (
+  state: Record<string, PanelBBox>,
+  showCustomTab: ShowCustomTab,
+) => {
   const findPanelWithCustomTab = (state: Record<string, PanelBBox>) => {
     return Object.keys(state).find((panel) =>
-      state[panel].panelViews.some((view) => view.name === customPanelView.name),
+      state[panel].panelViews.some(
+        (view) => view.name === customPanelView.name,
+      ),
     );
   };
 
   // if we need custom tab but it's not present, or we don't need it but it's there, update the state accordingly
   if (showCustomTab) {
     const panel = findPanelWithCustomTab(state);
-    const customTab = panel && state[panel]?.panelViews.find((view) => view.name === customPanelView.name);
+    const customTab =
+      panel &&
+      state[panel]?.panelViews.find(
+        (view) => view.name === customPanelView.name,
+      );
     if (!customTab) {
       return fixCustomTab(state, "regions-relations", showCustomTab);
     }
     if (customTab.title !== showCustomTab) {
       // remove the custom tab from the state and add it back with the new title
-      return fixCustomTab(fixCustomTab(state, panel, false), panel, showCustomTab);
+      return fixCustomTab(
+        fixCustomTab(state, panel, false),
+        panel,
+        showCustomTab,
+      );
     }
   } else {
     const panel = findPanelWithCustomTab(state);
@@ -176,38 +222,38 @@ export const panelComponents: { [key: string]: FC<PanelProps> } = {
 const panelViews = [
   {
     name: "regions",
-    title: "Regions",
+    title: "区域",
     component: panelComponents.regions as FC<PanelProps>,
     active: true,
   },
   {
     name: "history",
-    title: "History",
+    title: "历史",
     component: panelComponents.history as FC<PanelProps>,
     active: false,
   },
 
   {
     name: "relations",
-    title: "Relations",
+    title: "关系",
     component: panelComponents.relations as FC<PanelProps>,
     active: false,
   },
   {
     name: "info",
-    title: "Info",
+    title: "信息",
     component: panelComponents.info as FC<PanelProps>,
     active: true,
   },
   {
     name: "comments",
-    title: "Comments",
+    title: "评论",
     component: panelComponents.comments as FC<PanelProps>,
     active: false,
   },
   {
     name: "custom",
-    title: "Custom",
+    title: "自定义",
     component: panelComponents.custom as FC<PanelProps>,
     active: false,
   },
@@ -300,14 +346,34 @@ export const partialEmptyBaseProps = {
   setSidePanelCollapsed: () => {},
   dragTop: false,
   dragBottom: false,
-  panelViews: [panelViews[0], panelViews[1], panelViews[2], panelViews[3], panelViews[4]],
+  panelViews: [
+    panelViews[0],
+    panelViews[1],
+    panelViews[2],
+    panelViews[3],
+    panelViews[4],
+  ],
 };
 
-export const resizers = ["top-left", "top-right", "bottom-left", "bottom-right", "top", "bottom", "right", "left"];
+export const resizers = [
+  "top-left",
+  "top-right",
+  "bottom-left",
+  "bottom-right",
+  "top",
+  "bottom",
+  "right",
+  "left",
+];
 
-export const checkCollapsedPanelsHaveData = (collapsedSide: PanelsCollapsed, panelData: Record<string, PanelBBox>) => {
+export const checkCollapsedPanelsHaveData = (
+  collapsedSide: PanelsCollapsed,
+  panelData: Record<string, PanelBBox>,
+) => {
   const collapsedCopy = { ...collapsedSide };
-  const collapsedPanels = (Object.keys(collapsedCopy) as Side[]).filter((side) => collapsedCopy[side]);
+  const collapsedPanels = (Object.keys(collapsedCopy) as Side[]).filter(
+    (side) => collapsedCopy[side],
+  );
 
   collapsedPanels.forEach((side) => {
     const hasData = Object.keys(panelData).some((panel) => {
@@ -320,43 +386,67 @@ export const checkCollapsedPanelsHaveData = (collapsedSide: PanelsCollapsed, pan
   return collapsedCopy;
 };
 
-export const restorePanel = (showComments: boolean, showCustomTab: ShowCustomTab = false): StoredPanelState => {
+export const restorePanel = (
+  showComments: boolean,
+  showCustomTab: ShowCustomTab = false,
+): StoredPanelState => {
   const previousState = window.localStorage.getItem("panelState");
-  const parsed: StoredPanelState | null = previousState && JSON.parse(previousState);
+  const parsed: StoredPanelState | null =
+    previousState && JSON.parse(previousState);
   const panelData = parsed && parsed.panelData;
   const defaultCollapsedSide = { [Side.left]: false, [Side.right]: false };
   const collapsedSide = parsed?.collapsedSide ?? defaultCollapsedSide;
-  const allTabs = panelData && Object.values(panelData).flatMap((panel) => panel.panelViews);
+  const allTabs =
+    panelData && Object.values(panelData).flatMap((panel) => panel.panelViews);
   // don't use comments and custom tabs anywhere if it's disabled
-  const countOfAllAvailableTabs = panelViews.length - (showComments ? 0 : 1) - (showCustomTab ? 0 : 1);
+  const countOfAllAvailableTabs =
+    panelViews.length - (showComments ? 0 : 1) - (showCustomTab ? 0 : 1);
 
   // stored state can have less tabs than available, for example if it was stored on old version
   // or if comments were enabled; then return default state
   if (!allTabs || allTabs.length !== countOfAllAvailableTabs) {
-    let defaultPanel = showComments ? enterprisePanelDefault : openSourcePanelDefault;
+    let defaultPanel = showComments
+      ? enterprisePanelDefault
+      : openSourcePanelDefault;
     if (showComments && showCustomTab) {
-      defaultPanel = fixCustomTab(defaultPanel, "regions-relations", showCustomTab);
+      defaultPanel = fixCustomTab(
+        defaultPanel,
+        "regions-relations",
+        showCustomTab,
+      );
     }
 
     return { panelData: defaultPanel, collapsedSide: defaultCollapsedSide };
   }
 
-  const fixedPanels = stateRemovePanelEmptyViews(checkForCustomTab(panelData, showCustomTab));
+  const fixedPanels = stateRemovePanelEmptyViews(
+    checkForCustomTab(panelData, showCustomTab),
+  );
   const withActiveDefaults = setActiveDefaults(fixedPanels);
-  const safeCollapsedSide = checkCollapsedPanelsHaveData(collapsedSide, withActiveDefaults);
+  const safeCollapsedSide = checkCollapsedPanelsHaveData(
+    collapsedSide,
+    withActiveDefaults,
+  );
 
-  return { panelData: restoreComponentsToState(withActiveDefaults), collapsedSide: safeCollapsedSide };
+  return {
+    panelData: restoreComponentsToState(withActiveDefaults),
+    collapsedSide: safeCollapsedSide,
+  };
 };
 
-export const restoreComponentsToState = (panelData: Record<string, PanelBBox>) => {
+export const restoreComponentsToState = (
+  panelData: Record<string, PanelBBox>,
+) => {
   const updatedPanels: Record<string, PanelBBox> = { ...panelData };
 
   Object.keys(updatedPanels).forEach((panelName) => {
     const panel = updatedPanels[panelName];
 
-    panel.panelViews.forEach((view: { name: string; component: FC<PanelProps> }) => {
-      view.component = panelComponents[view.name];
-    });
+    panel.panelViews.forEach(
+      (view: { name: string; component: FC<PanelProps> }) => {
+        view.component = panelComponents[view.name];
+      },
+    );
   });
 
   return updatedPanels;
@@ -366,30 +456,51 @@ export const savePanels = (
   panelData: Record<string, PanelBBox>,
   collapsedSide: { [Side.left]: boolean; [Side.right]: boolean },
 ) => {
-  window.localStorage.setItem("panelState", JSON.stringify({ panelData, collapsedSide }));
+  window.localStorage.setItem(
+    "panelState",
+    JSON.stringify({ panelData, collapsedSide }),
+  );
 };
 
 export const getLeftKeys = (state: Record<string, PanelBBox>) =>
-  Object.keys(state).filter((key) => !state[key].detached && state[key].alignment === Side.left);
+  Object.keys(state).filter(
+    (key) => !state[key].detached && state[key].alignment === Side.left,
+  );
 export const getRightKeys = (state: Record<string, PanelBBox>) =>
-  Object.keys(state).filter((key) => !state[key].detached && state[key].alignment === Side.right);
+  Object.keys(state).filter(
+    (key) => !state[key].detached && state[key].alignment === Side.right,
+  );
 
-export const getAttachedPerSide = (state: Record<string, PanelBBox>, side: string) => {
-  if (side === Side.left) return getLeftKeys(state).sort((a, b) => state[a].order - state[b].order);
-  if (side === Side.right) return getRightKeys(state).sort((a, b) => state[a].order - state[b].order);
+export const getAttachedPerSide = (
+  state: Record<string, PanelBBox>,
+  side: string,
+) => {
+  if (side === Side.left)
+    return getLeftKeys(state).sort((a, b) => state[a].order - state[b].order);
+  if (side === Side.right)
+    return getRightKeys(state).sort((a, b) => state[a].order - state[b].order);
 };
 
-export const getSnappedHeights = (state: Record<string, PanelBBox>, totalHeight: number) => {
+export const getSnappedHeights = (
+  state: Record<string, PanelBBox>,
+  totalHeight: number,
+) => {
   const newState = { ...state };
   const leftKeys = getLeftKeys(newState);
   const rightKeys = getRightKeys(newState);
 
   [leftKeys, rightKeys].forEach((list) => {
-    const totalCollapsed = list.filter((panelKey) => !state[panelKey].visible).length;
+    const totalCollapsed = list.filter(
+      (panelKey) => !state[panelKey].visible,
+    ).length;
     const visible = list.filter((panelKey) => state[panelKey].visible);
     const collapsedAdjustments = PANEL_HEADER_HEIGHT * totalCollapsed;
-    const visibleGroupHeight = visible.reduce((acc, key) => acc + newState[key].height, 0);
-    const visibleGroupDifference = totalHeight - collapsedAdjustments - visibleGroupHeight;
+    const visibleGroupHeight = visible.reduce(
+      (acc, key) => acc + newState[key].height,
+      0,
+    );
+    const visibleGroupDifference =
+      totalHeight - collapsedAdjustments - visibleGroupHeight;
     const negativeNumber = visibleGroupDifference < 0;
     const adjustment = Math.abs(visibleGroupDifference) / (visible.length || 1);
     let top = 0;
@@ -410,15 +521,22 @@ export const getSnappedHeights = (state: Record<string, PanelBBox>, totalHeight:
   return newState;
 };
 
-export const redistributeHeights = (state: Record<string, PanelBBox>, totalHeight: number, alignment: Side) => {
+export const redistributeHeights = (
+  state: Record<string, PanelBBox>,
+  totalHeight: number,
+  alignment: Side,
+) => {
   const newState = { ...state };
   const sideKeys = getAttachedPerSide(newState, alignment);
 
   if (!sideKeys?.length) return state;
   const visible = sideKeys.filter((panelKey) => newState[panelKey].visible);
-  const totalCollapsed = sideKeys.filter((panelKey) => !newState[panelKey].visible).length;
+  const totalCollapsed = sideKeys.filter(
+    (panelKey) => !newState[panelKey].visible,
+  ).length;
   const collapsedAdjustments = PANEL_HEADER_HEIGHT * totalCollapsed;
-  const distributedHeight = (totalHeight - collapsedAdjustments) / visible.length || 1;
+  const distributedHeight =
+    (totalHeight - collapsedAdjustments) / visible.length || 1;
 
   visible.forEach((panelKey) => {
     let top = 0;
@@ -441,7 +559,8 @@ const setOrder = (
 ) => {
   const newState = { ...state };
 
-  newState[panelAddKey].order = order === JoinOrder.top ? 0 : columnsToOrder.length;
+  newState[panelAddKey].order =
+    order === JoinOrder.top ? 0 : columnsToOrder.length;
   let orderCounter = order === JoinOrder.bottom ? 0 : 1;
 
   columnsToOrder.forEach((panelKey) => {
@@ -487,7 +606,11 @@ export const joinPanelColumns = (
   return redistributeHeights(adjustZIndex, totalHeight, alignment);
 };
 
-export const splitPanelColumns = (state: Record<string, PanelBBox>, removingKey: string, totalHeight: number) => {
+export const splitPanelColumns = (
+  state: Record<string, PanelBBox>,
+  removingKey: string,
+  totalHeight: number,
+) => {
   const newState = { ...state };
   const alignment = newState[removingKey].alignment as Side;
   const movingTabAttributes = {
@@ -495,7 +618,10 @@ export const splitPanelColumns = (state: Record<string, PanelBBox>, removingKey:
     detached: true,
     height: DEFAULT_PANEL_HEIGHT,
   };
-  const removedState = { ...newState, [removingKey]: { ...newState[removingKey], ...movingTabAttributes } };
+  const removedState = {
+    ...newState,
+    [removingKey]: { ...newState[removingKey], ...movingTabAttributes },
+  };
   const column = getAttachedPerSide(newState, alignment);
 
   column?.forEach((key, index) => {
@@ -512,13 +638,19 @@ export const resizePanelColumns = (
   availableHeight: number,
 ) => {
   const newState = { ...state };
-  const panelsOnSameAlignment = getAttachedPerSide(newState, newState[key]?.alignment as Side);
+  const panelsOnSameAlignment = getAttachedPerSide(
+    newState,
+    newState[key]?.alignment as Side,
+  );
   const maxHeight = availableHeight;
 
   if (!panelsOnSameAlignment) return state;
   const difference = height - newState[key].height;
-  const visiblePanels = panelsOnSameAlignment.filter((panelKey) => newState[panelKey].visible);
-  const panelAboveKeyIndex = visiblePanels?.findIndex((visibleKey) => visibleKey === key) - 1;
+  const visiblePanels = panelsOnSameAlignment.filter(
+    (panelKey) => newState[panelKey].visible,
+  );
+  const panelAboveKeyIndex =
+    visiblePanels?.findIndex((visibleKey) => visibleKey === key) - 1;
 
   if (panelAboveKeyIndex === undefined) return state;
 
@@ -542,12 +674,14 @@ export const resizePanelColumns = (
     };
   });
   const collapsedAdjustments =
-    panelsOnSameAlignment.filter((panelKey) => !newState[panelKey].visible).length * PANEL_HEADER_HEIGHT;
+    panelsOnSameAlignment.filter((panelKey) => !newState[panelKey].visible)
+      .length * PANEL_HEADER_HEIGHT;
   const totalHeight = panelsOnSameAlignment
     .filter((panelKey) => newState[panelKey].visible)
     .reduce((acc, panelKey) => acc + newState[panelKey].height, 0);
 
-  if (totalHeight + collapsedAdjustments > availableHeight) return getSnappedHeights(state, availableHeight);
+  if (totalHeight + collapsedAdjustments > availableHeight)
+    return getSnappedHeights(state, availableHeight);
   return getSnappedHeights(newState, availableHeight);
 };
 
@@ -581,10 +715,21 @@ export const newPanelInState = (
   top: number,
   viewportSize: MutableRefObject<ViewportSize>,
 ) => {
-  const newPanel = newPanelFromTab(state, name, movingPanel, movingTab, left, top, viewportSize);
+  const newPanel = newPanelFromTab(
+    state,
+    name,
+    movingPanel,
+    movingTab,
+    left,
+    top,
+    viewportSize,
+  );
   const stateWithRemovals = stateRemovedTab(state, movingPanel, movingTab);
   const panelsWithRemovals = stateRemovePanelEmptyViews(stateWithRemovals);
-  const panelWithAdditions = { ...panelsWithRemovals, [`${newPanel.name}`]: newPanel };
+  const panelWithAdditions = {
+    ...panelsWithRemovals,
+    [`${newPanel.name}`]: newPanel,
+  };
   const renamedKeys = renameKeys(panelWithAdditions);
   const activeDefaults = setActiveDefaults(renamedKeys);
   const adjustZIndex = findZIndices(activeDefaults, newPanel.name);
@@ -594,7 +739,13 @@ export const newPanelInState = (
 
 const partitionByAttached = (state: Record<string, PanelBBox>) => {
   return Object.keys(state).reduce(
-    (result: [{ zIndex: number; panelKey: string }[], { zIndex: number; panelKey: string }[]], panelKey) => {
+    (
+      result: [
+        { zIndex: number; panelKey: string }[],
+        { zIndex: number; panelKey: string }[],
+      ],
+      panelKey,
+    ) => {
       state[panelKey].detached
         ? result[0].push({ zIndex: state[panelKey].zIndex, panelKey })
         : result[1].push({ zIndex: state[panelKey].zIndex, panelKey });
@@ -605,7 +756,10 @@ const partitionByAttached = (state: Record<string, PanelBBox>) => {
   );
 };
 
-export const findZIndices = (state: Record<string, PanelBBox>, focusedKey: string) => {
+export const findZIndices = (
+  state: Record<string, PanelBBox>,
+  focusedKey: string,
+) => {
   const newState = { ...state };
   const [detached, attached] = partitionByAttached(newState);
 
@@ -618,7 +772,8 @@ export const findZIndices = (state: Record<string, PanelBBox>, focusedKey: strin
       newState[panel.panelKey].zIndex = detachedCounter;
       detachedCounter++;
     });
-  if (newState[focusedKey].detached) newState[focusedKey].zIndex = detached.length + 12;
+  if (newState[focusedKey].detached)
+    newState[focusedKey].zIndex = detached.length + 12;
 
   return newState;
 };
@@ -626,11 +781,20 @@ export const findZIndices = (state: Record<string, PanelBBox>, focusedKey: strin
 export const findPanelViewByName = (
   state: Record<string, PanelBBox>,
   name: string,
-): { panelName: string; tab: PanelView; panelViewIndex: number } | undefined => {
-  const panelName = Object.keys(state).find((panelKey) => panelKey.includes(name)) || "";
-  const panelViewIndex = state[panelName]?.panelViews.findIndex((view: { name: string }) => view.name === name);
+):
+  | { panelName: string; tab: PanelView; panelViewIndex: number }
+  | undefined => {
+  const panelName =
+    Object.keys(state).find((panelKey) => panelKey.includes(name)) || "";
+  const panelViewIndex = state[panelName]?.panelViews.findIndex(
+    (view: { name: string }) => view.name === name,
+  );
 
   return panelViewIndex >= 0
-    ? { panelName, tab: state[panelName].panelViews[panelViewIndex], panelViewIndex }
+    ? {
+        panelName,
+        tab: state[panelName].panelViews[panelViewIndex],
+        panelViewIndex,
+      }
     : undefined;
 };
