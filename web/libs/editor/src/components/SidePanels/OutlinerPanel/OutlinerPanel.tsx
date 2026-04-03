@@ -26,7 +26,10 @@ const OutlinerFFClasses: string[] = [];
 
 OutlinerFFClasses.push("ff_hide_all_regions");
 
-const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({ regions, ...props }) => {
+const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({
+  regions,
+  ...props
+}) => {
   const [group, setGroup] = useState<GroupingOptions>(regions.group);
   const onOrderingChange = useCallback(
     (value: OrderingOptions) => {
@@ -50,7 +53,12 @@ const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({ regions, ...props }) =
   regions.setGrouping(group);
 
   return (
-    <PanelBase {...props} name="outliner" mix={OutlinerFFClasses} title="Outliner">
+    <PanelBase
+      {...props}
+      name="outliner"
+      mix={OutlinerFFClasses}
+      title="Outliner"
+    >
       <ViewControls
         ordering={regions.sort}
         regions={regions}
@@ -99,64 +107,87 @@ const OutlinerStandAlone: FC<OutlinerPanelProps> = ({ regions }) => {
 const OutlinerEmptyState = () => (
   <EmptyState
     icon={<IconLsLabeling width={24} height={24} />}
-    header="Labeled regions will appear here"
+    header="标注区域将在此显示"
     description={
       <>
         <span>
-          Start labeling and track your results
+          开始标记并跟踪您的结果
           <br />
-          using this panel
+          使用此面板
         </span>
       </>
     }
-    learnMore={{ href: getDocsUrl("guide/labeling"), text: "Learn more", testId: "regions-panel-learn-more" }}
+    learnMore={{
+      href: getDocsUrl("guide/labeling"),
+      text: "了解更多",
+      testId: "regions-panel-learn-more",
+    }}
   />
 );
 
-const OutlinerTreeComponent: FC<OutlinerTreeComponentProps> = observer(({ regions }) => {
-  const allRegionsHidden = regions?.regions?.length > 0 && regions?.filter?.length === 0;
+const OutlinerTreeComponent: FC<OutlinerTreeComponentProps> = observer(
+  ({ regions }) => {
+    const allRegionsHidden =
+      regions?.regions?.length > 0 && regions?.filter?.length === 0;
 
-  const hiddenRegions = useMemo(() => {
-    if (!regions?.regions?.length || !regions.filter?.length) return 0;
+    const hiddenRegions = useMemo(() => {
+      if (!regions?.regions?.length || !regions.filter?.length) return 0;
 
-    return regions?.regions?.length - regions?.filter?.length;
-  }, [regions?.regions?.length, regions?.filter?.length]);
+      return regions?.regions?.length - regions?.filter?.length;
+    }, [regions?.regions?.length, regions?.filter?.length]);
 
-  return (
-    <>
-      {allRegionsHidden ? (
-        <div className={cn("filters-info").toClassName()}>
-          <IconInfo width={21} height={20} />
-          <div className={cn("filters-info").elem("filters-title").toClassName()}>All regions hidden</div>
-          <div className={cn("filters-info").elem("filters-description").toClassName()}>
-            Adjust or remove the filters to view
+    return (
+      <>
+        {allRegionsHidden ? (
+          <div className={cn("filters-info").toClassName()}>
+            <IconInfo width={21} height={20} />
+            <div
+              className={cn("filters-info").elem("filters-title").toClassName()}
+            >
+              所有区域已隐藏
+            </div>
+            <div
+              className={cn("filters-info")
+                .elem("filters-description")
+                .toClassName()}
+            >
+              调整或移除筛选器以查看
+            </div>
           </div>
-        </div>
-      ) : regions?.regions?.length > 0 ? (
-        <>
-          <OutlinerTree
-            regions={regions}
-            footer={
-              hiddenRegions > 0 && (
-                <div className={cn("filters-info").toClassName()}>
-                  <IconInfo width={21} height={20} />
-                  <div className={cn("filters-info").elem("filters-title").toClassName()}>
-                    There {hiddenRegions === 1 ? "is" : "are"} {hiddenRegions} hidden region{hiddenRegions > 1 && "s"}
+        ) : regions?.regions?.length > 0 ? (
+          <>
+            <OutlinerTree
+              regions={regions}
+              footer={
+                hiddenRegions > 0 && (
+                  <div className={cn("filters-info").toClassName()}>
+                    <IconInfo width={21} height={20} />
+                    <div
+                      className={cn("filters-info")
+                        .elem("filters-title")
+                        .toClassName()}
+                    >
+                      有 {hiddenRegions} 个区域被隐藏
+                    </div>
+                    <div
+                      className={cn("filters-info")
+                        .elem("filters-description")
+                        .toClassName()}
+                    >
+                      调整或移除筛选器以查看
+                    </div>
                   </div>
-                  <div className={cn("filters-info").elem("filters-description").toClassName()}>
-                    Adjust or remove filters to view
-                  </div>
-                </div>
-              )
-            }
-          />
-        </>
-      ) : (
-        <OutlinerEmptyState />
-      )}
-    </>
-  );
-});
+                )
+              }
+            />
+          </>
+        ) : (
+          <OutlinerEmptyState />
+        )}
+      </>
+    );
+  },
+);
 
 export const OutlinerComponent = observer(OutlinerStandAlone);
 

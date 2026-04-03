@@ -20,17 +20,29 @@ interface DetailsPanelProps extends PanelProps {
   selection: any;
 }
 
-const DetailsPanelComponent: FC<DetailsPanelProps> = ({ currentEntity, regions, ...props }) => {
+const DetailsPanelComponent: FC<DetailsPanelProps> = ({
+  currentEntity,
+  regions,
+  ...props
+}) => {
   const selectedRegions = regions.selection;
 
   return (
-    <PanelBase {...props} currentEntity={currentEntity} name="details" title="Details">
+    <PanelBase
+      {...props}
+      currentEntity={currentEntity}
+      name="details"
+      title="详细信息"
+    >
       <Content selection={selectedRegions} currentEntity={currentEntity} />
     </PanelBase>
   );
 };
 
-const DetailsComponent: FC<DetailsPanelProps> = ({ currentEntity, regions }) => {
+const DetailsComponent: FC<DetailsPanelProps> = ({
+  currentEntity,
+  regions,
+}) => {
   const selectedRegions = regions.selection;
 
   return (
@@ -40,27 +52,47 @@ const DetailsComponent: FC<DetailsPanelProps> = ({ currentEntity, regions }) => 
   );
 };
 
-const Content: FC<any> = observer(function Content({ selection, currentEntity }: any): JSX.Element {
-  return <>{selection.size ? <RegionsPanel regions={selection} /> : <GeneralPanel currentEntity={currentEntity} />}</>;
+const Content: FC<any> = observer(function Content({
+  selection,
+  currentEntity,
+}: any): JSX.Element {
+  return (
+    <>
+      {selection.size ? (
+        <RegionsPanel regions={selection} />
+      ) : (
+        <GeneralPanel currentEntity={currentEntity} />
+      )}
+    </>
+  );
 });
 
 const CommentsTab: FC<any> = inject("store")(
   observer(function CommentsTab({ store }: any): JSX.Element {
     return (
       <>
-        {store.hasInterface("annotations:comments") && store.commentStore.isCommentable && (
-          <div className={cn("comments-panel").toClassName()}>
-            <div className={cn("comments-panel").elem("section-tab").toClassName()}>
-              <div className={cn("comments-panel").elem("section-content").toClassName()}>
-                <CommentsComponent
-                  annotationStore={store.annotationStore}
-                  commentStore={store.commentStore}
-                  cacheKey={`task.${store.task.id}`}
-                />
+        {store.hasInterface("annotations:comments") &&
+          store.commentStore.isCommentable && (
+            <div className={cn("comments-panel").toClassName()}>
+              <div
+                className={cn("comments-panel")
+                  .elem("section-tab")
+                  .toClassName()}
+              >
+                <div
+                  className={cn("comments-panel")
+                    .elem("section-content")
+                    .toClassName()}
+                >
+                  <CommentsComponent
+                    annotationStore={store.annotationStore}
+                    commentStore={store.commentStore}
+                    cacheKey={`task.${store.task.id}`}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
       </>
     );
   }),
@@ -77,24 +109,36 @@ const RelationsTab: FC<any> = inject("store")(
           <div className={cn("relations").elem("section-tab").toClassName()}>
             {hasRelations ? (
               <>
-                <div className={cn("relations").elem("view-control").toClassName()}>
-                  <div className={cn("relations").elem("section-head").toClassName()}>
-                    Relations ({relationStore.size})
+                <div
+                  className={cn("relations").elem("view-control").toClassName()}
+                >
+                  <div
+                    className={cn("relations")
+                      .elem("section-head")
+                      .toClassName()}
+                  >
+                    关系 ({relationStore.size})
                   </div>
                   <RelationsControls relationStore={relationStore} />
                 </div>
-                <div className={cn("relations").elem("section-content").toClassName()}>
+                <div
+                  className={cn("relations")
+                    .elem("section-content")
+                    .toClassName()}
+                >
                   <RelationsComponent relationStore={relationStore} />
                 </div>
               </>
             ) : (
               <EmptyState
                 icon={<IconRelationLink width={24} height={24} />}
-                header="Create relations between regions"
-                description={<>Link regions to define relationships between them</>}
+                header="创建区域间的关系"
+                description={<>链接区域以定义它们之间的关系</>}
                 learnMore={{
-                  href: getDocsUrl("guide/labeling#Add-relations-between-annotations"),
-                  text: "Learn more",
+                  href: getDocsUrl(
+                    "guide/labeling#Add-relations-between-annotations",
+                  ),
+                  text: "了解更多",
                   testId: "relations-panel-learn-more",
                 }}
               />
@@ -119,7 +163,7 @@ const HistoryTab: FC<any> = inject("store")(
               enabled={showAnnotationHistory}
               sectionHeader={
                 <>
-                  Annotation History
+                  标注历史
                   <span>#{currentEntity.pk ?? currentEntity.id}</span>
                 </>
               }
@@ -141,8 +185,8 @@ const InfoTab: FC<any> = inject("store")(
             {nothingSelected ? (
               <EmptyState
                 icon={<IconCursor width={24} height={24} />}
-                header="View region details"
-                description={<>Select a region to view its properties, metadata and available actions</>}
+                header="查看区域详情"
+                description={<>选择一个区域以查看其属性、元数据 和可用操作</>}
               />
             ) : (
               <>
@@ -163,7 +207,10 @@ const InfoTab: FC<any> = inject("store")(
 const CustomTab: FC<any> = function CustomTab(): JSX.Element {
   return (
     <div className={cn("custom").toClassName()}>
-      <div id="react-code-sidebar-portal" className={cn("custom").elem("section-tab").toClassName()} />
+      <div
+        id="react-code-sidebar-portal"
+        className={cn("custom").elem("section-tab").toClassName()}
+      />
     </div>
   );
 };
@@ -180,7 +227,7 @@ const GeneralPanel: FC<any> = inject("store")(
             enabled={showAnnotationHistory}
             sectionHeader={
               <>
-                Annotation History
+                标注历史
                 <span>#{currentEntity.pk ?? currentEntity.id}</span>
               </>
             }
@@ -188,25 +235,32 @@ const GeneralPanel: FC<any> = inject("store")(
         </div>
         <div className={cn("details").elem("section").toClassName()}>
           <div className={cn("details").elem("view-control").toClassName()}>
-            <div className={cn("details").elem("section-head").toClassName()}>Relations ({relationStore.size})</div>
+            <div className={cn("details").elem("section-head").toClassName()}>
+              关系 ({relationStore.size})
+            </div>
             <RelationsControls relationStore={relationStore} />
           </div>
           <div className={cn("details").elem("section-content").toClassName()}>
             <RelationsComponent relationStore={relationStore} />
           </div>
         </div>
-        {store.hasInterface("annotations:comments") && store.commentStore.isCommentable && (
-          <div className={cn("details").elem("section").toClassName()}>
-            <div className={cn("details").elem("section-head").toClassName()}>Comments</div>
-            <div className={cn("details").elem("section-content").toClassName()}>
-              <CommentsComponent
-                annotationStore={store.annotationStore}
-                commentStore={store.commentStore}
-                cacheKey={`task.${store.task.id}`}
-              />
+        {store.hasInterface("annotations:comments") &&
+          store.commentStore.isCommentable && (
+            <div className={cn("details").elem("section").toClassName()}>
+              <div className={cn("details").elem("section-head").toClassName()}>
+                评论
+              </div>
+              <div
+                className={cn("details").elem("section-content").toClassName()}
+              >
+                <CommentsComponent
+                  annotationStore={store.annotationStore}
+                  commentStore={store.commentStore}
+                  cacheKey={`task.${store.task.id}`}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </>
     );
   }),
@@ -214,7 +268,11 @@ const GeneralPanel: FC<any> = inject("store")(
 
 GeneralPanel.displayName = "GeneralPanel";
 
-const RegionsPanel: FC<{ regions: any }> = observer(function RegionsPanel({ regions }: { regions: any }): JSX.Element {
+const RegionsPanel: FC<{ regions: any }> = observer(function RegionsPanel({
+  regions,
+}: {
+  regions: any;
+}): JSX.Element {
   return (
     <div>
       {regions.list.map((reg: any) => {
@@ -224,8 +282,18 @@ const RegionsPanel: FC<{ regions: any }> = observer(function RegionsPanel({ regi
   );
 });
 
-const SelectedRegion: FC<{ region: any }> = observer(function SelectedRegion({ region }: { region: any }): JSX.Element {
-  return <RegionItem region={region} mainDetails={RegionDetailsMain} metaDetails={RegionDetailsMeta} />;
+const SelectedRegion: FC<{ region: any }> = observer(function SelectedRegion({
+  region,
+}: {
+  region: any;
+}): JSX.Element {
+  return (
+    <RegionItem
+      region={region}
+      mainDetails={RegionDetailsMain}
+      metaDetails={RegionDetailsMeta}
+    />
+  );
 });
 
 export const Comments = CommentsTab;

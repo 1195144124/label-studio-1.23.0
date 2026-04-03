@@ -1,6 +1,14 @@
 import { when } from "mobx";
 import { inject, observer } from "mobx-react";
-import { type FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  type FC,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   IconAnnotationAccepted,
   IconAnnotationImported,
@@ -54,56 +62,78 @@ const DraftState: FC<{
   annotation: any;
   inline?: boolean;
   isSelected?: boolean;
-}> = observer(({ annotation, inline, isSelected }: { annotation: any; inline?: boolean; isSelected?: boolean }) => {
-  const hasChanges = annotation.history.hasChanges;
-  const store = annotation.list; // @todo weird name
-  const infoIsHidden = store.store.hasInterface("annotations:hide-info");
-  const hiddenUser = infoIsHidden ? { email: "Me" } : null;
+}> = observer(
+  ({
+    annotation,
+    inline,
+    isSelected,
+  }: {
+    annotation: any;
+    inline?: boolean;
+    isSelected?: boolean;
+  }) => {
+    const hasChanges = annotation.history.hasChanges;
+    const store = annotation.list; // @todo weird name
+    const infoIsHidden = store.store.hasInterface("annotations:hide-info");
+    const hiddenUser = infoIsHidden ? { email: "Me" } : null;
 
-  const [hasUnsavedChanges, setChanges] = useState(false);
+    const [hasUnsavedChanges, setChanges] = useState(false);
 
-  // turn it on when changes just made; off when they we saved
-  useEffect(() => {
-    setChanges(true);
-  }, [annotation.history.history.length]);
-  useEffect(() => {
-    setChanges(false);
-  }, [annotation.draftSaved]);
+    // turn it on when changes just made; off when they we saved
+    useEffect(() => {
+      setChanges(true);
+    }, [annotation.history.history.length]);
+    useEffect(() => {
+      setChanges(false);
+    }, [annotation.draftSaved]);
 
-  if (!hasChanges && !annotation.versions.draft) return null;
+    if (!hasChanges && !annotation.versions.draft) return null;
 
-  return (
-    <HistoryItem
-      key="draft"
-      user={hiddenUser ?? annotation.user ?? { email: annotation.createdBy }}
-      date={annotation.draftSaved}
-      extra={
-        annotation.isDraftSaving ? (
-          <div className={cn("annotation-history").elem("saving").toClassName()}>
-            <div className={cn("annotation-history").elem("spin").toClassName()} />
-          </div>
-        ) : hasUnsavedChanges ? (
-          <div className={cn("annotation-history").elem("saving").toClassName()}>
-            <div className={cn("annotation-history").elem("dot").toClassName()} />
-          </div>
-        ) : hasChanges ? (
-          <div className={cn("annotation-history").elem("saving").toClassName()}>
-            <IconCheck className={cn("annotation-history").elem("saved").toClassName()} />
-          </div>
-        ) : null
-      }
-      inline={inline}
-      comment=""
-      acceptedState="draft_created"
-      selected={isSelected}
-      hideInfo={infoIsHidden}
-      onClick={() => {
-        store.selectHistory(null);
-        annotation.toggleDraft(true);
-      }}
-    />
-  );
-});
+    return (
+      <HistoryItem
+        key="draft"
+        user={hiddenUser ?? annotation.user ?? { email: annotation.createdBy }}
+        date={annotation.draftSaved}
+        extra={
+          annotation.isDraftSaving ? (
+            <div
+              className={cn("annotation-history").elem("saving").toClassName()}
+            >
+              <div
+                className={cn("annotation-history").elem("spin").toClassName()}
+              />
+            </div>
+          ) : hasUnsavedChanges ? (
+            <div
+              className={cn("annotation-history").elem("saving").toClassName()}
+            >
+              <div
+                className={cn("annotation-history").elem("dot").toClassName()}
+              />
+            </div>
+          ) : hasChanges ? (
+            <div
+              className={cn("annotation-history").elem("saving").toClassName()}
+            >
+              <IconCheck
+                className={cn("annotation-history").elem("saved").toClassName()}
+              />
+            </div>
+          ) : null
+        }
+        inline={inline}
+        comment=""
+        acceptedState="draft_created"
+        selected={isSelected}
+        hideInfo={infoIsHidden}
+        onClick={() => {
+          store.selectHistory(null);
+          annotation.toggleDraft(true);
+        }}
+      />
+    );
+  },
+);
 
 const AnnotationHistoryComponent: FC<any> = ({
   annotationStore,
@@ -118,33 +148,44 @@ const AnnotationHistoryComponent: FC<any> = ({
   const annotation = annotationStore.selected;
   const lastItem = history?.length ? history[0] : null;
   const hasChanges = annotation.history.hasChanges;
-  const infoIsHidden = annotationStore.store.hasInterface("annotations:hide-info");
+  const infoIsHidden = annotationStore.store.hasInterface(
+    "annotations:hide-info",
+  );
   const currentUser = window.APP_SETTINGS?.user;
 
   // if user makes changes at the first time there are no draft yet
   const isDraftSelected =
-    !annotationStore.selectedHistory && (annotation.draftSelected || (!annotation.versions.draft && hasChanges));
+    !annotationStore.selectedHistory &&
+    (annotation.draftSelected || (!annotation.versions.draft && hasChanges));
 
   // Determine if the empty state should be shown
   const hasDraft = annotation?.versions?.draft;
   const hasHistory = history && history.length > 0;
-  const shouldShowEmptyState = showEmptyState && !hasChanges && !hasDraft && !hasHistory;
+  const shouldShowEmptyState =
+    showEmptyState && !hasChanges && !hasDraft && !hasHistory;
 
   // Default empty state component
+  //张芒芒译
   const defaultEmptyState = (
     <EmptyState
       icon={<IconHistoryRewind width={24} height={24} />}
-      header="View annotation activity"
-      description={<>See a log of user actions for this annotation</>}
+      header="查看标注行为"
+      description={<>查看此标注下的用户活动</>}
     />
   );
 
   // If we should show empty state, render it
   if (shouldShowEmptyState) {
     return (
-      <div className={cn("annotation-history").mod({ inline, empty: true }).toClassName()}>
+      <div
+        className={cn("annotation-history")
+          .mod({ inline, empty: true })
+          .toClassName()}
+      >
         {sectionHeader && (
-          <div className={`${cn("annotation-history").elem("section-head").toClassName()} sr-only`}>
+          <div
+            className={`${cn("annotation-history").elem("section-head").toClassName()} sr-only`}
+          >
             {sectionHeader}
           </div>
         )}
@@ -156,16 +197,29 @@ const AnnotationHistoryComponent: FC<any> = ({
   return (
     <div className={cn("annotation-history").mod({ inline }).toClassName()}>
       {sectionHeader && (
-        <div className={`${cn("annotation-history").elem("section-head").toClassName()} sr-only`}>{sectionHeader}</div>
+        <div
+          className={`${cn("annotation-history").elem("section-head").toClassName()} sr-only`}
+        >
+          {sectionHeader}
+        </div>
       )}
-      <DraftState annotation={annotation} isSelected={isDraftSelected} inline={inline} />
+      <DraftState
+        annotation={annotation}
+        isSelected={isDraftSelected}
+        inline={inline}
+      />
       {enabled &&
         history.length > 0 &&
         history.map((item: any) => {
           const { id, user, createdDate } = item;
           const isLastItem = lastItem?.id === item.id;
-          const isSelected = isLastItem && !selectedHistory ? !isDraftSelected : selectedHistory?.id === item.id;
-          const hiddenUser = infoIsHidden ? { email: currentUser?.id === user.id ? "Me" : "User" } : null;
+          const isSelected =
+            isLastItem && !selectedHistory
+              ? !isDraftSelected
+              : selectedHistory?.id === item.id;
+          const hiddenUser = infoIsHidden
+            ? { email: currentUser?.id === user.id ? "Me" : "User" }
+            : null;
 
           return (
             <HistoryItem
@@ -231,27 +285,27 @@ const HistoryItemComponent: FC<{
   const reason = useMemo(() => {
     switch (acceptedState) {
       case "accepted":
-        return "Accepted";
+        return "已接受";
       case "rejected":
-        return "Rejected";
+        return "已拒绝";
       case "fixed_and_accepted":
-        return "Fixed";
+        return "已修复";
       case "updated":
-        return "Updated";
+        return "已更新";
       case "submitted":
-        return "Submitted";
+        return "已提交";
       case "prediction":
-        return "From prediction";
+        return "来自预测";
       case "imported":
-        return "Imported";
+        return "已导入";
       case "skipped":
-        return "Skipped";
+        return "已跳过";
       case "draft_created":
-        return "Draft";
+        return "草稿";
       case "deleted_review":
-        return "Review deleted";
+        return "评论已删除";
       case "propagated_annotation":
-        return "Propagated";
+        return "已传播";
       default:
         return null;
     }
@@ -265,13 +319,20 @@ const HistoryItemComponent: FC<{
     },
     [onClick, disabled],
   );
-
   return (
-    <div className={cn("history-item").mod({ inline, selected, disabled }).toClassName()} onClick={handleClick}>
+    <div
+      className={cn("history-item")
+        .mod({ inline, selected, disabled })
+        .toClassName()}
+      onClick={handleClick}
+    >
       <Space spread size="medium" truncated>
         <Space size="small" truncated>
           <Userpic
-            className={cn("history-item").elem("userpic").mod({ prediction: isPrediction }).toClassName()}
+            className={cn("history-item")
+              .elem("userpic")
+              .mod({ prediction: isPrediction })
+              .toClassName()}
             user={user}
             showUsernameTooltip
             username={isPrediction ? entity.createdBy : null}
@@ -285,10 +346,17 @@ const HistoryItemComponent: FC<{
 
         {!infoIsHidden && (
           <Space size="small">
-            {extra && <div className={cn("history-item").elem("date").toClassName()}>{extra}</div>}
+            {extra && (
+              <div className={cn("history-item").elem("date").toClassName()}>
+                {extra}
+              </div>
+            )}
             {date && (
               <div className={cn("history-item").elem("date").toClassName()}>
-                <Tooltip alignment="top-right" title={new Date(date).toLocaleString()}>
+                <Tooltip
+                  alignment="top-right"
+                  title={new Date(date).toLocaleString()}
+                >
                   <span>{humanDateDiff(date)}</span>
                 </Tooltip>
               </div>
@@ -297,7 +365,10 @@ const HistoryItemComponent: FC<{
         )}
       </Space>
       {(reason || comment) && (
-        <Space className={cn("history-item").elem("action").toClassName()} size="small">
+        <Space
+          className={cn("history-item").elem("action").toClassName()}
+          size="small"
+        >
           {acceptedState && <HistoryIcon type={acceptedState} />}
           <HistoryComment comment={comment} reason={reason} />
         </Space>
@@ -326,7 +397,13 @@ const HistoryComment: FC<{
   }, []);
 
   return (
-    <div className={cn("history-item").elem("comment").mod({ collapsed }).toClassName()} ref={commentRef as any}>
+    <div
+      className={cn("history-item")
+        .elem("comment")
+        .mod({ collapsed })
+        .toClassName()}
+      ref={commentRef as any}
+    >
       <div
         className={cn("history-item").elem("comment-content").toClassName()}
         data-reason={`${reason}${comment ? ": " : ""}`}
@@ -336,7 +413,10 @@ const HistoryComment: FC<{
 
       {collapsible && (
         <div
-          className={cn("history-item").elem("collapse-comment").mod({ collapsed }).toClassName()}
+          className={cn("history-item")
+            .elem("collapse-comment")
+            .mod({ collapsed })
+            .toClassName()}
           onClick={(e: any) => {
             e.stopPropagation();
             setCollapsed((v) => !v);
@@ -379,7 +459,13 @@ const HistoryIcon: FC<{ type: HistoryItemType }> = ({ type }) => {
     }
   }, [type]);
 
-  return icon && <div className={cn("history-item").elem("history-icon").toClassName()}>{icon}</div>;
+  return (
+    icon && (
+      <div className={cn("history-item").elem("history-icon").toClassName()}>
+        {icon}
+      </div>
+    )
+  );
 };
 
 const HistoryItem = observer(HistoryItemComponent);

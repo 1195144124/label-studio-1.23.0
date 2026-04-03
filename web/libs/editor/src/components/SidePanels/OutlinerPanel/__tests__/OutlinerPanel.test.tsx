@@ -33,7 +33,9 @@ jest.mock("../../PanelBase", () => ({
 
 jest.mock("../OutlinerTree", () => ({
   OutlinerTree: ({ regions, footer }: any) => (
-    <div data-testid="outliner-tree">{footer && <div data-testid="outliner-tree-footer">{footer}</div>}</div>
+    <div data-testid="outliner-tree">
+      {footer && <div data-testid="outliner-tree-footer">{footer}</div>}
+    </div>
   ),
 }));
 
@@ -60,7 +62,12 @@ jest.mock("../../Components/EmptyState", () => ({
       <div data-testid="empty-state-header">{header}</div>
       <div data-testid="empty-state-description">{description}</div>
       {learnMore && (
-        <a href={learnMore.href} data-testid={learnMore.testId} target="_blank" rel="noopener noreferrer">
+        <a
+          href={learnMore.href}
+          data-testid={learnMore.testId}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {learnMore.text}
         </a>
       )}
@@ -125,7 +132,9 @@ describe("OutlinerPanel", () => {
 
       render(<OutlinerPanel {...defaultProps} regions={regionsWithNoData} />);
 
-      expect(screen.getByTestId("empty-state-header")).toHaveTextContent("Labeled regions will appear here");
+      expect(screen.getByTestId("empty-state-header")).toHaveTextContent(
+        "Labeled regions will appear here",
+      );
     });
 
     it("renders the description text correctly", () => {
@@ -139,7 +148,9 @@ describe("OutlinerPanel", () => {
 
       const description = screen.getByTestId("empty-state-description");
       expect(description).toBeInTheDocument();
-      expect(description).toHaveTextContent("Start labeling and track your results");
+      expect(description).toHaveTextContent(
+        "Start labeling and track your results",
+      );
       expect(description).toHaveTextContent("using this panel");
     });
 
@@ -154,7 +165,10 @@ describe("OutlinerPanel", () => {
 
       const learnMoreLink = screen.getByTestId("regions-panel-learn-more");
       expect(learnMoreLink).toBeInTheDocument();
-      expect(learnMoreLink).toHaveAttribute("href", "https://docs.example.com/guide/labeling");
+      expect(learnMoreLink).toHaveAttribute(
+        "href",
+        "https://docs.example.com/guide/labeling",
+      );
       expect(learnMoreLink).toHaveAttribute("target", "_blank");
       expect(learnMoreLink).toHaveAttribute("rel", "noopener noreferrer");
       expect(learnMoreLink).toHaveTextContent("Learn more");
@@ -200,7 +214,9 @@ describe("OutlinerPanel", () => {
 
       expect(screen.getByTestId("icon-info")).toBeInTheDocument();
       expect(screen.getByText("All regions hidden")).toBeInTheDocument();
-      expect(screen.getByText("Adjust or remove the filters to view")).toBeInTheDocument();
+      expect(
+        screen.getByText("Adjust or remove the filters to view"),
+      ).toBeInTheDocument();
     });
 
     it("shows hidden regions count in footer when some regions are filtered", () => {
@@ -214,14 +230,18 @@ describe("OutlinerPanel", () => {
         filter: [{ id: "1", type: "rectangle" }], // 2 regions hidden
       };
 
-      render(<OutlinerPanel {...defaultProps} regions={regionsPartiallyFiltered} />);
+      render(
+        <OutlinerPanel {...defaultProps} regions={regionsPartiallyFiltered} />,
+      );
 
       expect(screen.getByTestId("outliner-tree")).toBeInTheDocument();
       const footer = screen.getByTestId("outliner-tree-footer");
       expect(footer).toBeInTheDocument();
 
       // Check for hidden regions count message
-      expect(footer.textContent).toContain("There are 2 hidden regions");
+      expect(footer.textContent).toContain(
+        "有 2 个区域被隐藏调整或移除筛选器以查看",
+      );
       expect(footer.textContent).toContain("Adjust or remove filters to view");
     });
 
@@ -238,7 +258,7 @@ describe("OutlinerPanel", () => {
       render(<OutlinerPanel {...defaultProps} regions={regionsOneHidden} />);
 
       const footer = screen.getByTestId("outliner-tree-footer");
-      expect(footer.textContent).toContain("There is 1 hidden region");
+      expect(footer.textContent).toContain("有 1 个区域被隐藏");
       expect(footer.textContent).not.toContain("regions"); // Check singular form
     });
 
@@ -258,7 +278,9 @@ describe("OutlinerPanel", () => {
       render(<OutlinerPanel {...defaultProps} regions={regionsNoneHidden} />);
 
       expect(screen.getByTestId("outliner-tree")).toBeInTheDocument();
-      expect(screen.queryByTestId("outliner-tree-footer")).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId("outliner-tree-footer"),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -299,7 +321,9 @@ describe("OutlinerPanel", () => {
         ],
       };
 
-      render(<OutlinerPanel {...defaultProps} regions={regionsWithAudioConfig} />);
+      render(
+        <OutlinerPanel {...defaultProps} regions={regionsWithAudioConfig} />,
+      );
 
       const viewControls = screen.getByTestId("view-controls");
       expect(viewControls).toBeInTheDocument();
@@ -312,7 +336,10 @@ describe("OutlinerPanel", () => {
         sort: "mediaStartTime",
         annotation: {
           names: new Map([
-            ["myTimelineLabels", { name: "myTimelineLabels", type: "timelinelabels" }],
+            [
+              "myTimelineLabels",
+              { name: "myTimelineLabels", type: "timelinelabels" },
+            ],
             ["myVideo", { name: "myVideo", type: "video" }],
           ]),
         },
@@ -326,7 +353,9 @@ describe("OutlinerPanel", () => {
         ],
       };
 
-      render(<OutlinerPanel {...defaultProps} regions={regionsWithVideoConfig} />);
+      render(
+        <OutlinerPanel {...defaultProps} regions={regionsWithVideoConfig} />,
+      );
 
       const viewControls = screen.getByTestId("view-controls");
       expect(viewControls).toBeInTheDocument();
@@ -340,21 +369,45 @@ describe("OutlinerPanel", () => {
         annotation: {
           names: new Map([
             ["myLabels", { name: "myLabels", type: "labels" }],
-            ["myVideoRectangle", { name: "myVideoRectangle", type: "videorectangle" }],
+            [
+              "myVideoRectangle",
+              { name: "myVideoRectangle", type: "videorectangle" },
+            ],
             ["myVideo", { name: "myVideo", type: "video" }],
           ]),
         },
         regions: [
-          { id: "1", type: "videorectangleregion", sequence: [{ frame: 30, enabled: true, x: 10, y: 10 }] },
-          { id: "2", type: "videorectangleregion", sequence: [{ frame: 10, enabled: true, x: 20, y: 20 }] },
+          {
+            id: "1",
+            type: "videorectangleregion",
+            sequence: [{ frame: 30, enabled: true, x: 10, y: 10 }],
+          },
+          {
+            id: "2",
+            type: "videorectangleregion",
+            sequence: [{ frame: 10, enabled: true, x: 20, y: 20 }],
+          },
         ],
         filter: [
-          { id: "1", type: "videorectangleregion", sequence: [{ frame: 30, enabled: true, x: 10, y: 10 }] },
-          { id: "2", type: "videorectangleregion", sequence: [{ frame: 10, enabled: true, x: 20, y: 20 }] },
+          {
+            id: "1",
+            type: "videorectangleregion",
+            sequence: [{ frame: 30, enabled: true, x: 10, y: 10 }],
+          },
+          {
+            id: "2",
+            type: "videorectangleregion",
+            sequence: [{ frame: 10, enabled: true, x: 20, y: 20 }],
+          },
         ],
       };
 
-      render(<OutlinerPanel {...defaultProps} regions={regionsWithVideoRectangleConfig} />);
+      render(
+        <OutlinerPanel
+          {...defaultProps}
+          regions={regionsWithVideoRectangleConfig}
+        />,
+      );
 
       const viewControls = screen.getByTestId("view-controls");
       expect(viewControls).toBeInTheDocument();
@@ -378,7 +431,9 @@ describe("OutlinerPanel", () => {
         ],
       };
 
-      render(<OutlinerPanel {...defaultProps} regions={regionsWithoutMediaConfig} />);
+      render(
+        <OutlinerPanel {...defaultProps} regions={regionsWithoutMediaConfig} />,
+      );
 
       const viewControls = screen.getByTestId("view-controls");
       expect(viewControls).toBeInTheDocument();
@@ -403,7 +458,12 @@ describe("OutlinerPanel", () => {
         filter: [],
       };
 
-      render(<OutlinerPanel {...defaultProps} regions={regionsWithMismatchedConfig} />);
+      render(
+        <OutlinerPanel
+          {...defaultProps}
+          regions={regionsWithMismatchedConfig}
+        />,
+      );
 
       const viewControls = screen.getByTestId("view-controls");
       expect(viewControls).toBeInTheDocument();

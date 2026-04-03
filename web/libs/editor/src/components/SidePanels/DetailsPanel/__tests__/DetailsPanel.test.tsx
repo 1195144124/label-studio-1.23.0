@@ -29,12 +29,18 @@ jest.mock("../../../Comments/Comments", () => ({
 }));
 
 jest.mock("../../../CurrentEntity/AnnotationHistory", () => ({
-  AnnotationHistory: (props: any) => <div data-testid="annotation-history" {...props} />,
+  AnnotationHistory: (props: any) => (
+    <div data-testid="annotation-history" {...props} />
+  ),
 }));
 
 jest.mock("../RegionDetails", () => ({
-  RegionDetailsMain: (props: any) => <div data-testid="region-details-main" {...props} />,
-  RegionDetailsMeta: (props: any) => <div data-testid="region-details-meta" {...props} />,
+  RegionDetailsMain: (props: any) => (
+    <div data-testid="region-details-main" {...props} />
+  ),
+  RegionDetailsMeta: (props: any) => (
+    <div data-testid="region-details-meta" {...props} />
+  ),
 }));
 
 jest.mock("../RegionItem", () => ({
@@ -48,11 +54,15 @@ jest.mock("../RegionItem", () => ({
 }));
 
 jest.mock("../Relations", () => ({
-  Relations: (props: any) => <div data-testid="relations-component" {...props} />,
+  Relations: (props: any) => (
+    <div data-testid="relations-component" {...props} />
+  ),
 }));
 
 jest.mock("../RelationsControls", () => ({
-  RelationsControls: (props: any) => <div data-testid="relations-controls" {...props} />,
+  RelationsControls: (props: any) => (
+    <div data-testid="relations-controls" {...props} />
+  ),
 }));
 
 jest.mock("../../Components/EmptyState", () => ({
@@ -62,7 +72,12 @@ jest.mock("../../Components/EmptyState", () => ({
       <div data-testid="empty-state-header">{header}</div>
       <div data-testid="empty-state-description">{description}</div>
       {learnMore && (
-        <a href={learnMore.href} data-testid={learnMore.testId} target="_blank" rel="noopener noreferrer">
+        <a
+          href={learnMore.href}
+          data-testid={learnMore.testId}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           {learnMore.text}
         </a>
       )}
@@ -121,7 +136,7 @@ describe("DetailsPanel", () => {
 
         const header = screen.getByTestId("empty-state-header");
         expect(header).toBeInTheDocument();
-        expect(header).toHaveTextContent("Create relations between regions");
+        expect(header).toHaveTextContent("创建区域间的关系");
       });
 
       it("renders empty state with correct description", () => {
@@ -129,7 +144,7 @@ describe("DetailsPanel", () => {
 
         const description = screen.getByTestId("empty-state-description");
         expect(description).toBeInTheDocument();
-        expect(description).toHaveTextContent("Link regions to define relationships between them");
+        expect(description).toHaveTextContent("链接区域以定义它们之间的关系");
       });
 
       it("renders learn more link with correct attributes", () => {
@@ -143,14 +158,18 @@ describe("DetailsPanel", () => {
         );
         expect(learnMoreLink).toHaveAttribute("target", "_blank");
         expect(learnMoreLink).toHaveAttribute("rel", "noopener noreferrer");
-        expect(learnMoreLink).toHaveTextContent("Learn more");
+        expect(learnMoreLink).toHaveTextContent("了解更多");
       });
 
       it("does not render relations controls when no relations exist", () => {
         render(<Relations currentEntity={mockCurrentEntityWithoutRelations} />);
 
-        expect(screen.queryByTestId("relations-controls")).not.toBeInTheDocument();
-        expect(screen.queryByTestId("relations-component")).not.toBeInTheDocument();
+        expect(
+          screen.queryByTestId("relations-controls"),
+        ).not.toBeInTheDocument();
+        expect(
+          screen.queryByTestId("relations-component"),
+        ).not.toBeInTheDocument();
       });
 
       it("does not render relations count header when no relations exist", () => {
@@ -177,7 +196,7 @@ describe("DetailsPanel", () => {
       it("renders relations count in header when relations exist", () => {
         render(<Relations currentEntity={mockCurrentEntityWithRelations} />);
 
-        expect(screen.getByText("Relations (3)")).toBeInTheDocument();
+        expect(screen.getByText("区域间的关系 (3)")).toBeInTheDocument();
       });
     });
   });
@@ -214,7 +233,7 @@ describe("DetailsPanel", () => {
 
         const header = screen.getByTestId("empty-state-header");
         expect(header).toBeInTheDocument();
-        expect(header).toHaveTextContent("View region details");
+        expect(header).toHaveTextContent("查看区域详情");
       });
 
       it("renders empty state with correct description when no selection", () => {
@@ -222,7 +241,9 @@ describe("DetailsPanel", () => {
 
         const description = screen.getByTestId("empty-state-description");
         expect(description).toBeInTheDocument();
-        expect(description).toHaveTextContent("Select a region to view its properties, metadata and available actions");
+        expect(description).toHaveTextContent(
+          "选择一个区域以查看其属性、元数据 和可用操作",
+        );
       });
 
       it("does not render region details on info panel when no selection", () => {
