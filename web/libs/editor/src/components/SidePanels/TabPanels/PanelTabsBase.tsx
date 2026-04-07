@@ -18,7 +18,12 @@ import {
 } from "@humansignal/icons";
 import { useDrag } from "../../../hooks/useDrag";
 import { clamp, isDefined } from "../../../utils/utilities";
-import { DEFAULT_PANEL_HEIGHT, DEFAULT_PANEL_MIN_HEIGHT, DEFAULT_PANEL_WIDTH, PANEL_HEADER_HEIGHT } from "../constants";
+import {
+  DEFAULT_PANEL_HEIGHT,
+  DEFAULT_PANEL_MIN_HEIGHT,
+  DEFAULT_PANEL_WIDTH,
+  PANEL_HEADER_HEIGHT,
+} from "../constants";
 import { type BaseProps as OrigBaseProps, Side } from "./types";
 import { resizers } from "./utils";
 import "./PanelTabsBase.scss";
@@ -92,10 +97,12 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
   const keyRef = useRef(key);
   const collapsed = sidePanelCollapsed[alignment as Side] && !detached;
   const isParentOfCollapsedPanel = attachedKeys && attachedKeys[0] === key;
-  const isChildOfGroup = attachedKeys && attachedKeys.includes(key) && attachedKeys[0] !== key;
+  const isChildOfGroup =
+    attachedKeys && attachedKeys.includes(key) && attachedKeys[0] !== key;
   const collapsedHeader = !(collapsed && !isParentOfCollapsedPanel);
-  const tooltipText = visible && !collapsed ? "Collapse" : "Expand";
-  const settings = props.currentEntity?.store?.settings || props.currentEntity?.settings;
+  const tooltipText = visible && !collapsed ? "折叠" : "展开";
+  const settings =
+    props.currentEntity?.store?.settings || props.currentEntity?.settings;
   const [bottomCollapsed, setBottomCollapsed] = useState(() => {
     if (isBottomPanel && settings?.defaultCollapsedBottomPanel) return true;
     return false;
@@ -135,8 +142,16 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
     }
     const dynamicStyle = visible
       ? {
-          height: locked ? DEFAULT_PANEL_HEIGHT : collapsed ? "100%" : (height ?? "100%"),
-          width: locked ? "100%" : !collapsed ? (width ?? "100%") : PANEL_HEADER_HEIGHT,
+          height: locked
+            ? DEFAULT_PANEL_HEIGHT
+            : collapsed
+              ? "100%"
+              : (height ?? "100%"),
+          width: locked
+            ? "100%"
+            : !collapsed
+              ? (width ?? "100%")
+              : PANEL_HEADER_HEIGHT,
         }
       : {
           width: collapsed ? "100%" : (width ?? DEFAULT_PANEL_WIDTH),
@@ -187,9 +202,21 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
       disabled: locked,
       collapsed,
       dragTop: dragTop && attachedKeys && attachedKeys[0] === key,
-      dragBottom: dragBottom && attachedKeys && attachedKeys[attachedKeys.length - 1] === key,
+      dragBottom:
+        dragBottom &&
+        attachedKeys &&
+        attachedKeys[attachedKeys.length - 1] === key,
     };
-  }, [alignment, visible, detached, resizing, locked, collapsed, dragTop, dragBottom]);
+  }, [
+    alignment,
+    visible,
+    detached,
+    resizing,
+    locked,
+    collapsed,
+    dragTop,
+    dragBottom,
+  ]);
 
   // Panel positioning
   useDrag(
@@ -201,7 +228,12 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         const el = e.target as HTMLElement;
         const collapseClassName = "[class*=__toggle]";
 
-        if (el.matches(collapseClassName) || el.closest(collapseClassName) || collapsed) return;
+        if (
+          el.matches(collapseClassName) ||
+          el.closest(collapseClassName) ||
+          collapsed
+        )
+          return;
 
         const allowDrag = true;
         const panel = panelRef.current!;
@@ -212,12 +244,21 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         const ty = e.clientY - clickTarget.top;
 
         const [x, y] = [e.pageX, e.pageY];
-        const [oX, oY] = [bbox.left - parentBBox.left, bbox.top - parentBBox.top];
+        const [oX, oY] = [
+          bbox.left - parentBBox.left,
+          bbox.top - parentBBox.top,
+        ];
 
         const { current: key } = keyRef;
         const [nX, nY] = [x - tx, y - ty];
 
-        handlers.current.onPositionChangeBegin?.(key, nX, nY, alignment, detached);
+        handlers.current.onPositionChangeBegin?.(
+          key,
+          nX,
+          nY,
+          alignment,
+          detached,
+        );
 
         return { x, y, oX, oY, allowDrag, alignment, key };
       },
@@ -231,7 +272,13 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         if (dist < 30) return;
         const [nX, nY] = [oX + (mX - x), oY + (mY - y)];
 
-        handlers.current.onPositionChange?.(draggingKey, nY, nX, true, alignment);
+        handlers.current.onPositionChange?.(
+          draggingKey,
+          nY,
+          nX,
+          true,
+          alignment,
+        );
       },
 
       onMouseUp(_, data) {
@@ -277,21 +324,50 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         setResizing(type);
         handlers.current.onResizeStart?.();
 
-        return { pos: [e.pageX, e.pageY], type, width, maxWidth, height, top, left, resizeDirections, shift };
+        return {
+          pos: [e.pageX, e.pageY],
+          type,
+          width,
+          maxWidth,
+          height,
+          top,
+          left,
+          resizeDirections,
+          shift,
+        };
       },
       onMouseMove(e, data) {
         if (data) {
-          const { pos, width: w, height: h, maxWidth, top: t, left: l, resizeDirections, shift } = data;
+          const {
+            pos,
+            width: w,
+            height: h,
+            maxWidth,
+            top: t,
+            left: l,
+            resizeDirections,
+            shift,
+          } = data;
           const [sX, sY] = pos;
 
           const wMod = resizeDirections.x ? e.pageX - sX : 0;
           const hMod = resizeDirections.y ? e.pageY - sY : 0;
 
-          const shiftLeft = isDefined(shift) && ["left", "top-left"].includes(shift);
-          const shiftTop = isDefined(shift) && ["top", "top-left"].includes(shift);
+          const shiftLeft =
+            isDefined(shift) && ["left", "top-left"].includes(shift);
+          const shiftTop =
+            isDefined(shift) && ["top", "top-left"].includes(shift);
 
-          const width = clamp(shiftLeft ? w - wMod : w + wMod, DEFAULT_PANEL_WIDTH, maxWidth);
-          const height = clamp(shiftTop ? h - hMod : h + hMod, DEFAULT_PANEL_MIN_HEIGHT, t + h);
+          const width = clamp(
+            shiftLeft ? w - wMod : w + wMod,
+            DEFAULT_PANEL_WIDTH,
+            maxWidth,
+          );
+          const height = clamp(
+            shiftTop ? h - hMod : h + hMod,
+            DEFAULT_PANEL_MIN_HEIGHT,
+            t + h,
+          );
 
           const top = shiftTop ? t + (h - height) : t;
           const left = shiftLeft ? l + (w - width) : l;
@@ -305,7 +381,18 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         setResizing(undefined);
       },
     },
-    [handlers, detached, width, maxWidth, height, top, left, visible, locked, positioning],
+    [
+      handlers,
+      detached,
+      width,
+      maxWidth,
+      height,
+      top,
+      left,
+      visible,
+      locked,
+      positioning,
+    ],
   );
 
   // Panel grouped resize height
@@ -335,11 +422,23 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         setResizing(undefined);
       },
     },
-    [handlers, width, height, top, left, locked, positioning, resizeGroup.current],
+    [
+      handlers,
+      width,
+      height,
+      top,
+      left,
+      locked,
+      positioning,
+      resizeGroup.current,
+    ],
   );
 
   const handleGroupPanelToggle = () => {
-    setSidePanelCollapsed({ ...sidePanelCollapsed, [alignment]: !sidePanelCollapsed[alignment as Side] });
+    setSidePanelCollapsed({
+      ...sidePanelCollapsed,
+      [alignment]: !sidePanelCollapsed[alignment as Side],
+    });
   };
 
   const handlePanelToggle = useCallback(
@@ -355,7 +454,10 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
     const onMouseMove = (e: MouseEvent) => {
       if (!dragging.current) return;
       const deltaY = startY.current - e.clientY;
-      const newHeight = Math.max(MIN_HEIGHT, Math.min(MAX_HEIGHT, startHeight.current + deltaY));
+      const newHeight = Math.max(
+        MIN_HEIGHT,
+        Math.min(MAX_HEIGHT, startHeight.current + deltaY),
+      );
       setPanelHeight(newHeight);
     };
     const onMouseUp = () => {
@@ -416,9 +518,14 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
                 if (collapsed) handleGroupPanelToggle();
               }}
               id={key}
-              className={cn("tabs-panel").elem("header").mod({ collapsed }).toClassName()}
+              className={cn("tabs-panel")
+                .elem("header")
+                .mod({ collapsed })
+                .toClassName()}
             >
-              <div className={cn("tabs-panel").elem("header-left").toClassName()}>
+              <div
+                className={cn("tabs-panel").elem("header-left").toClassName()}
+              >
                 {!collapsed && (
                   <IconOutlinerDrag
                     className={cn("tabs-panel").elem("icon").toClassName()}
@@ -431,19 +538,31 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
                   </div>
                 )}
               </div>
-              <div className={cn("tabs-panel").elem("header-right").toClassName()}>
+              <div
+                className={cn("tabs-panel").elem("header-right").toClassName()}
+              >
                 {(!detached || collapsed) && (
                   <div
-                    className={cn("tabs-panel").elem("toggle").mod({ detached, collapsed, alignment }).toClassName()}
+                    className={cn("tabs-panel")
+                      .elem("toggle")
+                      .mod({ detached, collapsed, alignment })
+                      .toClassName()}
                     onClick={handleGroupPanelToggle}
-                    data-tooltip={`${tooltipText} Group`}
+                    data-tooltip={`${tooltipText} 分组`}
                   >
-                    {Side.left === alignment ? <IconChevronLeft /> : <IconChevronRight />}
+                    {Side.left === alignment ? (
+                      <IconChevronLeft />
+                    ) : (
+                      <IconChevronRight />
+                    )}
                   </div>
                 )}
                 {!collapsed && (
                   <div
-                    className={cn("tabs-panel").elem("toggle").mod({ detached, collapsed, alignment }).toClassName()}
+                    className={cn("tabs-panel")
+                      .elem("toggle")
+                      .mod({ detached, collapsed, alignment })
+                      .toClassName()}
                     onClick={handlePanelToggle}
                     data-tooltip={tooltipText}
                   >
@@ -456,10 +575,15 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
         )}
         {visible && !collapsed && (
           <div className={cn("tabs-panel").elem("body").toClassName()}>
-            {lockPanelContents && <div className={cn("tabs-panel").elem("shield").toClassName()} />}
+            {lockPanelContents && (
+              <div className={cn("tabs-panel").elem("shield").toClassName()} />
+            )}
             {(() => {
               const onlyChild = React.Children.only(children);
-              if (React.isValidElement(onlyChild) && (onlyChild.type as any).displayName === "Tabs") {
+              if (
+                React.isValidElement(onlyChild) &&
+                (onlyChild.type as any).displayName === "Tabs"
+              ) {
                 return React.cloneElement(onlyChild, {
                   isBottomPanel: isBottomPanel as boolean,
                   bottomCollapsed,
@@ -484,7 +608,8 @@ export const PanelTabsBase: FC<BasePropsWithChildren> = ({
           {resizers.map((res) => {
             const shouldRender = collapsed
               ? false
-              : ((res === "left" || res === "right") && alignment !== res) || detached;
+              : ((res === "left" || res === "right") && alignment !== res) ||
+                detached;
 
             return shouldRender ? (
               <div

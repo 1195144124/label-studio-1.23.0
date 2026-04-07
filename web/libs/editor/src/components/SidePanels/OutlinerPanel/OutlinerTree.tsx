@@ -182,8 +182,6 @@ const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(
         collapsedPos.includes(pos) ? expand(pos) : collapse(pos);
       };
     }
-    console.log(regionsTree);
-    debugger;
     return (
       <div className={cn("outliner-tree").toClassName()} ref={setRef}>
         {!!height && (
