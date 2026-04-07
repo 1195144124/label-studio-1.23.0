@@ -283,7 +283,7 @@ function AnnotationButtonTooltip({
 
     // Add Annotation ID first if available
     if (annotationId) {
-      rows.push({ label: "标注编号", value: String(annotationId) });
+      rows.push({ label: "标注ID", value: String(annotationId) });
     }
 
     // Add Type for all annotations/predictions
@@ -547,17 +547,17 @@ const AnnotationButtonContextMenu = injector(
       const deleteAnnotation = useCallback(() => {
         clickHandler();
         confirm({
-          title: "Delete annotation?",
+          title: "删除标注？",
           body: (
             <>
-              This will <strong>delete all existing regions</strong>. Are you
-              sure you want to delete them?
+              此操作将<strong>删除所有现有区域</strong>。您确定要 删除它们吗？
               <br />
-              This action cannot be undone.
+              此操作无法撤销。
             </>
           ),
           buttonLook: "negative",
-          okText: "Delete",
+          okText: "确定",
+          cancelText: "取消",
           onOk: () => {
             entity.list.deleteAnnotation(entity);
           },
@@ -579,13 +579,13 @@ const AnnotationButtonContextMenu = injector(
       const actions = useMemo<ContextMenuAction[]>(
         () => [
           {
-            label: "Copy Annotation ID",
+            label: "复制标注ID",
             onClick: copyAnnotationIdHandler,
             icon: <IconClipboardCheck width={20} height={20} />,
             enabled: !isDraft,
           },
           {
-            label: `${isGroundTruth ? "Unset " : "Set "} as Ground Truth`,
+            label: `${isGroundTruth ? "取消" : "设置"}基准标注`,
             onClick: setGroundTruth,
             icon: isGroundTruth ? (
               <IconStar color="#FFC53D" width={iconSize} height={iconSize} />
@@ -595,31 +595,31 @@ const AnnotationButtonContextMenu = injector(
             enabled: showGroundTruth,
           },
           {
-            label: "Duplicate Annotation",
+            label: "复制标注",
             onClick: duplicateAnnotation,
             icon: <IconDuplicate width={20} height={20} />,
             enabled: showDuplicateAnnotation,
           },
           {
-            label: "Copy Annotation Link",
+            label: "复制标注链接",
             onClick: linkAnnotation,
             icon: <IconLink />,
             enabled: !isDraft && store.hasInterface("annotations:copy-link"),
           },
           {
-            label: "Open Performance Dashboard",
+            label: "打开性能仪表板",
             onClick: openPerformanceDashboard,
             icon: <IconAnalytics width={20} height={20} />,
             enabled: isLSE && hasProjectId && !isDraft && !isPrediction,
           },
           {
-            label: "Show Other Annotations",
+            label: "显示其他标注",
             onClick: showOtherAnnotations,
             icon: <IconViewAll width={20} height={20} />,
             enabled: true,
           },
           {
-            label: "Delete Annotation",
+            label: "删除标注",
             onClick: deleteAnnotation,
             icon: <IconTrashRect />,
             separator: true,

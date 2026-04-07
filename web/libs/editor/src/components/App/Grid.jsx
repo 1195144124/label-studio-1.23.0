@@ -3,7 +3,14 @@
  * Added virtualization support for large annotation counts
  */
 
-import React, { Component, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  Component,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Spin } from "antd";
 import { Button, Tooltip } from "@humansignal/ui";
 import { LeftCircleOutlined, RightCircleOutlined } from "@ant-design/icons";
@@ -60,59 +67,71 @@ export class Item extends Component {
   }
 
   render() {
-    return <Annotation root={this.props.root} annotation={this.props.annotation} />;
+    return (
+      <Annotation root={this.props.root} annotation={this.props.annotation} />
+    );
   }
 }
 
 // FIT-720: Virtualized annotation panel with lazy hydration (exported for tests)
-export const VirtualizedAnnotationPanel = observer(({ annotation, root, style, onSelect, isHydrating }) => {
-  // Check if annotation has regions - either from original load (versions.result) or from hydration (areas)
-  const versionsResult = annotation.versions?.result;
-  const hasVersionsResult = Array.isArray(versionsResult) && versionsResult.length > 0;
-  // Force MobX to track areas by accessing the regions getter (which iterates areas)
-  const regions = annotation.regions;
-  const hasRegions = regions && regions.length > 0;
-  // Annotation is a stub if it has no data and is not user-generated
-  // After hydration, hasRegions will be true (deserializeResults populates regions)
-  const isStub = !hasVersionsResult && !hasRegions && annotation.pk && !annotation.userGenerate;
+export const VirtualizedAnnotationPanel = observer(
+  ({ annotation, root, style, onSelect, isHydrating }) => {
+    // Check if annotation has regions - either from original load (versions.result) or from hydration (areas)
+    const versionsResult = annotation.versions?.result;
+    const hasVersionsResult =
+      Array.isArray(versionsResult) && versionsResult.length > 0;
+    // Force MobX to track areas by accessing the regions getter (which iterates areas)
+    const regions = annotation.regions;
+    const hasRegions = regions && regions.length > 0;
+    // Annotation is a stub if it has no data and is not user-generated
+    // After hydration, hasRegions will be true (deserializeResults populates regions)
+    const isStub =
+      !hasVersionsResult &&
+      !hasRegions &&
+      annotation.pk &&
+      !annotation.userGenerate;
 
-  return (
-    <div style={{ ...style, paddingRight: PANEL_GAP }}>
-      <div id={`c-${annotation.id}`} style={{ position: "relative", height: "100%" }}>
-        <EntityTab
-          entity={annotation}
-          onClick={() => onSelect(annotation)}
-          prediction={annotation.type === "prediction"}
-          bordered={false}
-          style={{ height: 44 }}
-        />
-        {isStub || isHydrating ? (
-          <div
-            style={{
-              position: "absolute",
-              top: 44,
-              left: 0,
-              width: "100%",
-              height: "calc(100% - 44px)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              background: "var(--color-neutral-surface)",
-            }}
-          >
-            <Spin size="large" />
-            <span style={{ marginTop: 12, color: "#999" }}>
-              {isHydrating ? "Loading annotation..." : "Waiting to load..."}
-            </span>
-          </div>
-        ) : (
-          <Annotation root={root} annotation={annotation} />
-        )}
+    return (
+      <div style={{ ...style, paddingRight: PANEL_GAP }}>
+        <div
+          id={`c-${annotation.id}`}
+          style={{ position: "relative", height: "100%" }}
+        >
+          <EntityTab
+            entity={annotation}
+            onClick={() => onSelect(annotation)}
+            prediction={annotation.type === "prediction"}
+            bordered={false}
+            style={{ height: 44 }}
+          />
+          {isStub || isHydrating ? (
+            <div
+              style={{
+                position: "absolute",
+                top: 44,
+                left: 0,
+                width: "100%",
+                height: "calc(100% - 44px)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "var(--color-neutral-surface)",
+              }}
+            >
+              <Spin size="large" />
+              <span style={{ marginTop: 12, color: "#999" }}>
+                {isHydrating ? "Loading annotation..." : "Waiting to load..."}
+              </span>
+            </div>
+          ) : (
+            <Annotation root={root} annotation={annotation} />
+          )}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 // FIT-720: Virtualized Grid component
 const VirtualizedGrid = observer(({ store, annotations, root }) => {
@@ -134,13 +153,19 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
     if (!isFF(FF_FIT_720_LAZY_LOAD_ANNOTATIONS)) return;
 
     annotations.forEach((annotation) => {
-      if (!annotation.pk || annotation.type === "prediction" || annotation.userGenerate) return;
+      if (
+        !annotation.pk ||
+        annotation.type === "prediction" ||
+        annotation.userGenerate
+      )
+        return;
 
       const id = annotation.pk;
 
       // Check if annotation already has data in MST
       const versionsResult = annotation.versions?.result;
-      const hasDataInMST = Array.isArray(versionsResult) && versionsResult.length > 0;
+      const hasDataInMST =
+        Array.isArray(versionsResult) && versionsResult.length > 0;
       const regions = annotation.regions;
       const hasRegions = regions && regions.length > 0;
 
@@ -166,7 +191,10 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
   }, []); // Only run once on mount
 
   // Filter visible annotations
-  const visibleAnnotations = useMemo(() => annotations.filter((c) => !c.hidden), [annotations]);
+  const visibleAnnotations = useMemo(
+    () => annotations.filter((c) => !c.hidden),
+    [annotations],
+  );
 
   // Calculate panel width based on container (aim for ~50% width, min PANEL_WIDTH)
   const panelWidth = useMemo(() => {
@@ -199,7 +227,10 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
   const scrollRight = useCallback(() => {
     if (listRef.current) {
       const maxOffset = totalWidth - containerWidth;
-      const newOffset = Math.min(maxOffset, scrollOffset + panelWidth + PANEL_GAP);
+      const newOffset = Math.min(
+        maxOffset,
+        scrollOffset + panelWidth + PANEL_GAP,
+      );
       listRef.current.scrollTo(newOffset);
     }
   }, [scrollOffset, panelWidth, totalWidth, containerWidth]);
@@ -236,7 +267,8 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
 
         if (sdk?.datamanager?.store?.taskStore?.loadAnnotation) {
           // Fallback: directly load annotation via taskStore
-          fullAnnotation = await sdk.datamanager.store.taskStore.loadAnnotation(annotationPk);
+          fullAnnotation =
+            await sdk.datamanager.store.taskStore.loadAnnotation(annotationPk);
         } else {
           // Use TanStack Query for caching and deduplication
           fullAnnotation = await fetchAnnotationCached(annotationPk);
@@ -246,7 +278,9 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
           // IMPORTANT: Re-fetch the annotation from the store after async operation
           // The original reference might be stale (user navigated, scrolled, etc.)
           // which causes MST "object is protected" errors
-          const freshAnnotation = annotations.find((a) => a.id === annotationId);
+          const freshAnnotation = annotations.find(
+            (a) => a.id === annotationId,
+          );
           if (!freshAnnotation) {
             // Annotation no longer exists in the store
             return;
@@ -254,7 +288,8 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
 
           // Check if annotation is still valid and not already hydrated
           const versionsResult = freshAnnotation.versions?.result;
-          const hasVersionsResult = Array.isArray(versionsResult) && versionsResult.length > 0;
+          const hasVersionsResult =
+            Array.isArray(versionsResult) && versionsResult.length > 0;
           const regions = freshAnnotation.regions;
           const hasRegions = regions && regions.length > 0;
 
@@ -317,16 +352,24 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
           if (!annotation) continue;
 
           // Skip if already hydrated or currently hydrating
-          if (hydratedIds.current.has(annotation.id) || hydratingIds.has(annotation.id)) {
+          if (
+            hydratedIds.current.has(annotation.id) ||
+            hydratingIds.has(annotation.id)
+          ) {
             continue;
           }
 
           // Use consistent stub detection: check versions.result (source of truth)
           const versionsResult = annotation.versions?.result;
-          const hasVersionsResult = Array.isArray(versionsResult) && versionsResult.length > 0;
+          const hasVersionsResult =
+            Array.isArray(versionsResult) && versionsResult.length > 0;
           const regions = annotation.regions;
           const hasRegions = regions && regions.length > 0;
-          const isStub = !hasVersionsResult && !hasRegions && annotation.pk && !annotation.userGenerate;
+          const isStub =
+            !hasVersionsResult &&
+            !hasRegions &&
+            annotation.pk &&
+            !annotation.userGenerate;
 
           if (isStub) {
             hydrateAnnotation(annotation);
@@ -340,12 +383,21 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
   // FIT-720: Initial hydration on mount - hydrate first visible annotations
   useEffect(() => {
     // Only run once when containerWidth becomes non-zero
-    if (initialHydrationDone.current || visibleAnnotations.length === 0 || containerWidth === 0) return;
+    if (
+      initialHydrationDone.current ||
+      visibleAnnotations.length === 0 ||
+      containerWidth === 0
+    )
+      return;
 
     initialHydrationDone.current = true;
 
-    const visibleCount = Math.ceil(containerWidth / (panelWidth + PANEL_GAP)) + 1;
-    const initialVisibleCount = Math.min(visibleCount, visibleAnnotations.length);
+    const visibleCount =
+      Math.ceil(containerWidth / (panelWidth + PANEL_GAP)) + 1;
+    const initialVisibleCount = Math.min(
+      visibleCount,
+      visibleAnnotations.length,
+    );
 
     for (let i = 0; i < initialVisibleCount; i++) {
       const annotation = visibleAnnotations[i];
@@ -356,10 +408,15 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
 
       // Use consistent stub detection: check versions.result (source of truth)
       const versionsResult = annotation.versions?.result;
-      const hasVersionsResult = Array.isArray(versionsResult) && versionsResult.length > 0;
+      const hasVersionsResult =
+        Array.isArray(versionsResult) && versionsResult.length > 0;
       const regions = annotation.regions;
       const hasRegions = regions && regions.length > 0;
-      const isStub = !hasVersionsResult && !hasRegions && annotation.pk && !annotation.userGenerate;
+      const isStub =
+        !hasVersionsResult &&
+        !hasRegions &&
+        annotation.pk &&
+        !annotation.userGenerate;
 
       if (isStub) {
         hydrateAnnotation(annotation);
@@ -395,7 +452,10 @@ const VirtualizedGrid = observer(({ store, annotations, root }) => {
 
   return (
     <div className={styles.containerVirtualized}>
-      <div className={styles.grid} style={{ overflow: "hidden", height: "100%" }}>
+      <div
+        className={styles.grid}
+        style={{ overflow: "hidden", height: "100%" }}
+      >
         <AutoSizer>
           {({ width, height }) => {
             if (width !== containerWidth) {
@@ -467,7 +527,10 @@ class GridClassComponent extends Component {
   }
 
   componentDidMount() {
-    if (!isFF(FF_DEV_3391) && this.props.annotations[0] !== this.props.store.selected) {
+    if (
+      !isFF(FF_DEV_3391) &&
+      this.props.annotations[0] !== this.props.store.selected
+    ) {
       this.startRenderCycle();
     }
   }
@@ -520,8 +583,13 @@ class GridClassComponent extends Component {
     /* istanbul ignore next: iframe clone not testable in jsdom */
     clonedIframe.forEach((iframe, idx) => {
       iframe.contentWindow.document.open();
-      iframe.contentWindow.document.write(sourceIframe[idx].contentDocument.documentElement.outerHTML);
-      moveStylesBetweenHeadTags(sourceIframe[idx].contentDocument.head, iframe.contentDocument.head);
+      iframe.contentWindow.document.write(
+        sourceIframe[idx].contentDocument.documentElement.outerHTML,
+      );
+      moveStylesBetweenHeadTags(
+        sourceIframe[idx].contentDocument.head,
+        iframe.contentDocument.head,
+      );
     });
 
     this.setState((state) => {
@@ -538,7 +606,9 @@ class GridClassComponent extends Component {
     const container = this.container.current;
     const children = container.children;
 
-    const current = Array.from(children).findIndex((child) => container.scrollLeft <= child.offsetLeft);
+    const current = Array.from(children).findIndex(
+      (child) => container.scrollLeft <= child.offsetLeft,
+    );
 
     if (!container) return;
 
@@ -571,7 +641,8 @@ class GridClassComponent extends Component {
     const i = this.state.item;
     const { annotations } = this.props;
     const selected = isFF(FF_DEV_3391) ? null : this.props.store.selected;
-    const isRenderingNext = i < annotations.length && annotations[i] === selected;
+    const isRenderingNext =
+      i < annotations.length && annotations[i] === selected;
 
     return (
       <div className={styles.container}>
@@ -579,8 +650,12 @@ class GridClassComponent extends Component {
           {annotations
             .filter((c) => !c.hidden)
             .map((c) => (
-              <div id={`c-${c.id}`} key={`anno-${c.id}`} style={{ position: "relative" }}>
-                <Tooltip title="Open Annotation Tab">
+              <div
+                id={`c-${c.id}`}
+                key={`anno-${c.id}`}
+                style={{ position: "relative" }}
+              >
+                <Tooltip title="打开标注标签页">
                   <div>
                     <EntityTab
                       entity={c}
@@ -614,21 +689,42 @@ class GridClassComponent extends Component {
               </div>
             ))}
           {isRenderingNext && (
-            <div id={"c-tmp"} key={"anno-tmp"} style={{ opacity: 0, position: "relative", right: 99999 }}>
+            <div
+              id={"c-tmp"}
+              key={"anno-tmp"}
+              style={{ opacity: 0, position: "relative", right: 99999 }}
+            >
               <EntityTab
                 entity={selected}
                 prediction={selected.type === "prediction"}
                 bordered={false}
                 style={{ height: 44 }}
               />
-              <Item root={this.props.root} onFinish={this.onFinish} key={i} annotation={selected} />
+              <Item
+                root={this.props.root}
+                onFinish={this.onFinish}
+                key={i}
+                annotation={selected}
+              />
             </div>
           )}
         </div>
-        <Button size="small" look="string" onClick={this.left} className={styles.left} aria-label="Move left">
+        <Button
+          size="small"
+          look="string"
+          onClick={this.left}
+          className={styles.left}
+          aria-label="Move left"
+        >
           <LeftCircleOutlined />
         </Button>
-        <Button size="small" look="string" onClick={this.right} className={styles.right} aria-label="Move right">
+        <Button
+          size="small"
+          look="string"
+          onClick={this.right}
+          className={styles.right}
+          aria-label="Move right"
+        >
           <RightCircleOutlined />
         </Button>
       </div>

@@ -61,6 +61,7 @@ export const TimeAgo = ({ date, ...rest }: TimeAgoProps) => {
     "不到一分钟前"
       ? "几秒钟前"
       : formatDistanceToNow(fromTS, { addSuffix: true, locale: zhCN });
+  console.log(this);
   return (
     <time
       dateTime={format(fromTS, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")}

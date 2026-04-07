@@ -16,7 +16,10 @@ export const TopBar = observer(({ store }) => {
   const isPrediction = entity?.type === "prediction";
 
   const isViewAll = annotationStore?.viewingAll === true;
-  const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isStarterCloudPlan() && store.hasInterface("annotation:bulk");
+  const isBulkMode =
+    isFF(FF_BULK_ANNOTATION) &&
+    !isStarterCloudPlan() &&
+    store.hasInterface("annotation:bulk");
 
   if (isBulkMode) return null;
 
@@ -28,7 +31,10 @@ export const TopBar = observer(({ store }) => {
     <div className={cn("topbar").mod({ newLabelingUI: true }).toClassName()}>
       <div className={cn("topbar").elem("group").toClassName()}>
         {store.hasInterface("annotations:view-all") && (
-          <ViewAllToggle isActive={isViewAll} onClick={annotationStore.toggleViewingAllAnnotations} />
+          <ViewAllToggle
+            isActive={isViewAll}
+            onClick={annotationStore.toggleViewingAllAnnotations}
+          />
         )}
         {store.hasInterface("annotations:add-new") && (
           <Button
@@ -38,18 +44,24 @@ export const TopBar = observer(({ store }) => {
             variant="neutral"
             size="small"
             look="outlined"
-            tooltip="Create a new annotation"
+            tooltip="创建新标注"
             onClick={(event) => {
               event.preventDefault();
               const created = store.annotationStore.createAnnotation();
 
-              store.annotationStore.selectAnnotation(created.id, { exitViewAll: true });
+              store.annotationStore.selectAnnotation(created.id, {
+                exitViewAll: true,
+              });
             }}
           >
             <IconPlus />
           </Button>
         )}
-        <AnnotationsCarousel store={store} annotationStore={store.annotationStore} commentStore={store.commentStore} />
+        <AnnotationsCarousel
+          store={store}
+          annotationStore={store.annotationStore}
+          commentStore={store.commentStore}
+        />
       </div>
     </div>
   ) : null;
