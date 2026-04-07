@@ -64,7 +64,7 @@ export const TimeAgo = ({ date, ...rest }: TimeAgoProps) => {
   return (
     <time
       dateTime={format(fromTS, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx")}
-      title={format(fromTS, "PPpp")}
+      title={format(fromTS, "yyyy年MM月dd日 HH:mm:ss", { locale: zhCN })}
       {...rest}
     >
       {text}

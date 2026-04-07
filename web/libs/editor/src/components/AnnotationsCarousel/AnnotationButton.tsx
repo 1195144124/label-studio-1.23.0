@@ -5,8 +5,12 @@ import { isAlive } from "mobx-state-tree";
 import truncate from "truncate-middle";
 import clsx from "clsx";
 import { format, isValid } from "date-fns";
+import { zhCN } from "date-fns/locale";
 import { useCopyText } from "@humansignal/core";
-import { isDefined, userDisplayName } from "@humansignal/core/lib/utils/helpers";
+import {
+  isDefined,
+  userDisplayName,
+} from "@humansignal/core/lib/utils/helpers";
 import { cn } from "../../utils/bem";
 import {
   IconAnnotationGroundTruth,
@@ -27,7 +31,14 @@ import {
   IconCrossAlt,
   IconEllipsisVertical,
 } from "@humansignal/icons";
-import { Tooltip, Userpic, ToastType, useToast, Badge, DropdownTrigger } from "@humansignal/ui";
+import {
+  Tooltip,
+  Userpic,
+  ToastType,
+  useToast,
+  Badge,
+  DropdownTrigger,
+} from "@humansignal/ui";
 import { TimeAgo } from "../../common/TimeAgo/TimeAgo";
 import { useDropdown } from "@humansignal/ui";
 import { isFF } from "../../utils/feature-flags";
@@ -35,8 +46,15 @@ import { isFF } from "../../utils/feature-flags";
 // eslint-disable-next-line
 // @ts-ignore
 import { confirm } from "../../common/Modal/Modal";
-import { type ContextMenuAction, ContextMenu, type MenuActionOnClick } from "../ContextMenu";
-import { useResolveUser, isUserComplete } from "@humansignal/core/hooks/useResolveUser";
+import {
+  type ContextMenuAction,
+  ContextMenu,
+  type MenuActionOnClick,
+} from "../ContextMenu";
+import {
+  useResolveUser,
+  isUserComplete,
+} from "@humansignal/core/hooks/useResolveUser";
 import "./AnnotationButton.scss";
 
 // Constants for name truncation
@@ -131,7 +149,10 @@ const getReviewBadge = (acceptedState: string | null | undefined) => {
 
   // Use the same class structure as Annotators component
   const userPickBadge = cn("userpic-badge");
-  const className = clsx(userPickBadge.toString(), userPickBadge.mod({ [badgeMod]: true }).toString());
+  const className = clsx(
+    userPickBadge.toString(),
+    userPickBadge.mod({ [badgeMod]: true }).toString(),
+  );
 
   return (
     <div className={className}>
@@ -209,67 +230,80 @@ function AnnotationButtonTooltip({
     // Check for both ephemeral drafts (isDraft) and saved drafts (isDraftSaved)
     // Exception: If Draft AND Skipped, show both Draft and Skipped
     if (isDraft || isDraftSaved) {
-      return createBadgeStyle("Draft", "grape");
+      return createBadgeStyle("草稿", "grape");
     }
     if (acceptedState) {
       switch (acceptedState) {
         case "accepted":
-          return createBadgeStyle("Accepted", "kale");
+          return createBadgeStyle("已接受", "kale");
         case "rejected":
-          return createBadgeStyle("Rejected", "persimmon");
+          return createBadgeStyle("已拒绝", "persimmon");
         case "fixed":
         case "fixed_and_accepted":
-          return createBadgeStyle("Fixed", "canteloupe");
+          return createBadgeStyle("已修复", "canteloupe");
         default:
           break;
       }
     }
     // Exception: If Submitted AND Skipped, only show Skipped (don't show Submitted)
     if (isSubmitted && !isSkipped) {
-      return createBadgeStyle("Submitted", "kale");
+      return createBadgeStyle("已提交", "kale");
     }
 
     return null;
-  }, [isPrediction, isDraft, isDraftSaved, acceptedState, isSubmitted, isSkipped]);
+  }, [
+    isPrediction,
+    isDraft,
+    isDraftSaved,
+    acceptedState,
+    isSubmitted,
+    isSkipped,
+  ]);
 
   // Format date using date-fns, matching Data Manager format: "MMM dd yyyy, HH:mm:ss" (e.g., "Jan 15 2024, 14:30:45")
-  const formatDate = useCallback((dateString: string | null | undefined): string | null => {
-    if (!dateString) return null;
+  const formatDate = useCallback(
+    (dateString: string | null | undefined): string | null => {
+      if (!dateString) return null;
 
-    try {
-      const date = new Date(dateString);
-      if (!isValid(date)) return null;
+      try {
+        const date = new Date(dateString);
+        if (!isValid(date)) return null;
 
-      // Use the same format as Data Manager's DateTimeCell
-      return format(date, "MMM dd yyyy, HH:mm:ss");
-    } catch {
-      return null;
-    }
-  }, []);
+        // Use the same format as Data Manager's DateTimeCell
+        return format(date, "yyyy年MM月dd日 HH:mm:ss", { locale: zhCN });
+      } catch {
+        return null;
+      }
+    },
+    [],
+  );
 
   const tooltipData = useMemo(() => {
     const rows: Array<{ label: string; value: string }> = [];
 
     // Add Annotation ID first if available
     if (annotationId) {
-      rows.push({ label: "Annotation ID", value: String(annotationId) });
+      rows.push({ label: "标注编号", value: String(annotationId) });
     }
 
     // Add Type for all annotations/predictions
     if (isPrediction) {
-      rows.push({ label: "Type", value: "Prediction" });
+      rows.push({ label: "类型", value: "模型预测" });
       if (isDefined(predictionScore)) {
-        rows.push({ label: "Prediction Score", value: `${(predictionScore * 100).toFixed(2)}%` });
+        rows.push({
+          label: "预测分数",
+          value: `${(predictionScore * 100).toFixed(2)}%`,
+        });
       }
     } else {
-      rows.push({ label: "Type", value: "Annotation" });
+      rows.push({ label: "类型", value: "标注" });
     }
 
     // Add Last Updated after Type
     if (lastUpdated) {
       const formattedDate = formatDate(lastUpdated);
       if (formattedDate) {
-        rows.push({ label: "Last Updated", value: formattedDate });
+        rows.push({ label: "最后更新时间", value: formattedDate });
       }
     }
 
@@ -277,7 +311,12 @@ function AnnotationButtonTooltip({
   }, [annotationId, isPrediction, predictionScore, lastUpdated, formatDate]);
 
   const isRenderable =
-    tooltipData.length > 0 || !!displayUsername || !!statusBadge || !!isSkipped || !!isGroundTruth || !!annotationId;
+    tooltipData.length > 0 ||
+    !!displayUsername ||
+    !!statusBadge ||
+    !!isSkipped ||
+    !!isGroundTruth ||
+    !!annotationId;
 
   if (!isRenderable) {
     return null;
@@ -289,7 +328,10 @@ function AnnotationButtonTooltip({
 
   const tooltipContent = (
     <div
-      className={cn("annotation-button").elem("tooltipContainer").mod({ open: isTooltipOpen }).toClassName()}
+      className={cn("annotation-button")
+        .elem("tooltipContainer")
+        .mod({ open: isTooltipOpen })
+        .toClassName()}
       ref={containerRef as any}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -300,11 +342,17 @@ function AnnotationButtonTooltip({
       }}
     >
       {(statusBadge || isSkipped || isGroundTruth) && (
-        <div className={cn("annotation-button").elem("tooltipBadges").toClassName()}>
+        <div
+          className={cn("annotation-button")
+            .elem("tooltipBadges")
+            .toClassName()}
+        >
           {/* Draft/Submitted badges shown first */}
           {statusBadge && (
             <Badge
-              className={cn("annotation-button").elem("tooltipStatusBadge").toClassName()}
+              className={cn("annotation-button")
+                .elem("tooltipStatusBadge")
+                .toClassName()}
               style={{
                 backgroundColor: statusBadge.backgroundColor,
                 color: statusBadge.color,
@@ -317,7 +365,9 @@ function AnnotationButtonTooltip({
           {/* Skipped badge shown after Draft/Submitted */}
           {isSkipped && (
             <Badge
-              className={cn("annotation-button").elem("tooltipStatusBadge").toClassName()}
+              className={cn("annotation-button")
+                .elem("tooltipStatusBadge")
+                .toClassName()}
               style={{
                 ...getBadgeColors("persimmon"),
                 border: "none",
@@ -329,7 +379,9 @@ function AnnotationButtonTooltip({
           {/* Ground Truth badge shown last */}
           {isGroundTruth && (
             <Badge
-              className={cn("annotation-button").elem("tooltipStatusBadge").toClassName()}
+              className={cn("annotation-button")
+                .elem("tooltipStatusBadge")
+                .toClassName()}
               style={{
                 ...getBadgeColors("canteloupe"),
                 border: "none",
@@ -341,17 +393,39 @@ function AnnotationButtonTooltip({
         </div>
       )}
       {displayUsername && (
-        <div className={cn("annotation-button").elem("tooltipContainerTitle").toClassName()}>{displayUsername}</div>
+        <div
+          className={cn("annotation-button")
+            .elem("tooltipContainerTitle")
+            .toClassName()}
+        >
+          {displayUsername}
+        </div>
       )}
       {tooltipData.length > 0 && (
-        <div className={cn("annotation-button").elem("tooltipContainerInfo").toClassName()}>
+        <div
+          className={cn("annotation-button")
+            .elem("tooltipContainerInfo")
+            .toClassName()}
+        >
           {tooltipData.map((row, index) => (
             <div
               key={`${row.label}-${row.value}-${index}`}
               className={cn("annotation-button").elem("infoRow").toClassName()}
             >
-              <div className={cn("annotation-button").elem("infoRowLabel").toClassName()}>{row.label}</div>
-              <div className={cn("annotation-button").elem("infoRowValue").toClassName()}>{row.value}</div>
+              <div
+                className={cn("annotation-button")
+                  .elem("infoRowLabel")
+                  .toClassName()}
+              >
+                {row.label}
+              </div>
+              <div
+                className={cn("annotation-button")
+                  .elem("infoRowValue")
+                  .toClassName()}
+              >
+                {row.value}
+              </div>
             </div>
           ))}
         </div>
@@ -359,7 +433,9 @@ function AnnotationButtonTooltip({
     </div>
   );
 
-  return typeof document !== "undefined" ? createPortal(tooltipContent, document.body) : null;
+  return typeof document !== "undefined"
+    ? createPortal(tooltipContent, document.body)
+    : null;
 }
 
 // AnnotationButtonContextMenu component - must be defined outside AnnotationButton
@@ -423,7 +499,9 @@ const AnnotationButtonContextMenu = injector(
           type: ToastType.info,
         });
       }, [copyLink, toast, dropdown]);
-      const [copyAnnotationId] = useCopyText({ defaultText: entity.pk?.toString() ?? entity.id?.toString() ?? "" });
+      const [copyAnnotationId] = useCopyText({
+        defaultText: entity.pk?.toString() ?? entity.id?.toString() ?? "",
+      });
       const copyAnnotationIdHandler = useCallback<MenuActionOnClick>(() => {
         copyAnnotationId();
         dropdown?.close();
@@ -434,7 +512,8 @@ const AnnotationButtonContextMenu = injector(
       }, [copyAnnotationId, toast, dropdown]);
       const openPerformanceDashboard = useCallback<MenuActionOnClick>(() => {
         // Only available in LSE
-        const isLSE = (window as any).APP_SETTINGS?.version?.edition === "Enterprise";
+        const isLSE =
+          (window as any).APP_SETTINGS?.version?.edition === "Enterprise";
         if (!isLSE) return;
 
         const url = new URL(window.location.origin);
@@ -452,7 +531,8 @@ const AnnotationButtonContextMenu = injector(
           url.searchParams.set("user", entity.user.id);
         }
 
-        const projectMatch = window.location.pathname.match(/\/projects\/(\d+)/);
+        const projectMatch =
+          window.location.pathname.match(/\/projects\/(\d+)/);
         if (projectMatch) {
           url.searchParams.set("project", projectMatch[1]);
         }
@@ -470,7 +550,8 @@ const AnnotationButtonContextMenu = injector(
           title: "Delete annotation?",
           body: (
             <>
-              This will <strong>delete all existing regions</strong>. Are you sure you want to delete them?
+              This will <strong>delete all existing regions</strong>. Are you
+              sure you want to delete them?
               <br />
               This action cannot be undone.
             </>
@@ -484,12 +565,16 @@ const AnnotationButtonContextMenu = injector(
       }, [entity, onAnnotationChange]);
       const isPrediction = entity.type === "prediction";
       const isDraft = !isDefined(entity.pk);
-      const showGroundTruth = capabilities.groundTruthEnabled && !isPrediction && !isDraft;
-      const showDuplicateAnnotation = capabilities.enableCreateAnnotation && !isDraft;
-      const isLSE = (window as any).APP_SETTINGS?.version?.edition === "Enterprise";
+      const showGroundTruth =
+        capabilities.groundTruthEnabled && !isPrediction && !isDraft;
+      const showDuplicateAnnotation =
+        capabilities.enableCreateAnnotation && !isDraft;
+      const isLSE =
+        (window as any).APP_SETTINGS?.version?.edition === "Enterprise";
 
       // Check if project ID is available (from store or URL)
-      const hasProjectId = !!window.location.pathname.match(/\/projects\/(\d+)/);
+      const hasProjectId =
+        !!window.location.pathname.match(/\/projects\/(\d+)/);
 
       const actions = useMemo<ContextMenuAction[]>(
         () => [
@@ -575,7 +660,12 @@ const AnnotationButtonContextMenu = injector(
 );
 
 export const AnnotationButton = observer(
-  ({ entity, capabilities, annotationStore, onAnnotationChange }: AnnotationButtonInterface) => {
+  ({
+    entity,
+    capabilities,
+    annotationStore,
+    onAnnotationChange,
+  }: AnnotationButtonInterface) => {
     // Check if entity is alive - must be done before any hooks to avoid accessing dead entity
     // But we'll return null AFTER all hooks are called to maintain hook order
     const entityIsAlive = isAlive(entity);
@@ -588,15 +678,20 @@ export const AnnotationButton = observer(
     const resolvedUser =
       entityIsAlive && entity.user && isUserComplete(entity.user)
         ? entity.user
-        : { firstName: entityIsAlive ? entity.createdBy || "Admin" : "Unknown" };
+        : {
+            firstName: entityIsAlive ? entity.createdBy || "Admin" : "Unknown",
+          };
     const username = entityIsAlive ? userDisplayName(resolvedUser) : "Unknown";
     const [isGroundTruth, setIsGroundTruth] = useState<boolean>();
     const isDraft = entityIsAlive && !isPrediction && !isDefined(entity.pk);
     const isDraftSaved = entityIsAlive && !isPrediction && entity.draftId > 0;
     const isSkipped = entityIsAlive && !isPrediction && entity.skipped === true;
     // isSubmitted should be independent of skipped/ground truth status
-    const isSubmitted = entityIsAlive && !isPrediction && !isDraft && !isDraftSaved;
-    const infoIsHidden = annotationStore.store?.hasInterface("annotations:hide-info");
+    const isSubmitted =
+      entityIsAlive && !isPrediction && !isDraft && !isDraftSaved;
+    const infoIsHidden = annotationStore.store?.hasInterface(
+      "annotations:hide-info",
+    );
     let hiddenUser = null;
 
     // Tooltip state and refs
@@ -606,7 +701,9 @@ export const AnnotationButton = observer(
     const timeoutRef = useRef<number>();
     const leaveTimeoutRef = useRef<number>();
     const [isTooltipOpen, setTooltipOpen] = useState(false);
-    const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | undefined>(undefined);
+    const [tooltipPosition, setTooltipPosition] = useState<
+      { top: number; left: number } | undefined
+    >(undefined);
     const [isContextMenuOpen, setContextMenuOpen] = useState(false);
 
     // Lazily resolve incomplete user data when the button comes into view.
@@ -616,12 +713,18 @@ export const AnnotationButton = observer(
       (userData: any) => annotationStore?.store?.enrichUsers?.([userData]),
       [annotationStore],
     );
-    useResolveUser({ user: entity?.user, onUserResolved: enrichUser, elementRef: buttonRef });
+    useResolveUser({
+      user: entity?.user,
+      onUserResolved: enrichUser,
+      elementRef: buttonRef,
+    });
 
     if (infoIsHidden && entityIsAlive) {
       // this data can be missing in tests, but we don't have `infoIsHidden` there, so hiding logic like this
       const currentUser = annotationStore.store.user;
-      const isCurrentUser = entity.user?.id === currentUser.id || entity.createdBy === currentUser.email;
+      const isCurrentUser =
+        entity.user?.id === currentUser.id ||
+        entity.createdBy === currentUser.email;
       hiddenUser = { email: isCurrentUser ? "Me" : "User" };
     }
 
@@ -634,7 +737,12 @@ export const AnnotationButton = observer(
         ? truncatePersonName(displayUsername)
         : displayUsername
       : displayUsername.length > NAME_TRUNCATE_THRESHOLD
-        ? truncate(displayUsername, NAME_TRUNCATE_START, NAME_TRUNCATE_END, "...")
+        ? truncate(
+            displayUsername,
+            NAME_TRUNCATE_START,
+            NAME_TRUNCATE_END,
+            "...",
+          )
         : displayUsername;
 
     const CommentIcon = renderCommentIcon(entity);
@@ -651,7 +759,10 @@ export const AnnotationButton = observer(
     useEffect(() => {
       function handleClickOutside(e: MouseEvent) {
         const target = e.target as HTMLElement;
-        if (!buttonRef.current?.contains(target) && !tooltipContainerRef.current?.contains(target)) {
+        if (
+          !buttonRef.current?.contains(target) &&
+          !tooltipContainerRef.current?.contains(target)
+        ) {
           setTooltipOpen(false);
         }
       }
@@ -669,11 +780,20 @@ export const AnnotationButton = observer(
 
         // If tooltip is open, check if mouse is still over button or tooltip
         if (isTooltipOpen) {
-          const elementAtPoint = document.elementFromPoint(e.clientX, e.clientY);
+          const elementAtPoint = document.elementFromPoint(
+            e.clientX,
+            e.clientY,
+          );
           // Only call contains() if elementAtPoint is actually a Node
-          const isOverTooltip = elementAtPoint && tooltipContainerRef.current?.contains(elementAtPoint as Node);
-          const isOverButton = elementAtPoint && buttonRef.current?.contains(elementAtPoint as Node);
-          const isOverTrigger = (elementAtPoint as HTMLElement)?.closest?.(".annotation-button__trigger");
+          const isOverTooltip =
+            elementAtPoint &&
+            tooltipContainerRef.current?.contains(elementAtPoint as Node);
+          const isOverButton =
+            elementAtPoint &&
+            buttonRef.current?.contains(elementAtPoint as Node);
+          const isOverTrigger = (elementAtPoint as HTMLElement)?.closest?.(
+            ".annotation-button__trigger",
+          );
 
           // Close tooltip if mouse is not over button or tooltip (or is over trigger)
           if (!isOverTooltip && (!isOverButton || isOverTrigger)) {
@@ -715,7 +835,10 @@ export const AnnotationButton = observer(
         let left: number;
 
         // Position below by default, above if not enough space
-        if (spaceBelow < estimatedTooltipHeight + 20 && spaceAbove > spaceBelow) {
+        if (
+          spaceBelow < estimatedTooltipHeight + 20 &&
+          spaceAbove > spaceBelow
+        ) {
           // Position above
           top = anchorPosition.top - estimatedTooltipHeight - 12;
         } else {
@@ -724,7 +847,10 @@ export const AnnotationButton = observer(
         }
 
         // Center horizontally, but adjust if too close to edges
-        left = anchorPosition.left + anchorPosition.width / 2 - estimatedTooltipWidth / 2;
+        left =
+          anchorPosition.left +
+          anchorPosition.width / 2 -
+          estimatedTooltipWidth / 2;
 
         // Adjust if too close to right edge
         if (left + estimatedTooltipWidth > window.innerWidth - 20) {
@@ -741,9 +867,16 @@ export const AnnotationButton = observer(
         // Update arrow position after tooltip renders
         requestAnimationFrame(() => {
           if (tooltipContainerRef.current) {
-            const containerPosition = tooltipContainerRef.current.getBoundingClientRect();
-            const arrowOffset = anchorPosition.left + anchorPosition.width / 2 - containerPosition.left;
-            tooltipContainerRef.current.style.setProperty("--tooltip-arrow-position", `${arrowOffset}px`);
+            const containerPosition =
+              tooltipContainerRef.current.getBoundingClientRect();
+            const arrowOffset =
+              anchorPosition.left +
+              anchorPosition.width / 2 -
+              containerPosition.left;
+            tooltipContainerRef.current.style.setProperty(
+              "--tooltip-arrow-position",
+              `${arrowOffset}px`,
+            );
           }
         });
       }
@@ -762,7 +895,9 @@ export const AnnotationButton = observer(
           leaveTimeoutRef.current = undefined;
         }
 
-        const isTrigger = (e.target as HTMLElement)?.closest?.(".annotation-button__trigger");
+        const isTrigger = (e.target as HTMLElement)?.closest?.(
+          ".annotation-button__trigger",
+        );
 
         // Don't show tooltip if hovering over trigger
         if (isTrigger) {
@@ -781,60 +916,77 @@ export const AnnotationButton = observer(
       [recalculateTooltipPosition, isContextMenuOpen],
     );
 
-    const handleTooltipLeave = useCallback((e: React.MouseEvent | React.FocusEvent) => {
-      // Clear any pending enter timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = undefined;
-      }
-
-      // Clear any existing leave timeout
-      if (leaveTimeoutRef.current) {
-        clearTimeout(leaveTimeoutRef.current);
-      }
-
-      const relatedTarget = ((e as React.MouseEvent).relatedTarget ||
-        (e as React.FocusEvent).relatedTarget) as HTMLElement | null;
-
-      // Check if we're moving to the tooltip container
-      // Only call contains() if relatedTarget is actually a Node
-      const isMovingToTooltip = relatedTarget && tooltipContainerRef.current?.contains(relatedTarget as Node);
-
-      // If not moving to tooltip, check if moving back to button (but not trigger)
-      // Only call contains() if relatedTarget is actually a Node
-      const isMovingToButton = relatedTarget && buttonRef.current?.contains(relatedTarget as Node);
-      const isMovingToTrigger = relatedTarget?.closest?.(".annotation-button__trigger");
-
-      // If moving to tooltip or button (but not trigger), keep tooltip open
-      if (isMovingToTooltip || (isMovingToButton && !isMovingToTrigger)) {
-        return;
-      }
-
-      // Use a small delay to allow mouse to move to tooltip, but close if mouse is truly gone
-      leaveTimeoutRef.current = window.setTimeout(() => {
-        // Check current mouse position
-        const currentMouseX = (window as any).lastMouseX;
-        const currentMouseY = (window as any).lastMouseY;
-
-        if (currentMouseX !== undefined && currentMouseY !== undefined) {
-          const elementAtPoint = document.elementFromPoint(currentMouseX, currentMouseY);
-          // Only call contains() if elementAtPoint is actually a Node
-          const isOverTooltip = elementAtPoint && tooltipContainerRef.current?.contains(elementAtPoint as Node);
-          const isOverButton = elementAtPoint && buttonRef.current?.contains(elementAtPoint as Node);
-          const isOverTrigger = (elementAtPoint as HTMLElement)?.closest?.(".annotation-button__trigger");
-
-          // Close tooltip unless mouse is over tooltip or button (but not trigger)
-          if (!isOverTooltip && (!isOverButton || isOverTrigger)) {
-            setTooltipOpen(false);
-          }
-        } else {
-          // No mouse position available, close tooltip
-          setTooltipOpen(false);
+    const handleTooltipLeave = useCallback(
+      (e: React.MouseEvent | React.FocusEvent) => {
+        // Clear any pending enter timeout
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = undefined;
         }
 
-        leaveTimeoutRef.current = undefined;
-      }, 100); // Small delay to allow mouse movement to tooltip
-    }, []);
+        // Clear any existing leave timeout
+        if (leaveTimeoutRef.current) {
+          clearTimeout(leaveTimeoutRef.current);
+        }
+
+        const relatedTarget = ((e as React.MouseEvent).relatedTarget ||
+          (e as React.FocusEvent).relatedTarget) as HTMLElement | null;
+
+        // Check if we're moving to the tooltip container
+        // Only call contains() if relatedTarget is actually a Node
+        const isMovingToTooltip =
+          relatedTarget &&
+          tooltipContainerRef.current?.contains(relatedTarget as Node);
+
+        // If not moving to tooltip, check if moving back to button (but not trigger)
+        // Only call contains() if relatedTarget is actually a Node
+        const isMovingToButton =
+          relatedTarget && buttonRef.current?.contains(relatedTarget as Node);
+        const isMovingToTrigger = relatedTarget?.closest?.(
+          ".annotation-button__trigger",
+        );
+
+        // If moving to tooltip or button (but not trigger), keep tooltip open
+        if (isMovingToTooltip || (isMovingToButton && !isMovingToTrigger)) {
+          return;
+        }
+
+        // Use a small delay to allow mouse to move to tooltip, but close if mouse is truly gone
+        leaveTimeoutRef.current = window.setTimeout(() => {
+          // Check current mouse position
+          const currentMouseX = (window as any).lastMouseX;
+          const currentMouseY = (window as any).lastMouseY;
+
+          if (currentMouseX !== undefined && currentMouseY !== undefined) {
+            const elementAtPoint = document.elementFromPoint(
+              currentMouseX,
+              currentMouseY,
+            );
+            // Only call contains() if elementAtPoint is actually a Node
+            const isOverTooltip =
+              elementAtPoint &&
+              tooltipContainerRef.current?.contains(elementAtPoint as Node);
+            const isOverButton =
+              elementAtPoint &&
+              buttonRef.current?.contains(elementAtPoint as Node);
+            const isOverTrigger = (elementAtPoint as HTMLElement)?.closest?.(
+              ".annotation-button__trigger",
+            );
+
+            // Close tooltip unless mouse is over tooltip or button (but not trigger)
+            if (!isOverTooltip && (!isOverButton || isOverTrigger)) {
+              setTooltipOpen(false);
+            }
+          } else {
+            // No mouse position available, close tooltip
+            setTooltipOpen(false);
+          }
+
+          leaveTimeoutRef.current = undefined;
+        }, 100); // Small delay to allow mouse movement to tooltip
+      },
+      [],
+    );
 
     const handleTooltipContainerLeave = useCallback(() => {
       // When mouse leaves tooltip container, close immediately
@@ -891,7 +1043,8 @@ export const AnnotationButton = observer(
     // so we match by finding the annotation's position in the backend's annotation list
     const getReviewStatus = useCallback(() => {
       // Only available in LSE for non-predictions
-      const isLSE = (window as any).APP_SETTINGS?.version?.edition === "Enterprise";
+      const isLSE =
+        (window as any).APP_SETTINGS?.version?.edition === "Enterprise";
       if (!isLSE || !entityIsAlive || isPrediction) {
         return null;
       }
@@ -902,7 +1055,8 @@ export const AnnotationButton = observer(
       if (!sourceStr) return null;
 
       try {
-        const taskSource = typeof sourceStr === "string" ? JSON.parse(sourceStr) : sourceStr;
+        const taskSource =
+          typeof sourceStr === "string" ? JSON.parse(sourceStr) : sourceStr;
         const annotators = taskSource?.annotators;
         const backendAnnotations = taskSource?.annotations;
 
@@ -964,13 +1118,23 @@ export const AnnotationButton = observer(
           onClick={clickHandler}
           ref={mainSectionRef as any}
         >
-          <div className={cn("annotation-button").elem("picSection").toClassName()}>
+          <div
+            className={cn("annotation-button").elem("picSection").toClassName()}
+          >
             <Userpic
-              className={cn("annotation-button").elem("userpic").mod({ prediction: isPrediction }).toClassName()}
+              className={cn("annotation-button")
+                .elem("userpic")
+                .mod({ prediction: isPrediction })
+                .toClassName()}
               // @ts-expect-error - block attribute for Selenium test compatibility
               block="lsf-annotation-button"
               username={isPrediction ? entity.createdBy : null}
-              user={hiddenUser ?? (isUserComplete(entity.user) ? entity.user : { email: entity.createdBy })}
+              user={
+                hiddenUser ??
+                (isUserComplete(entity.user)
+                  ? entity.user
+                  : { email: entity.createdBy })
+              }
               size={24}
               badge={
                 reviewBadge
@@ -998,11 +1162,20 @@ export const AnnotationButton = observer(
           </div>
           <div className={cn("annotation-button").elem("main").toClassName()}>
             <div className={cn("annotation-button").elem("user").toClassName()}>
-              <span className={cn("annotation-button").elem("name").toClassName()}>{displayNameTruncated}</span>
+              <span
+                className={cn("annotation-button").elem("name").toClassName()}
+              >
+                {displayNameTruncated}
+              </span>
             </div>
             {!infoIsHidden && (
-              <div className={cn("annotation-button").elem("info").toClassName()}>
-                <TimeAgo className={cn("annotation-button").elem("date").toClassName()} date={entity.createdDate} />
+              <div
+                className={cn("annotation-button").elem("info").toClassName()}
+              >
+                <TimeAgo
+                  className={cn("annotation-button").elem("date").toClassName()}
+                  date={entity.createdDate}
+                />
                 {isPrediction && isDefined(entity.score) && (
                   <span title={`Prediction score = ${entity.score}`}>
                     {" · "} {(entity.score * 100).toFixed(2)}%
@@ -1012,31 +1185,53 @@ export const AnnotationButton = observer(
             )}
           </div>
           {!isPrediction && (
-            <div className={cn("annotation-button").elem("icons").toClassName()}>
+            <div
+              className={cn("annotation-button").elem("icons").toClassName()}
+            >
               {(entity.draftId > 0 || isDraft) && (
                 <Tooltip title="Draft">
-                  <div className={cn("annotation-button").elem("icon").mod({ draft: true }).toClassName()}>
+                  <div
+                    className={cn("annotation-button")
+                      .elem("icon")
+                      .mod({ draft: true })
+                      .toClassName()}
+                  >
                     <IconDraftCreated2 color="#617ADA" />
                   </div>
                 </Tooltip>
               )}
               {entity.skipped && (
                 <Tooltip title="Skipped">
-                  <div className={cn("annotation-button").elem("icon").mod({ skipped: true }).toClassName()}>
+                  <div
+                    className={cn("annotation-button")
+                      .elem("icon")
+                      .mod({ skipped: true })
+                      .toClassName()}
+                  >
                     <IconAnnotationSkipped2 color="#DD0000" />
                   </div>
                 </Tooltip>
               )}
               {isGroundTruth && (
                 <Tooltip title="Ground-truth">
-                  <div className={cn("annotation-button").elem("icon").mod({ groundTruth: true }).toClassName()}>
+                  <div
+                    className={cn("annotation-button")
+                      .elem("icon")
+                      .mod({ groundTruth: true })
+                      .toClassName()}
+                  >
                     <IconAnnotationGroundTruth />
                   </div>
                 </Tooltip>
               )}
               {CommentIcon && (
                 <Tooltip title={renderCommentTooltip(entity)}>
-                  <div className={cn("annotation-button").elem("icon").mod({ comments: true }).toClassName()}>
+                  <div
+                    className={cn("annotation-button")
+                      .elem("icon")
+                      .mod({ comments: true })
+                      .toClassName()}
+                  >
                     <CommentIcon />
                   </div>
                 </Tooltip>
