@@ -1,5 +1,3 @@
 # label-studio-1.23.0
 
-label-studio-1.23.0 汉化222222222
-
-111222顶顶顶顶顶顶顶
+label-studio-1.23.0 汉化
