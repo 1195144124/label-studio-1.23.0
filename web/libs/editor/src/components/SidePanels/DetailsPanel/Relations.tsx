@@ -109,7 +109,7 @@ const RelationItem: FC<{ relation: any }> = observer(({ relation }) => {
                 variant="neutral"
                 look="string"
                 size="small"
-                tooltip="Toggle Visibility"
+                tooltip="显示/隐藏"
                 onClick={relation.toggleVisibility}
                 aria-label={`${relation.visible ? "Hide" : "Show"} Relation`}
               >
@@ -128,7 +128,7 @@ const RelationItem: FC<{ relation: any }> = observer(({ relation }) => {
                 look="string"
                 size="small"
                 aria-label="Delete Relation"
-                tooltip="Delete Relation"
+                tooltip="删除关系"
                 onClick={() => {
                   relation.node1.setHighlight(false);
                   relation.node2.setHighlight(false);

@@ -49,7 +49,7 @@ const ToggleRelationsVisibilityButton = observer<FC<ToggleRelationsVisibilityBut
           <IconOutlinerEyeOpened width={16} height={16} />
         )
       }
-      tooltip={isAllHidden ? "Show all" : "Hide all"}
+      tooltip={isAllHidden ? "全部显示" : "全部隐藏"}
       tooltipTheme="dark"
     />
   );
@@ -84,7 +84,7 @@ const ToggleRelationsOrderButton = observer<FC<ToggleRelationsOrderButtonProps>>
       disabled={isDisabled}
       aria-label={isAsc ? "Order by oldest" : "Order by newest"}
       icon={isAsc ? <IconSortUp /> : <IconSortDown />}
-      tooltip={isAsc ? "Order by oldest" : "Order by newest"}
+      tooltip={isAsc ? "倒序" : "正序"}
       tooltipTheme="dark"
     />
   );
