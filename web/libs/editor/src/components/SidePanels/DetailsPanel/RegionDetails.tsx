@@ -169,7 +169,7 @@ export const RegionDetailsMeta: FC<RegionDetailsMetaProps> = observer(
         {editMode ? (
           <textarea
             ref={(el) => (input.current = el)}
-            placeholder="Meta"
+            placeholder="请输入"
             className={cn("detailed-region").elem("meta-text").toClassName()}
             value={region.meta.text}
             onChange={(e) => saveMeta(e.target.value)}

@@ -14,7 +14,7 @@ const ToolView = observer(({ item }) => {
       ariaLabel="move-tool"
       active={item.selected}
       icon={<IconMoveTool />}
-      label="Move"
+      label="移动"
       shortcut={item.shortcut}
       extraShortcuts={item.extraShortcuts}
       onClick={() => {
@@ -95,6 +95,12 @@ const _Tool = types
     };
   });
 
-const Selection = types.compose("MoveTool", ToolMixin, BaseTool, AnnotationMixin, _Tool);
+const Selection = types.compose(
+  "MoveTool",
+  ToolMixin,
+  BaseTool,
+  AnnotationMixin,
+  _Tool,
+);
 
 export { Selection };
