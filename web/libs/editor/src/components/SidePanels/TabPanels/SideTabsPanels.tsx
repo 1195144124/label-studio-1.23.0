@@ -704,7 +704,6 @@ const SideTabsPanelsComponent: FC<SidePanelsProps> = ({
             ) : (
               <>
                 {Object.entries(panels).map(([panelType, panels], iterator) => {
-                  console.log(panelType, panels);
                   const content = panels
                     .sort((a, b) => a.order - b.order)
                     .map((baseProps, index) => {
