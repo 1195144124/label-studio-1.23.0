@@ -101,7 +101,7 @@ export const FlyoutMenu = ({ items, icon }) => {
           .elem("icon")
           .mix(isClicked ? "isClicked" : "")
           .toClassName()}
-        title="Zoom presets (click to see options)"
+        title="缩放预设（点击查看选项）"
       >
         {icon}
       </div>

@@ -30,7 +30,7 @@ const IconDot = ({ size }) => {
 const ToolView = observer(({ item }) => {
   return (
     <Tool
-      label="Brush"
+      label="刷子"
       ariaLabel="brush-tool"
       active={item.selected}
       shortcut={item.shortcut}
