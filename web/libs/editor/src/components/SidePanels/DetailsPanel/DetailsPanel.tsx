@@ -134,13 +134,6 @@ const RelationsTab: FC<any> = inject("store")(
                 icon={<IconRelationLink width={24} height={24} />}
                 header="创建区域间的关系"
                 description={<>链接区域以定义它们之间的关系</>}
-                learnMore={{
-                  href: getDocsUrl(
-                    "guide/labeling#Add-relations-between-annotations",
-                  ),
-                  text: "了解更多",
-                  testId: "relations-panel-learn-more",
-                }}
               />
             )}
           </div>
