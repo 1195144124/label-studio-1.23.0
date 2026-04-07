@@ -144,7 +144,10 @@ const cnProto = {
       for (const key in mod) {
         const value = mod[key];
         if (value === null || value === undefined || value === false) continue;
-        result += value === true ? ` ${prefixClass(`${base}_${key}`)}` : ` ${prefixClass(`${base}_${key}_${value}`)}`;
+        result +=
+          value === true
+            ? ` ${prefixClass(`${base}_${key}`)}`
+            : ` ${prefixClass(`${base}_${key}_${value}`)}`;
       }
     }
 
@@ -173,7 +176,12 @@ type CNInstance = CN & {
 };
 
 // Factory function - creates minimal object, methods come from prototype
-const createCN = (block: string, elem?: string, mod?: CNMod, mix?: (CNMix | CNMix[])[]): CN => {
+const createCN = (
+  block: string,
+  elem?: string,
+  mod?: CNMod,
+  mix?: (CNMix | CNMix[])[],
+): CN => {
   const instance = Object.create(cnProto) as CNInstance;
   instance._block = block;
   instance._elem = elem;
@@ -186,10 +194,23 @@ const createCN = (block: string, elem?: string, mod?: CNMod, mix?: (CNMix | CNMi
 // Public API: cn(block, options?)
 const cnb = (
   block: string,
-  options: { elem?: string; mix?: CNMix | CNMix[] | (CNMix | CNMix[])[]; mod?: CNMod } = {},
+  options: {
+    elem?: string;
+    mix?: CNMix | CNMix[] | (CNMix | CNMix[])[];
+    mod?: CNMod;
+  } = {},
 ): CN => {
-  const mix = options.mix ? (Array.isArray(options.mix) ? options.mix : [options.mix]) : undefined;
-  return createCN(block, options.elem, options.mod, mix as (CNMix | CNMix[])[] | undefined);
+  const mix = options.mix
+    ? Array.isArray(options.mix)
+      ? options.mix
+      : [options.mix]
+    : undefined;
+  return createCN(
+    block,
+    options.elem,
+    options.mod,
+    mix as (CNMix | CNMix[])[] | undefined,
+  );
 };
 
 export { cnb };

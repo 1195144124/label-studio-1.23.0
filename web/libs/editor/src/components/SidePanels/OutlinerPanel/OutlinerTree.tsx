@@ -1,4 +1,11 @@
-import { IconArrow, IconChevronLeft, IconEyeClosed, IconEyeOpened, IconSparks, IconWarning } from "@humansignal/icons";
+import {
+  IconArrow,
+  IconChevronLeft,
+  IconEyeClosed,
+  IconEyeOpened,
+  IconSparks,
+  IconWarning,
+} from "@humansignal/icons";
 import { Tooltip } from "@humansignal/ui";
 import chroma from "chroma-js";
 import { inject, observer } from "mobx-react";
@@ -70,133 +77,146 @@ interface OutlinerInnerTreeProps {
 }
 
 const iconGetter = ({ entity }: any) => <NodeIconComponent node={entity} />;
-const switcherIconGetter = ({ isLeaf }: any) => <SwitcherIcon isLeaf={isLeaf} />;
-const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(({ regions, regionsTree }) => {
-  const blockRef = useRef<HTMLElement>();
-  const [height, setHeight] = useState(0);
-  let resizeObserver: ResizeObserver | null = useMemo(() => {
-    let lastHeight = 0;
+const switcherIconGetter = ({ isLeaf }: any) => (
+  <SwitcherIcon isLeaf={isLeaf} />
+);
+const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(
+  ({ regions, regionsTree }) => {
+    const blockRef = useRef<HTMLElement>();
+    const [height, setHeight] = useState(0);
+    let resizeObserver: ResizeObserver | null = useMemo(() => {
+      let lastHeight = 0;
 
-    return new ResizeObserver((entities) => {
-      requestAnimationFrame(() => {
-        if (!entities?.[0]?.contentRect || entities?.[0]?.contentRect?.height === lastHeight) {
-          return;
-        }
-        lastHeight = entities?.[0]?.contentRect?.height || 1;
+      return new ResizeObserver((entities) => {
+        requestAnimationFrame(() => {
+          if (
+            !entities?.[0]?.contentRect ||
+            entities?.[0]?.contentRect?.height === lastHeight
+          ) {
+            return;
+          }
+          lastHeight = entities?.[0]?.contentRect?.height || 1;
 
-        // ensure the component is still mounted
-        if (blockRef.current) {
-          setHeight(lastHeight);
-        }
+          // ensure the component is still mounted
+          if (blockRef.current) {
+            setHeight(lastHeight);
+          }
+        });
       });
-    });
-  }, []);
+    }, []);
 
-  useEffect(() => {
-    return () => {
-      resizeObserver?.disconnect();
-      resizeObserver = null;
-    };
-  }, []);
-  const setRef = useCallback((ref) => {
-    if (ref) {
-      resizeObserver?.observe(ref);
-    } else if (blockRef.current) {
-      resizeObserver?.unobserve(blockRef.current);
+    useEffect(() => {
+      return () => {
+        resizeObserver?.disconnect();
+        resizeObserver = null;
+      };
+    }, []);
+    const setRef = useCallback((ref) => {
+      if (ref) {
+        resizeObserver?.observe(ref);
+      } else if (blockRef.current) {
+        resizeObserver?.unobserve(blockRef.current);
+      }
+      blockRef.current = ref;
+      setHeight(ref?.clientHeight || 1);
+    }, []);
+    const eventHandlers = useEventHandlers();
+    const selectedKeys = regions.selection.keys;
+    const rootClass = cn("tree");
+    let expandedKeys;
+    let onExpand;
+    // It works only for 'label' mode yet.
+    // To enable this feature at other group modes, it needs to set correct pos at regionsTree for these modes
+    // It also doesn't work with nesting level more than 1
+    const isPersistCollapseEnabled =
+      isFF(FF_DEV_2755) && regions.group === "label";
+
+    if (isFF(FF_DEV_2755)) {
+      const [collapsedPos, setCollapsedPos] = useState(
+        localStorage
+          .getItem(localStoreName)
+          ?.split?.(",")
+          ?.filter((pos) => !!pos) ?? [],
+      );
+
+      const updateLocalStorage = (collapsedPos: Array<string>) => {
+        localStorage.setItem(localStoreName, collapsedPos.join(","));
+      };
+
+      const collapse = (pos: string) => {
+        const newCollapsedPos = [...collapsedPos, pos];
+
+        setCollapsedPos(newCollapsedPos);
+        updateLocalStorage(newCollapsedPos);
+      };
+
+      const expand = (pos: string) => {
+        const newCollapsedPos = collapsedPos.filter((cPos) => cPos !== pos);
+
+        setCollapsedPos(newCollapsedPos);
+        updateLocalStorage(newCollapsedPos);
+      };
+
+      expandedKeys =
+        regionsTree
+          .filter((item: any) => !collapsedPos.includes(item.pos))
+          .map((item: any) => item.key) ?? [];
+
+      onExpand = (
+        _internalExpandedKeys: Key[],
+        {
+          node,
+        }: {
+          node: EventDataNode;
+        },
+      ): void => {
+        const region = regionsTree.find(
+          (region: any) => region.key === node.key,
+        );
+
+        if (!region) return;
+
+        // pos is equal to label name
+        const pos = region.pos;
+
+        collapsedPos.includes(pos) ? expand(pos) : collapse(pos);
+      };
     }
-    blockRef.current = ref;
-    setHeight(ref?.clientHeight || 1);
-  }, []);
-  const eventHandlers = useEventHandlers();
-  const selectedKeys = regions.selection.keys;
-  const rootClass = cn("tree");
-  let expandedKeys;
-  let onExpand;
-  // It works only for 'label' mode yet.
-  // To enable this feature at other group modes, it needs to set correct pos at regionsTree for these modes
-  // It also doesn't work with nesting level more than 1
-  const isPersistCollapseEnabled = isFF(FF_DEV_2755) && regions.group === "label";
-
-  if (isFF(FF_DEV_2755)) {
-    const [collapsedPos, setCollapsedPos] = useState(
-      localStorage
-        .getItem(localStoreName)
-        ?.split?.(",")
-        ?.filter((pos) => !!pos) ?? [],
+    console.log(regionsTree);
+    debugger;
+    return (
+      <div className={cn("outliner-tree").toClassName()} ref={setRef}>
+        {!!height && (
+          <Tree
+            key={regions.group}
+            draggable={regions.group === "manual"}
+            multiple
+            defaultExpandAll
+            defaultExpandParent={!isPersistCollapseEnabled}
+            autoExpandParent
+            checkable={false}
+            prefixCls={rootClass.toClassName()}
+            className={rootClass.toClassName()}
+            treeData={regionsTree}
+            selectedKeys={selectedKeys}
+            icon={iconGetter}
+            switcherIcon={switcherIconGetter}
+            virtual
+            itemHeight={MIN_REGIONS_TREE_ROW_HEIGHT}
+            height={height}
+            {...eventHandlers}
+            {...(isPersistCollapseEnabled
+              ? {
+                  expandedKeys,
+                  onExpand,
+                }
+              : {})}
+          />
+        )}
+      </div>
     );
-
-    const updateLocalStorage = (collapsedPos: Array<string>) => {
-      localStorage.setItem(localStoreName, collapsedPos.join(","));
-    };
-
-    const collapse = (pos: string) => {
-      const newCollapsedPos = [...collapsedPos, pos];
-
-      setCollapsedPos(newCollapsedPos);
-      updateLocalStorage(newCollapsedPos);
-    };
-
-    const expand = (pos: string) => {
-      const newCollapsedPos = collapsedPos.filter((cPos) => cPos !== pos);
-
-      setCollapsedPos(newCollapsedPos);
-      updateLocalStorage(newCollapsedPos);
-    };
-
-    expandedKeys =
-      regionsTree.filter((item: any) => !collapsedPos.includes(item.pos)).map((item: any) => item.key) ?? [];
-
-    onExpand = (
-      _internalExpandedKeys: Key[],
-      {
-        node,
-      }: {
-        node: EventDataNode;
-      },
-    ): void => {
-      const region = regionsTree.find((region: any) => region.key === node.key);
-
-      if (!region) return;
-
-      // pos is equal to label name
-      const pos = region.pos;
-
-      collapsedPos.includes(pos) ? expand(pos) : collapse(pos);
-    };
-  }
-
-  return (
-    <div className={cn("outliner-tree").toClassName()} ref={setRef}>
-      {!!height && (
-        <Tree
-          key={regions.group}
-          draggable={regions.group === "manual"}
-          multiple
-          defaultExpandAll
-          defaultExpandParent={!isPersistCollapseEnabled}
-          autoExpandParent
-          checkable={false}
-          prefixCls={rootClass.toClassName()}
-          className={rootClass.toClassName()}
-          treeData={regionsTree}
-          selectedKeys={selectedKeys}
-          icon={iconGetter}
-          switcherIcon={switcherIconGetter}
-          virtual
-          itemHeight={MIN_REGIONS_TREE_ROW_HEIGHT}
-          height={height}
-          {...eventHandlers}
-          {...(isPersistCollapseEnabled
-            ? {
-                expandedKeys,
-                onExpand,
-              }
-            : {})}
-        />
-      )}
-    </div>
-  );
-});
+  },
+);
 
 const useDataTree = ({ regions, rootClass, footer }: any) => {
   const processor = useCallback((item: any, idx, _false, _null, _onClick) => {
@@ -242,7 +262,8 @@ const useDataTree = ({ regions, rootClass, footer }: any) => {
 
 const useEventHandlers = () => {
   const onSelect = useCallback((_, evt) => {
-    const multi = evt.nativeEvent.ctrlKey || (isMacOS() && evt.nativeEvent.metaKey);
+    const multi =
+      evt.nativeEvent.ctrlKey || (isMacOS() && evt.nativeEvent.metaKey);
     const { node } = evt;
 
     const self = node?.item;
@@ -337,10 +358,15 @@ const useEventHandlers = () => {
       if (labelWithConstraint.length) {
         const selDrag: any[] = dragReg.labeling.selectedLabels;
 
-        const set1 = flatten(labelWithConstraint.map((l) => l.groupcancontain.split(",")));
-        const set2 = flatten(selDrag.map((l) => (l.alias ? [l.alias, l.value] : [l.value])));
+        const set1 = flatten(
+          labelWithConstraint.map((l) => l.groupcancontain.split(",")),
+        );
+        const set2 = flatten(
+          selDrag.map((l) => (l.alias ? [l.alias, l.value] : [l.value])),
+        );
 
-        if (set1.filter((value) => -1 !== set2.indexOf(value)).length === 0) return;
+        if (set1.filter((value) => -1 !== set2.indexOf(value)).length === 0)
+          return;
       }
 
       // check drop regions tree depth
@@ -413,15 +439,25 @@ const RootTitle: FC<any> = observer(
     return (
       <div className={cn("outliner-item").mod({ incomplete }).toClassName()}>
         <div className={cn("outliner-item").elem("content").toClassName()}>
-          {!props.isGroup && <div className={cn("outliner-item").elem("index").toClassName()}>{props.idx + 1}</div>}
+          {!props.isGroup && (
+            <div className={cn("outliner-item").elem("index").toClassName()}>
+              {props.idx + 1}
+            </div>
+          )}
           <div className={cn("outliner-item").elem("title").toClassName()}>
             {label}
             {item?.text && (
-              <div className={cn("outliner-item").elem("text").toClassName()}>{item.text.replace(/\\n/g, "\n")}</div>
+              <div className={cn("outliner-item").elem("text").toClassName()}>
+                {item.text.replace(/\\n/g, "\n")}
+              </div>
             )}
             {incomplete && (
-              <span className={cn("outliner-item").elem("incomplete").toClassName()}>
-                <Tooltip title={`Incomplete ${item.type?.replace("region", "") ?? "region"}`}>
+              <span
+                className={cn("outliner-item").elem("incomplete").toClassName()}
+              >
+                <Tooltip
+                  title={`Incomplete ${item.type?.replace("region", "") ?? "region"}`}
+                >
                   <IconWarning />
                 </Tooltip>
               </span>
@@ -474,105 +510,172 @@ const injector = inject(({ store }) => {
 });
 
 const RegionControls: FC<RegionControlsProps> = injector(
-  observer(({ hovered, item, entity, collapsed, regions, hasControls, type, toggleCollapsed, store }) => {
-    const { regions: regionStore } = useContext(OutlinerContext);
+  observer(
+    ({
+      hovered,
+      item,
+      entity,
+      collapsed,
+      regions,
+      hasControls,
+      type,
+      toggleCollapsed,
+      store,
+    }) => {
+      const { regions: regionStore } = useContext(OutlinerContext);
 
-    const hidden = useMemo(() => {
-      if (type?.includes("region") || type?.includes("range") || type?.includes("reactcode")) {
-        return entity.hidden;
-      }
-      if ((!type || type.includes("label") || type?.includes("tool")) && regions) {
-        return Object.values(regions).every(({ hidden }) => hidden);
-      }
-      return false;
-    }, [entity, type, regions]);
+      const hidden = useMemo(() => {
+        if (
+          type?.includes("region") ||
+          type?.includes("range") ||
+          type?.includes("reactcode")
+        ) {
+          return entity.hidden;
+        }
+        if (
+          (!type || type.includes("label") || type?.includes("tool")) &&
+          regions
+        ) {
+          return Object.values(regions).every(({ hidden }) => hidden);
+        }
+        return false;
+      }, [entity, type, regions]);
 
-    const onToggleHidden = useCallback(() => {
-      if (type?.includes("region") || type?.includes("range") || type?.includes("reactcode")) {
-        entity.toggleHidden();
-      } else if (!type || type.includes("label")) {
-        regionStore.setHiddenByLabel(!hidden, entity);
-      } else if (type?.includes("tool")) {
-        regionStore.setHiddenByTool(!hidden, entity);
-      }
-    }, [item, item?.toggleHidden, hidden]);
+      const onToggleHidden = useCallback(() => {
+        if (
+          type?.includes("region") ||
+          type?.includes("range") ||
+          type?.includes("reactcode")
+        ) {
+          entity.toggleHidden();
+        } else if (!type || type.includes("label")) {
+          regionStore.setHiddenByLabel(!hidden, entity);
+        } else if (type?.includes("tool")) {
+          regionStore.setHiddenByTool(!hidden, entity);
+        }
+      }, [item, item?.toggleHidden, hidden]);
 
-    const onToggleCollapsed = useCallback(
-      (e: MouseEvent) => {
-        toggleCollapsed(e);
-      },
-      [toggleCollapsed],
-    );
+      const onToggleCollapsed = useCallback(
+        (e: MouseEvent) => {
+          toggleCollapsed(e);
+        },
+        [toggleCollapsed],
+      );
 
-    const onToggleLocked = useCallback(() => {
-      item.setLocked((locked: boolean) => !locked);
-    }, []);
+      const onToggleLocked = useCallback(() => {
+        item.setLocked((locked: boolean) => !locked);
+      }, []);
 
-    return (
-      <div
-        className={cn("outliner-item").elem("controls").mod({ withControls: hasControls, newUI: true }).toClassName()}
-      >
-        <Tooltip title={"Confidence Score"}>
-          <div className={cn("outliner-item").elem("control-wrapper").toClassName()}>
-            <div className={cn("outliner-item").elem("control").mod({ type: "predict" }).toClassName()}>
-              {item?.origin === "prediction" && <IconSparks style={{ width: 18, height: 18 }} />}
-            </div>
-            <div className={cn("outliner-item").elem("control").mod({ type: "score" }).toClassName()}>
-              {isDefined(item?.score) && item.score.toFixed(2)}
-            </div>
-          </div>
-        </Tooltip>
-        <div className={cn("outliner-item").elem("wrapper").toClassName()}>
-          {store.hasInterface("annotations:copy-link") && isDefined(item?.annotation?.pk) && (
-            <div className={cn("outliner-item").elem("control").mod({ type: "menu" }).toClassName()}>
-              <RegionContextMenu item={item} />
-            </div>
-          )}
-          {!item?.incomplete && (
-            <div className={cn("outliner-item").elem("control").mod({ type: "lock" }).toClassName()}>
-              <LockButton
-                item={item}
-                annotation={item?.annotation}
-                hovered={hovered}
-                locked={item?.locked}
-                onClick={onToggleLocked}
-                variant="neutral"
-                look="string"
-                tooltip={item?.locked ? "Unlock Region" : "Lock Region"}
-              />
-            </div>
-          )}
-          {!item?.incomplete && (
-            <div className={cn("outliner-item").elem("control").mod({ type: "visibility" }).toClassName()}>
-              <RegionControlButton
-                variant="neutral"
-                look="string"
-                onClick={onToggleHidden}
-                style={hidden ? undefined : { display: "none" }}
+      return (
+        <div
+          className={cn("outliner-item")
+            .elem("controls")
+            .mod({ withControls: hasControls, newUI: true })
+            .toClassName()}
+        >
+          <Tooltip title={"Confidence Score"}>
+            <div
+              className={cn("outliner-item")
+                .elem("control-wrapper")
+                .toClassName()}
+            >
+              <div
+                className={cn("outliner-item")
+                  .elem("control")
+                  .mod({ type: "predict" })
+                  .toClassName()}
               >
-                {hidden ? (
-                  <IconEyeClosed style={{ width: 20, height: 20 }} />
-                ) : (
-                  <IconEyeOpened style={{ width: 20, height: 20 }} />
+                {item?.origin === "prediction" && (
+                  <IconSparks style={{ width: 18, height: 18 }} />
                 )}
-              </RegionControlButton>
+              </div>
+              <div
+                className={cn("outliner-item")
+                  .elem("control")
+                  .mod({ type: "score" })
+                  .toClassName()}
+              >
+                {isDefined(item?.score) && item.score.toFixed(2)}
+              </div>
             </div>
-          )}
-          {hasControls && (
-            <div className={cn("outliner-item").elem("control").mod({ type: "visibility" }).toClassName()}>
-              <RegionControlButton variant="neutral" look="string" onClick={onToggleCollapsed}>
-                <IconChevronLeft
-                  style={{
-                    transform: `rotate(${collapsed ? -90 : 90}deg)`,
-                  }}
+          </Tooltip>
+          <div className={cn("outliner-item").elem("wrapper").toClassName()}>
+            {store.hasInterface("annotations:copy-link") &&
+              isDefined(item?.annotation?.pk) && (
+                <div
+                  className={cn("outliner-item")
+                    .elem("control")
+                    .mod({ type: "menu" })
+                    .toClassName()}
+                >
+                  <RegionContextMenu item={item} />
+                </div>
+              )}
+            {!item?.incomplete && (
+              <div
+                className={cn("outliner-item")
+                  .elem("control")
+                  .mod({ type: "lock" })
+                  .toClassName()}
+              >
+                <LockButton
+                  item={item}
+                  annotation={item?.annotation}
+                  hovered={hovered}
+                  locked={item?.locked}
+                  onClick={onToggleLocked}
+                  variant="neutral"
+                  look="string"
+                  tooltip={item?.locked ? "Unlock Region" : "Lock Region"}
                 />
-              </RegionControlButton>
-            </div>
-          )}
+              </div>
+            )}
+            {!item?.incomplete && (
+              <div
+                className={cn("outliner-item")
+                  .elem("control")
+                  .mod({ type: "visibility" })
+                  .toClassName()}
+              >
+                <RegionControlButton
+                  variant="neutral"
+                  look="string"
+                  onClick={onToggleHidden}
+                  style={hidden ? undefined : { display: "none" }}
+                >
+                  {hidden ? (
+                    <IconEyeClosed style={{ width: 20, height: 20 }} />
+                  ) : (
+                    <IconEyeOpened style={{ width: 20, height: 20 }} />
+                  )}
+                </RegionControlButton>
+              </div>
+            )}
+            {hasControls && (
+              <div
+                className={cn("outliner-item")
+                  .elem("control")
+                  .mod({ type: "visibility" })
+                  .toClassName()}
+              >
+                <RegionControlButton
+                  variant="neutral"
+                  look="string"
+                  onClick={onToggleCollapsed}
+                >
+                  <IconChevronLeft
+                    style={{
+                      transform: `rotate(${collapsed ? -90 : 90}deg)`,
+                    }}
+                  />
+                </RegionControlButton>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    );
-  }),
+      );
+    },
+  ),
 );
 
 interface RegionItemOCSProps {
@@ -583,50 +686,55 @@ interface RegionItemOCSProps {
   setCollapsed: (value: boolean) => void;
 }
 
-const RegionItemDesc: FC<RegionItemOCSProps> = observer(({ item, collapsed, setCollapsed, selected }) => {
-  const controls: any[] = item.perRegionDescControls || [];
+const RegionItemDesc: FC<RegionItemOCSProps> = observer(
+  ({ item, collapsed, setCollapsed, selected }) => {
+    const controls: any[] = item.perRegionDescControls || [];
 
-  const onClick = useCallback(
-    (e) => {
-      e.stopPropagation();
+    const onClick = useCallback(
+      (e) => {
+        e.stopPropagation();
 
-      if (!selected) {
-        item.annotation.selectArea(item);
-      }
-    },
-    [item, selected, collapsed],
-  );
+        if (!selected) {
+          item.annotation.selectArea(item);
+        }
+      },
+      [item, selected, collapsed],
+    );
 
-  return (
-    <div
-      className={cn("ocr")
-        .mod({ collapsed, empty: !(controls?.length > 0) })
-        .toClassName()}
-      onClick={onClick}
-      onDragStart={(e: any) => e.stopPropagation()}
-    >
-      <div className={cn("ocr").elem("controls").toClassName()}>
-        {controls.map((tag, idx) => {
-          const View = Registry.getPerRegionView(tag.type, PER_REGION_MODES.REGION_LIST);
-          const color = item.getOneColor();
-          const css = color ? chroma(color).alpha(0.2).css() : undefined;
+    return (
+      <div
+        className={cn("ocr")
+          .mod({ collapsed, empty: !(controls?.length > 0) })
+          .toClassName()}
+        onClick={onClick}
+        onDragStart={(e: any) => e.stopPropagation()}
+      >
+        <div className={cn("ocr").elem("controls").toClassName()}>
+          {controls.map((tag, idx) => {
+            const View = Registry.getPerRegionView(
+              tag.type,
+              PER_REGION_MODES.REGION_LIST,
+            );
+            const color = item.getOneColor();
+            const css = color ? chroma(color).alpha(0.2).css() : undefined;
 
-          return View ? (
-            <View
-              key={idx}
-              item={tag}
-              area={item}
-              collapsed={collapsed}
-              setCollapsed={setCollapsed}
-              color={css}
-              outliner
-              canDelete={false}
-            />
-          ) : null;
-        })}
+            return View ? (
+              <View
+                key={idx}
+                item={tag}
+                area={item}
+                collapsed={collapsed}
+                setCollapsed={setCollapsed}
+                color={css}
+                outliner
+                canDelete={false}
+              />
+            ) : null;
+          })}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 export const OutlinerTree = observer(OutlinerTreeComponent);
