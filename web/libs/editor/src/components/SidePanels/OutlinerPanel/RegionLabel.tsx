@@ -7,7 +7,7 @@ export type RegionLabelProps = {
 export const RegionLabel = observer(({ item }: RegionLabelProps) => {
   const { type } = item ?? {};
   if (!type) {
-    return "No Label";
+    return "无标注";
   }
   if (type.includes("label")) {
     return item.value;
@@ -27,7 +27,9 @@ export const RegionLabel = observer(({ item }: RegionLabelProps) => {
     }
   }
   if (type.includes("region") || type.includes("range")) {
-    const labelsInResults = item.labelings.map((result: any) => result.selectedLabels || []);
+    const labelsInResults = item.labelings.map(
+      (result: any) => result.selectedLabels || [],
+    );
 
     const labels: any[] = [].concat(...labelsInResults);
 
@@ -40,8 +42,12 @@ export const RegionLabel = observer(({ item }: RegionLabelProps) => {
             index ? ", " : null,
             // This comes from an Elem tag that was set without a name. The CSS was fixed to make it work,
             // but this is clearly bad CSS usage.
-            <div key={label.id} className={cn("labels-list").toClassName()} style={{ color }}>
-              {label.value || "No label"}
+            <div
+              key={label.id}
+              className={cn("labels-list").toClassName()}
+              style={{ color }}
+            >
+              {label.value || "无标注"}
             </div>,
           ];
         })}
