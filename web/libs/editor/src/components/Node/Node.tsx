@@ -1,7 +1,12 @@
 import type { FC } from "react";
 import { getType } from "mobx-state-tree";
 import { observer } from "mobx-react";
-import { ApartmentOutlined, AudioOutlined, LineChartOutlined, MessageOutlined } from "@ant-design/icons";
+import {
+  ApartmentOutlined,
+  AudioOutlined,
+  LineChartOutlined,
+  MessageOutlined,
+} from "@ant-design/icons";
 
 import Registry from "../../core/Registry";
 import "./Node.scss";
@@ -40,7 +45,9 @@ const NodeViews: Record<string, NodeViewProps> = {
   RichTextRegionModel: {
     name: "HTML",
     icon: IconText,
-    getContent: (node: any) => <span style={{ color: "#5a5a5a" }}>{node.text}</span>,
+    getContent: (node: any) => (
+      <span style={{ color: "#5a5a5a" }}>{node.text}</span>
+    ),
     fullContent: (node: any) => (
       <div>
         {/* <div style={{ color: "#5a5a5a" }}>{node.text}</div> */}
@@ -70,7 +77,9 @@ const NodeViews: Record<string, NodeViewProps> = {
   TextAreaRegionModel: {
     name: "Input",
     icon: MessageOutlined,
-    getContent: (node) => <span style={{ color: "#5a5a5a" }}>{node._value}</span>,
+    getContent: (node) => (
+      <span style={{ color: "#5a5a5a" }}>{node._value}</span>
+    ),
   },
 
   RectRegionModel: {
@@ -89,7 +98,11 @@ const NodeViews: Record<string, NodeViewProps> = {
     name: "Video Rect",
     icon: IconRectangleTool,
     altIcon: IconRectangleToolSmart,
-    getContent: (node) => <span style={{ color: "#5a5a5a" }}>from {node.sequence[0]?.frame} frame</span>,
+    getContent: (node) => (
+      <span style={{ color: "#5a5a5a" }}>
+        from {node.sequence[0]?.frame} frame
+      </span>
+    ),
   },
 
   PolygonRegionModel: {
@@ -145,7 +158,9 @@ const NodeViews: Record<string, NodeViewProps> = {
   },
 
   ...Object.fromEntries(
-    Registry.customTags.filter((tag) => tag.region).map((tag) => [tag.region.name, tag.region.nodeView]),
+    Registry.customTags
+      .filter((tag) => tag.region)
+      .map((tag) => [tag.region.name, tag.region.nodeView]),
   ),
 };
 

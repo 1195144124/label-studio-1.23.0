@@ -39,10 +39,12 @@ const _Tool = types
       },
 
       get viewTooltip() {
-        return "Polygon region";
+        return "多边形区域";
       },
       get iconComponent() {
-        return self.dynamic ? NodeViews.PolygonRegionModel.altIcon : NodeViews.PolygonRegionModel.icon;
+        return self.dynamic
+          ? NodeViews.PolygonRegionModel.altIcon
+          : NodeViews.PolygonRegionModel.icon;
       },
 
       get defaultDimensions() {
@@ -79,7 +81,10 @@ const _Tool = types
     return {
       handleToolSwitch(tool) {
         self.stopListening();
-        if (self.getCurrentArea()?.isDrawing && tool.toolName !== "ZoomPanTool") {
+        if (
+          self.getCurrentArea()?.isDrawing &&
+          tool.toolName !== "ZoomPanTool"
+        ) {
           const shape = self.getCurrentArea()?.toJSON();
 
           if (shape?.points?.length > 2) self.finishDrawing();
@@ -113,7 +118,10 @@ const _Tool = types
         const point = self.control?.getSnappedPoint({ x, y });
 
         self.mode = "drawing";
-        self.currentArea = self.createRegion(self.createRegionOptions({ x: point.x, y: point.y }), true);
+        self.currentArea = self.createRegion(
+          self.createRegionOptions({ x: point.x, y: point.y }),
+          true,
+        );
         self.setDrawing(true);
         if (!ff.isActive(ff.FF_MULTIPLE_LABELS_REGIONS)) {
           self.applyActiveStates(self.currentArea);
@@ -147,6 +155,12 @@ const _Tool = types
     };
   });
 
-const Polygon = types.compose(_Tool.name, ToolMixin, BaseTool, MultipleClicksDrawingTool, _Tool);
+const Polygon = types.compose(
+  _Tool.name,
+  ToolMixin,
+  BaseTool,
+  MultipleClicksDrawingTool,
+  _Tool,
+);
 
 export { Polygon };
