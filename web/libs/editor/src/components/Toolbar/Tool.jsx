@@ -48,7 +48,10 @@ export const Tool = ({
             <Fragment key={`${keys.join("-")}-${index}`}>
               {keys.map((key) => {
                 return (
-                  <kbd className={cn("tool").elem("key").toClassName()} key={key}>
+                  <kbd
+                    className={cn("tool").elem("key").toClassName()}
+                    key={key}
+                  >
                     {keysDictionary[key] ?? key}
                   </kbd>
                 );
@@ -107,10 +110,15 @@ export const Tool = ({
   }, [extraShortcuts, active]);
 
   const extraContent = useMemo(() => {
-    return smart && extra ? <div className={cn("tool").elem("extra").toClassName()}>{extra}</div> : null;
+    return smart && extra ? (
+      <div className={cn("tool").elem("extra").toClassName()}>{extra}</div>
+    ) : null;
   }, [smart, extra]);
 
-  const showControls = dynamic === false && controls?.length && (active || (controlsOnHover && hovered));
+  const showControls =
+    dynamic === false &&
+    controls?.length &&
+    (active || (controlsOnHover && hovered));
   const isAnnotationDrawing = tool?.annotation?.isDrawing;
   const isDisabled = disabled || isAnnotationDrawing;
 
@@ -172,8 +180,13 @@ export const Tool = ({
           )
         ))}
       {showControls && (
-        <div className={cn("tool").elem("controls").toClassName()} onClickCapture={(e) => e.stopPropagation()}>
-          <div className={cn("tool").elem("controls-body").toClassName()}>{controls}</div>
+        <div
+          className={cn("tool").elem("controls").toClassName()}
+          onClickCapture={(e) => e.stopPropagation()}
+        >
+          <div className={cn("tool").elem("controls-body").toClassName()}>
+            {controls}
+          </div>
         </div>
       )}
     </button>

@@ -2,7 +2,10 @@ import { types } from "mobx-state-tree";
 
 import BaseTool, { DEFAULT_DIMENSIONS } from "./Base";
 import ToolMixin from "../mixins/Tool";
-import { ThreePointsDrawingTool, TwoPointsDrawingTool } from "../mixins/DrawingTool";
+import {
+  ThreePointsDrawingTool,
+  TwoPointsDrawingTool,
+} from "../mixins/DrawingTool";
 import { AnnotationMixin } from "../mixins/AnnotationMixin";
 import { NodeViews } from "../components/Node/Node";
 
@@ -84,11 +87,21 @@ const _BaseNPointTool = types
         if (control?.snap === "pixel") {
           const canvasX = currentArea.parent.internalToCanvasX(currentArea.x);
           const canvasY = currentArea.parent.internalToCanvasY(currentArea.y);
-          const canvasWidth = currentArea.parent.internalToCanvasX(currentArea.width);
-          const canvasHeight = currentArea.parent.internalToCanvasY(currentArea.height);
+          const canvasWidth = currentArea.parent.internalToCanvasX(
+            currentArea.width,
+          );
+          const canvasHeight = currentArea.parent.internalToCanvasY(
+            currentArea.height,
+          );
 
           // Apply snap logic through setPosition which handles both corners
-          currentArea.setPosition(canvasX, canvasY, canvasWidth, canvasHeight, currentArea.rotation);
+          currentArea.setPosition(
+            canvasX,
+            canvasY,
+            canvasWidth,
+            canvasHeight,
+            currentArea.rotation,
+          );
         }
 
         // Use the parent commitDrawingRegion to finalize the region
@@ -103,10 +116,12 @@ const _Tool = types
   })
   .views((self) => ({
     get viewTooltip() {
-      return "Rectangle";
+      return "矩形";
     },
     get iconComponent() {
-      return self.dynamic ? NodeViews.RectRegionModel.altIcon : NodeViews.RectRegionModel.icon;
+      return self.dynamic
+        ? NodeViews.RectRegionModel.altIcon
+        : NodeViews.RectRegionModel.icon;
     },
   }));
 
@@ -116,10 +131,12 @@ const _Tool3Point = types
   })
   .views((self) => ({
     get viewTooltip() {
-      return "3 Point Rectangle";
+      return "三点式矩形";
     },
     get iconComponent() {
-      return self.dynamic ? NodeViews.Rect3PointRegionModel.altIcon : NodeViews.Rect3PointRegionModel.icon;
+      return self.dynamic
+        ? NodeViews.Rect3PointRegionModel.altIcon
+        : NodeViews.Rect3PointRegionModel.icon;
     },
   }));
 

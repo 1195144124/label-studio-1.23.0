@@ -45,12 +45,18 @@ export const Toolbar = inject("store")(
 
     return (
       <ToolbarProvider value={{ expanded, alignment }}>
-        <div ref={(el) => setToolbar(el)} className={cn("toolbar").mod({ alignment, expanded }).toClassName()}>
+        <div
+          ref={(el) => setToolbar(el)}
+          className={cn("toolbar").mod({ alignment, expanded }).toClassName()}
+        >
           {Object.entries(toolGroups).map(([name, tools], i) => {
             const visibleTools = tools.filter((t) => t.viewClass);
 
             return visibleTools.length ? (
-              <div className={cn("toolbar").elem("group").toClassName()} key={`toolset-${name}-${i}`}>
+              <div
+                className={cn("toolbar").elem("group").toClassName()}
+                key={`toolset-${name}-${i}`}
+              >
                 {visibleTools
                   .sort((a, b) => a.index - b.index)
                   .map((tool, i) => {
@@ -79,13 +85,14 @@ const SmartTools = observer(({ tools }) => {
   const selected = useMemo(() => tools[selectedIndex], [selectedIndex]);
 
   const hasSelected = tools.some((t) => t.selected);
-
+  console.log(tools);
+  debugger;
   return (
     tools.length > 0 && (
       <div className={cn("toolbar").elem("group").toClassName()}>
         <Tool
           smart
-          label="Auto-Detect"
+          label="自动检测"
           active={hasSelected}
           icon={selected.iconClass}
           shortcut="tool:auto-detect"
