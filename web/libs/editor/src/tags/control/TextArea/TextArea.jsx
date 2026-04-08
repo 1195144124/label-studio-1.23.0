@@ -16,7 +16,10 @@ import PerRegionMixin, { PER_REGION_MODES } from "../../../mixins/PerRegion";
 import ProcessAttrsMixin from "../../../mixins/ProcessAttrs";
 import { ReadOnlyControlMixin } from "../../../mixins/ReadOnlyMixin";
 import RequiredMixin from "../../../mixins/Required";
-import { HtxTextAreaRegion, TextAreaRegionModel } from "../../../regions/TextAreaRegion";
+import {
+  HtxTextAreaRegion,
+  TextAreaRegionModel,
+} from "../../../regions/TextAreaRegion";
 import { FF_LEAD_TIME, FF_LSDV_4583, isFF } from "../../../utils/feature-flags";
 import ControlBase from "../Base";
 import ClassificationBase from "../ClassificationBase";
@@ -182,11 +185,16 @@ const Model = types
       },
 
       requiredModal() {
-        InfoModal.warning(self.requiredmessage || `Input for the textarea "${self.name}" is required.`);
+        InfoModal.warning(
+          self.requiredmessage ||
+            `Input for the textarea "${self.name}" is required.`,
+        );
       },
 
       uniqueModal() {
-        InfoModal.warning("There is already an entry with that text. Please enter unique text.");
+        InfoModal.warning(
+          "There is already an entry with that text. Please enter unique text.",
+        );
       },
 
       setResult(value) {
@@ -261,7 +269,10 @@ const Model = types
         if (!result) return;
 
         // add current stored leadTime to the main stored lead_time
-        result.setMetaValue("lead_time", (result.meta?.lead_time ?? 0) + self.leadTime / 1000);
+        result.setMetaValue(
+          "lead_time",
+          (result.meta?.lead_time ?? 0) + self.leadTime / 1000,
+        );
 
         self.leadTime = 0;
         self.resetLeadTimeCounters();
@@ -296,7 +307,8 @@ const Model = types
         if (!isAvailableElement(lastActiveElement, lastActiveElementModel)) {
           // Try to use main textarea element
           const textareaElement =
-            self.textareaRef.current?.input || self.textareaRef.current?.resizableTextArea?.textArea;
+            self.textareaRef.current?.input ||
+            self.textareaRef.current?.resizableTextArea?.textArea;
 
           if (isAvailableElement(textareaElement, self)) {
             lastActiveElement = textareaElement;
@@ -305,7 +317,12 @@ const Model = types
             return;
           }
         }
-        lastActiveElement.setRangeText(value, lastActiveElement.selectionStart, lastActiveElement.selectionEnd, "end");
+        lastActiveElement.setRangeText(
+          value,
+          lastActiveElement.selectionStart,
+          lastActiveElement.selectionEnd,
+          "end",
+        );
         lastActiveElementModel.setValue(lastActiveElement.value);
       },
 
@@ -346,7 +363,8 @@ const HtxTextArea = observer(({ item }) => {
   );
 
   // Helper function for pluralization
-  const pluralize = (count, singular, plural) => (count === 1 ? singular : plural);
+  const pluralize = (count, singular, plural) =>
+    count === 1 ? singular : plural;
 
   const props = {
     name: item.name,
@@ -376,7 +394,13 @@ const HtxTextArea = observer(({ item }) => {
   if (rows > 1) {
     // allow to add multiline text with shift+enter
     props.onKeyDown = (e) => {
-      if (e.key === "Enter" && e.shiftKey && item.allowsubmit && item._value && !item.annotation.isReadOnly()) {
+      if (
+        e.key === "Enter" &&
+        e.shiftKey &&
+        item.allowsubmit &&
+        item._value &&
+        !item.annotation.isReadOnly()
+      ) {
         e.preventDefault();
         e.stopPropagation();
         item.addText(item._value);
@@ -389,7 +413,8 @@ const HtxTextArea = observer(({ item }) => {
 
   const visibleStyle = item.perRegionVisible() ? {} : { display: "none" };
 
-  const showAddButton = !item.isReadOnly() && (item.showsubmitbutton ?? rows !== 1);
+  const showAddButton =
+    !item.isReadOnly() && (item.showsubmitbutton ?? rows !== 1);
   const itemStyle = {};
   const textareaClassName = cn("text-area").toClassName();
 
@@ -398,13 +423,22 @@ const HtxTextArea = observer(({ item }) => {
   visibleStyle.marginTop = "4px";
 
   return item.displaymode === PER_REGION_MODES.TAG ? (
-    <div className={textareaClassName} style={visibleStyle} ref={item.elementRef} data-testid="textarea-control">
+    <div
+      className={textareaClassName}
+      style={visibleStyle}
+      ref={item.elementRef}
+      data-testid="textarea-control"
+    >
       {Tree.renderChildren(item, item.annotation)}
 
       {item.showSubmit && (
         <Form
           onFinish={() => {
-            if (item.allowsubmit && item._value && !item.annotation.isReadOnly()) {
+            if (
+              item.allowsubmit &&
+              item._value &&
+              !item.annotation.isReadOnly()
+            ) {
               item.addText(item._value);
               item.setValue("");
             }
@@ -415,9 +449,17 @@ const HtxTextArea = observer(({ item }) => {
         >
           <Form.Item style={itemStyle}>
             {rows === 1 ? (
-              <Input {...props} aria-label="TextArea Input" data-testid="textarea-input" />
+              <Input
+                {...props}
+                aria-label="TextArea Input"
+                data-testid="textarea-input"
+              />
             ) : (
-              <TextArea {...props} aria-label="TextArea Input" data-testid="textarea-input" />
+              <TextArea
+                {...props}
+                aria-label="TextArea Input"
+                data-testid="textarea-input"
+              />
             )}
             {showAddButton && (
               <div
@@ -437,13 +479,18 @@ const HtxTextArea = observer(({ item }) => {
                     className="text-neutral-content-subtler"
                     data-testid="textarea-character-count"
                   >
-                    {item._value?.length ?? 0} {pluralize(item._value?.length ?? 0, "character", "characters")}
+                    {item._value?.length ?? 0}{" "}
+                    {pluralize(item._value?.length ?? 0, "个字符", "个字符")}
                   </Typography>
 
                   {/* Region count - use submissionsNum computed view */}
                   {(item.submissionsNum > 0 || item.maxsubmissions) && (
                     <>
-                      <Typography size="small" className="text-neutral-content-subtler" aria-hidden="true">
+                      <Typography
+                        size="small"
+                        className="text-neutral-content-subtler"
+                        aria-hidden="true"
+                      >
                         •
                       </Typography>
                       <Typography
@@ -452,8 +499,9 @@ const HtxTextArea = observer(({ item }) => {
                         data-testid="textarea-submission-count"
                       >
                         {item.submissionsNum}
-                        {item.maxsubmissions && ` / ${item.maxsubmissions}`}{" "}
-                        {pluralize(item.submissionsNum, "submission", "submissions")}
+                        {item.maxsubmissions &&
+                          ` / ${item.maxsubmissions}`}{" "}
+                        {pluralize(item.submissionsNum, "个提交", "个提交")}
                       </Typography>
                     </>
                   )}
@@ -468,7 +516,7 @@ const HtxTextArea = observer(({ item }) => {
                       className="text-neutral-content-subtler italic"
                       data-testid="textarea-instruction"
                     >
-                      Press Shift + Enter to Add
+                      Shift + Enter 快速添加
                     </Typography>
                   )}
 
@@ -483,7 +531,7 @@ const HtxTextArea = observer(({ item }) => {
                       htmlType="submit"
                       data-testid="textarea-add-button"
                     >
-                      Add
+                      添加
                     </Button>
                   </Form.Item>
                 </div>

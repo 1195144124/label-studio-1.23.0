@@ -224,14 +224,14 @@
 
         const lsfConfig = {
           config: `
-               <View>
-  <Labels name="label" toName="audio" zoom="true" hotkey="ctrl+enter">
-    <Label value="Event A" background="red"/>
-    <Label value="Event B" background="green"/>
-  </Labels>
-  <Audio name="audio" value="$audio"/>
-</View>
-              `,
+                           <View>
+              <Labels name="label" toName="audio" zoom="true" hotkey="ctrl+enter">
+                <Label value="Event A" background="red"/>
+                <Label value="Event B" background="green"/>
+              </Labels>
+              <Audio name="audio" value="$audio"/>
+            </View>
+                          `,
           interfaces: [
             "panel",
             "update",
@@ -286,33 +286,52 @@
 
         var ls = new LabelStudio("label-studio", {
           config: `
-                <View>
-  <View style="display:flex;justify-content:center">
-    <PolygonLabels name="objects" toName="image" value="$objects"/>
+           <View>
+  <View style="display: flex; flex-wrap: wrap;">
+    <View className="label-column">
+      <Header value="Regions"/>
+      <RectangleLabels name="regions" toName="image" value="$regions"/>
+  </View>
+    <View className="label-column">
+      <Header value="Attributes"/>
+    <RectangleLabels name="attributes" toName="image" value="$attributes"/>
+    </View>
+    <View className="label-column">
+      <Header value="Relationships"/>
+    <RectangleLabels name="relationships" toName="image" value="$relationships"/>
+    </View>
+  
   </View>
   <Image name="image" value="$image"/>
+  <Style>
+  .label-column .lsf-labels {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  </Style>
 </View>
-              `,
+                          `,
           interfaces: [
             "panel",
             "update",
             "submit",
-            // 'skip',
-            // 'controls',
-            // 'review',
-            // 'infobar',
-            // 'topbar',
+            // "skip",
+            // "controls",
+            // "review",
+            // "infobar",
+            // "topbar",
             // "instruction",
             "side-column",
-            // "ground-truth",
-            // "annotations:tabs",
-            // "annotations:menu",
-            // "annotations:current",
-            // "annotations:add-new",
-            // "annotations:delete",
-            // "annotations:view-all",
-            // "predictions:tabs",
-            // "predictions:menu",
+            "ground-truth",
+            "annotations:tabs",
+            "annotations:menu",
+            "annotations:current",
+            "annotations:add-new",
+            "annotations:delete",
+            "annotations:view-all",
+            "predictions:tabs",
+            "predictions:menu",
             "auto-annotation",
             "edit-history",
             "topbar:prevnext",
@@ -320,30 +339,7 @@
           task: {
             annotations: [],
             data: {
-              image:
-                "https://htx-pub.s3.amazonaws.com/templates/inventory-tracking/shelf.jpeg",
-              objects: [
-                {
-                  value: "可乐",
-                  html: "<img width='100' src='https://htx-pub.s3.amazonaws.com/templates/inventory-tracking/cocacola.png'/>",
-                },
-                {
-                  value: "RedBull",
-                  html: "<img width='100' src='https://htx-pub.s3.amazonaws.com/templates/inventory-tracking/redbull.png'/>",
-                },
-                {
-                  value: "Burn",
-                  html: "<img width='100' src='https://htx-pub.s3.amazonaws.com/templates/inventory-tracking/burn.png'/>",
-                },
-                {
-                  value: "Breezer",
-                  html: "<img width='100' src='https://htx-pub.s3.amazonaws.com/templates/inventory-tracking/breezer.png'/>",
-                },
-                {
-                  value: "Monster",
-                  html: "<img width='100' src='https://htx-pub.s3.amazonaws.com/templates/inventory-tracking/monster.png'/>",
-                },
-              ],
+              image: "https://app.heartex.ai/static/samples/sample.jpg",
             },
           },
           onLabelStudioLoad: (LS) => {

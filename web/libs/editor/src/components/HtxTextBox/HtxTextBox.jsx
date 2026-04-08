@@ -35,14 +35,18 @@ export class HtxTextBox extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener("click", this.handleGlobalClick, { capture: true });
+    window.removeEventListener("click", this.handleGlobalClick, {
+      capture: true,
+    });
   }
 
   handleGlobalClick = (e) => {
     const el = e?.target;
     const isShortcut = el?.dataset?.shortcut;
     const shouldSkip =
-      !this.state.editing || (this.props.ignoreShortcuts && isShortcut) || el === this.inputRef.current;
+      !this.state.editing ||
+      (this.props.ignoreShortcuts && isShortcut) ||
+      el === this.inputRef.current;
 
     if (!shouldSkip) {
       this.setEditing(false);
@@ -149,7 +153,10 @@ export class HtxTextBox extends React.Component {
     this.updateHeight();
 
     return (
-      <div className={cn("textarea").elem("region").toClassName()} data-testid="htx-textbox-edit">
+      <div
+        className={cn("textarea").elem("region").toClassName()}
+        data-testid="htx-textbox-edit"
+      >
         {rows > 1 ? <textarea {...inputProps} /> : <input {...inputProps} />}
         {!onlyEdit && (
           <Tooltip title="Save: [shift+enter]">
@@ -186,8 +193,16 @@ export class HtxTextBox extends React.Component {
     } = this.props;
 
     return (
-      <div className={cn("textarea").elem("region").toClassName()} data-testid="htx-textbox-view">
-        <div className={this.inputClassName} id={props.id} name={props.name} data-testid="htx-textbox-content">
+      <div
+        className={cn("textarea").elem("region").toClassName()}
+        data-testid="htx-textbox-view"
+      >
+        <div
+          className={this.inputClassName}
+          id={props.id}
+          name={props.name}
+          data-testid="htx-textbox-content"
+        >
           <Typography ref={this.textRef} size="small">
             {text.split("\n").map((line, index, array) => {
               const isLastLine = index === array.length - 1;
@@ -200,13 +215,16 @@ export class HtxTextBox extends React.Component {
             })}
           </Typography>
         </div>
-        <div className={cn("textarea").elem("actions").toClassName()} data-testid="htx-textbox-actions">
+        <div
+          className={cn("textarea").elem("actions").toClassName()}
+          data-testid="htx-textbox-actions"
+        >
           {isEditable && onChange && (
             <Button
               variant="neutral"
               look="outlined"
               size="small"
-              tooltip="Edit"
+              tooltip="编辑"
               tooltipTheme="Dark"
               leading={<IconPencil />}
               aria-label="Edit Region"
@@ -220,7 +238,7 @@ export class HtxTextBox extends React.Component {
               variant="negative"
               look="outlined"
               size="small"
-              tooltip="Delete"
+              tooltip="删除"
               tooltipTheme="Dark"
               leading={<IconTrashAlt />}
               aria-label="Delete Region"
@@ -234,6 +252,8 @@ export class HtxTextBox extends React.Component {
   }
 
   render() {
-    return (this.state.editing || this.props.onlyEdit) && this.props.isEditable ? this.renderEdit() : this.renderView();
+    return (this.state.editing || this.props.onlyEdit) && this.props.isEditable
+      ? this.renderEdit()
+      : this.renderView();
   }
 }
