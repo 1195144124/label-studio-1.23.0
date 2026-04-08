@@ -223,10 +223,14 @@
         ];
 
         const lsfConfig = {
-          description: "Description",
           config: `
-                <View><PolygonLabels name="label" toName="image" strokeWidth="3" pointSize="small" opacity="0.8"><Label value="汽车" background="#00FE00"/><Label value="房子" background="#FF6600"/><Label value="树" background="#1E90FF"/></PolygonLabels>
-								<Image name="image" value="$image" zoom="true" /></View>
+               <View>
+  <Labels name="label" toName="audio" zoom="true" hotkey="ctrl+enter">
+    <Label value="Event A" background="red"/>
+    <Label value="Event B" background="green"/>
+  </Labels>
+  <Audio name="audio" value="$audio"/>
+</View>
               `,
           interfaces: [
             "panel",
@@ -273,18 +277,67 @@
             },
           ],
           task: {
-            annotations: annotationHistory,
-            predictions: [],
-            id: 1,
+            annotations: [],
             data: {
-              image:
-                "https://htx-pub.s3.us-east-1.amazonaws.com/examples/images/nick-owuor-astro-nic-visuals-wDifg5xc9Z4-unsplash.jpg",
+              audio: "./public/files/barradeen-emotional.mp3",
             },
           },
-          history: annotationHistory,
         };
 
-        var ls = new LabelStudio("label-studio", lsfConfig);
+        var ls = new LabelStudio("label-studio", {
+          config: `
+                <View>
+  <Labels name="label" toName="audio" zoom="true" hotkey="ctrl+enter">
+    <Label value="Event A" background="red"/>
+    <Label value="Event B" background="green"/>
+  </Labels>
+  <Audio name="audio" value="$audio"/>
+</View>
+              `,
+          interfaces: [
+            "panel",
+            "update",
+            "submit",
+            "skip",
+            "controls",
+            "review",
+            "infobar",
+            "topbar",
+            "instruction",
+            "side-column",
+            "ground-truth",
+            "annotations:tabs",
+            "annotations:menu",
+            "annotations:current",
+            "annotations:add-new",
+            "annotations:delete",
+            "annotations:view-all",
+            "predictions:tabs",
+            "predictions:menu",
+            "auto-annotation",
+            "edit-history",
+            "topbar:prevnext",
+          ],
+          task: {
+            annotations: [],
+            data: {
+              audio: "/public/files/barradeen-emotional.mp3",
+            },
+          },
+          onLabelStudioLoad: (LS) => {
+            var c = LS.annotationStore.addAnnotation({
+              userGenerate: true,
+            });
+            LS.annotationStore.selectAnnotation(c.id);
+          },
+          onSubmitAnnotation: (ls, annotation) => {
+            console.log(
+              annotation.serializeAnnotation(),
+              JSON.stringify(annotation.serializeAnnotation()),
+            );
+            // emit('onSubmitAnnotation', annotation.toJSON());
+          },
+        });
 
         ls.on("storageInitialized", (store) => {
           ls.on("selectAnnotation", (next) => {
