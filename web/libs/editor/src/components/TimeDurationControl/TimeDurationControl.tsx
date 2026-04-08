@@ -50,7 +50,7 @@ export const TimeDurationControl: FC<TimerProps> = ({
         readonly={startTimeReadonly}
         value={_currentTime}
         onChange={handleChangeCurrentTime}
-        label={showLabels ? "Start" : undefined}
+        label={showLabels ? "开始" : undefined}
         data-testid="timebox-current-time"
       />
       <TimeBox
@@ -59,16 +59,16 @@ export const TimeDurationControl: FC<TimerProps> = ({
         value={endTime}
         onChange={handleChangeEndTime}
         data-testid="timebox-end-time"
-        label={showLabels ? "End" : undefined}
+        label={showLabels ? "结束" : undefined}
       />
       {showDuration && (
         <TimeBox
           sidepanel={isSidepanel}
           readonly={true}
           value={endTime - startTime}
-          onChange={() => {}}
+          onChange={() => { }}
           data-testid="timebox-duration-time"
-          label={showLabels ? "Duration" : undefined}
+          label={showLabels ? "时长" : undefined}
         />
       )}
     </div>
