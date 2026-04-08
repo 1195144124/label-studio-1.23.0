@@ -35,18 +35,18 @@ export const Actions = ({ store }) => {
             data-testid="bottombar-instructions-button"
           />
         )}
-        <Button
+        {/* <Button
           type="text"
           aria-label="Settings"
           size="small"
           look="string"
           variant="neutral"
           onClick={() => store.toggleSettings()}
-          tooltip="Settings"
+          tooltip="设置"
           className="aspect-square"
           leading={<IconSettings />}
           data-testid="bottombar-settings-button"
-        />
+        /> */}
       </div>
 
       {store.hasInterface("ground-truth") && !isBulkMode && <GroundTruth entity={entity} />}

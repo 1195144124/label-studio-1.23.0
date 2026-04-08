@@ -14,7 +14,7 @@ export const EditingHistory = observer(({ entity }) => {
         look="string"
         aria-label="Undo"
         className="!p-0"
-        tooltip="Undo"
+        tooltip="撤销"
         disabled={!history?.canUndo}
         onClick={() => entity.undo()}
       >
@@ -25,7 +25,7 @@ export const EditingHistory = observer(({ entity }) => {
         look="string"
         aria-label="Redo"
         className="!p-0"
-        tooltip="Redo"
+        tooltip="重做"
         disabled={!history?.canRedo}
         onClick={() => entity.redo()}
         leading={<IconRedo />}
@@ -34,7 +34,7 @@ export const EditingHistory = observer(({ entity }) => {
         look="string"
         variant="negative"
         aria-label="Reset"
-        tooltip="Reset"
+        tooltip="重置"
         className="!p-0"
         disabled={!history?.canUndo}
         onClick={() => history?.reset()}

@@ -9,7 +9,7 @@ export const EditingHistory = observer(({ entity }) => {
 
   return (
     <div className={cn("history-buttons").toClassName()}>
-      <Tooltip title="Undo">
+      <Tooltip title="撤销">
         <Button
           variant="neutral"
           size="small"
@@ -22,7 +22,7 @@ export const EditingHistory = observer(({ entity }) => {
           data-testid="bottombar-undo-button"
         />
       </Tooltip>
-      <Tooltip title="Redo">
+      <Tooltip title="重做">
         <Button
           variant="neutral"
           size="small"
@@ -35,7 +35,7 @@ export const EditingHistory = observer(({ entity }) => {
           data-testid="bottombar-redo-button"
         />
       </Tooltip>
-      <Tooltip title="Reset">
+      <Tooltip title="重置">
         <Button
           variant="negative"
           look="string"
