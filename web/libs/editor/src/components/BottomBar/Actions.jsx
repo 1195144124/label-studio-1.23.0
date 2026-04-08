@@ -28,7 +28,7 @@ export const Actions = ({ store }) => {
             size="small"
             variant="neutral"
             look="string"
-            tooltip="Show instructions"
+            tooltip="显示说明"
             onClick={() => store.toggleDescription()}
             className="aspect-square"
             leading={<IconInfoOutline />}

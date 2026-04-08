@@ -80,7 +80,7 @@ export const Controls = controlsInjector(
 
     const RejectButton = useMemo(() => {
       return (
-        <ButtonTooltip key="reject" title="Reject annotation: [ Ctrl+Space ]">
+        <ButtonTooltip key="reject" title="放弃标注: [ Ctrl+Space ]">
           <Button
             aria-label="Reject current annotation"
             disabled={disabled}
@@ -95,7 +95,7 @@ export const Controls = controlsInjector(
               }
             }}
           >
-            Reject
+            放弃
           </Button>
         </ButtonTooltip>
       );
@@ -215,7 +215,7 @@ export const Controls = controlsInjector(
       if ((userGenerate && sentUserGenerate) || (!userGenerate && store.hasInterface("update"))) {
         const isUpdate = sentUserGenerate || versions.result;
         const button = (
-          <ButtonTooltip key="update" title="Update this task: [ Alt+Enter ]">
+          <ButtonTooltip key="update" title="更新此任务: [ Alt+Enter ]">
             <Button
               aria-label="Update current annotation"
               disabled={disabled || submitDisabled}
@@ -225,7 +225,7 @@ export const Controls = controlsInjector(
                 store.updateAnnotation();
               }}
             >
-              {isUpdate ? "Update" : "Submit"}
+              {isUpdate ? "更新" : "提交"}
             </Button>
           </ButtonTooltip>
         );

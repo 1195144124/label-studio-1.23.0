@@ -495,7 +495,7 @@ const AnnotationButtonContextMenu = injector(
         copyLink();
         dropdown?.close();
         toast?.show({
-          message: "Annotation link copied to clipboard",
+          message: "标注链接已复制",
           type: ToastType.info,
         });
       }, [copyLink, toast, dropdown]);
@@ -506,7 +506,7 @@ const AnnotationButtonContextMenu = injector(
         copyAnnotationId();
         dropdown?.close();
         toast?.show({
-          message: "Annotation ID copied to clipboard",
+          message: "标注ID已复制",
           type: ToastType.info,
         });
       }, [copyAnnotationId, toast, dropdown]);
@@ -679,8 +679,8 @@ export const AnnotationButton = observer(
       entityIsAlive && entity.user && isUserComplete(entity.user)
         ? entity.user
         : {
-            firstName: entityIsAlive ? entity.createdBy || "Admin" : "Unknown",
-          };
+          firstName: entityIsAlive ? entity.createdBy || "Admin" : "Unknown",
+        };
     const username = entityIsAlive ? userDisplayName(resolvedUser) : "Unknown";
     const [isGroundTruth, setIsGroundTruth] = useState<boolean>();
     const isDraft = entityIsAlive && !isPrediction && !isDefined(entity.pk);
@@ -738,11 +738,11 @@ export const AnnotationButton = observer(
         : displayUsername
       : displayUsername.length > NAME_TRUNCATE_THRESHOLD
         ? truncate(
-            displayUsername,
-            NAME_TRUNCATE_START,
-            NAME_TRUNCATE_END,
-            "...",
-          )
+          displayUsername,
+          NAME_TRUNCATE_START,
+          NAME_TRUNCATE_END,
+          "...",
+        )
         : displayUsername;
 
     const CommentIcon = renderCommentIcon(entity);
@@ -1139,8 +1139,8 @@ export const AnnotationButton = observer(
               badge={
                 reviewBadge
                   ? {
-                      bottomRight: reviewBadge,
-                    }
+                    bottomRight: reviewBadge,
+                  }
                   : undefined
               }
             >

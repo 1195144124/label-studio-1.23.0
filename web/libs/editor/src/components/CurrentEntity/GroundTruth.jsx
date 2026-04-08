@@ -5,7 +5,7 @@ import { cn } from "../../utils/bem";
 import "./GroundTruth.scss";
 
 export const GroundTruth = observer(({ entity, disabled = false, size = "md" }) => {
-  const title = entity.ground_truth ? "Unset this result as a ground truth" : "Set this result as a ground truth";
+  const title = entity.ground_truth ? "取消将此结果作为基准标注" : "将此结果设为基准标注";
   const IndicatorIcon = !entity.ground_truth ? IconStarOutline : IconStar;
 
   return (

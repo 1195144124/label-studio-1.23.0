@@ -72,7 +72,7 @@ export const CurrentTask = observer(({ store }) => {
 
   // Memoized messages for previous button
   const prevButtonMessage = useMemo(() => {
-    return !store.canGoPrevTask ? "No previous task" : "Previous task";
+    return !store.canGoPrevTask ? "无上一个任务" : "上一个任务";
   }, [store.canGoPrevTask]);
 
   // Memoized messages for next button
@@ -81,15 +81,15 @@ export const CurrentTask = observer(({ store }) => {
       return "Submit an annotation to continue";
     }
     if (canNavigateNext) {
-      return "Next task";
+      return "下一个任务";
     }
     if (canPostponeTask) {
-      return "Postpone task";
+      return "推迟任务";
     }
     if (!canSkipOrPostpone) {
-      return "Cannot postpone: task cannot be skipped";
+      return "无法推迟:任务不能跳过";
     }
-    return "No next task available";
+    return "无下一个任务";
   }, [requiresAnnotationSubmission, canNavigateNext, canPostponeTask, canSkipOrPostpone]);
 
   if (store.hasInterface("annotations:comments") && isFF(FF_DEV_4174)) {

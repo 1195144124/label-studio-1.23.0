@@ -186,7 +186,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
     } else if (annotation.skipped) {
       buttons.push(
         <div className={cn("controls").elem("skipped-info").toClassName()} key="skipped">
-          <IconBan /> Was skipped
+          <IconBan /> 已跳过
         </div>,
       );
       buttons.push(<UnskipButton key="unskip" disabled={disabled} store={store} />);
@@ -234,7 +234,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
               }}
               data-testid={`bottombar-${isUpdate ? "update" : "submit"}-and-exit-button`}
             >
-              {`${isUpdate ? "Update" : "Submit"} and exit`}
+              {`${isUpdate ? "更新" : "提交"} 并退出`}
             </Button>
           </div>
         );
@@ -247,7 +247,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
             ? store.overlapReachedMessage
             : submitDisabled
               ? EMPTY_SUBMIT_TOOLTIP
-              : "Save results: [ Ctrl+Enter ]";
+              : "保存结果: [ Ctrl+Enter ]";
 
         buttons.push(
           <ButtonTooltip key="submit" title={title} className="whitespace-nowrap max-w-none">
@@ -268,7 +268,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                   }}
                   data-testid="bottombar-submit-button"
                 >
-                  Submit
+                  提交
                 </Button>
                 {useExitOption ? (
                   <Dropdown.Trigger
@@ -302,8 +302,8 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
           : overlapDisabled
             ? store.overlapReachedMessage
             : noChanges
-              ? "No changes were made"
-              : "Update this task: [ Ctrl+Enter ]";
+              ? "未做任何更改"
+              : "更新此任务: [ Ctrl+Enter ]";
         const button = (
           <ButtonTooltip key="update" title={updateTitle} className="whitespace-nowrap max-w-none">
             <div className={cn("controls").elem("tooltip-wrapper").toClassName()}>
@@ -323,7 +323,7 @@ export const Controls = controlsInjector<{ annotation: MSTAnnotation }>(
                   }}
                   data-testid="bottombar-update-button"
                 >
-                  {isUpdate ? "Update" : "Submit"}
+                  {isUpdate ? "更新" : "提交"}
                 </Button>
                 {useExitOption ? (
                   <Dropdown.Trigger

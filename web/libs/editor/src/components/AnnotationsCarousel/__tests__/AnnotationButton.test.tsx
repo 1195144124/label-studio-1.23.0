@@ -461,7 +461,7 @@ describe("AnnotationButton", () => {
     fireEvent.click(container.querySelector(".ls-annotation-button__trigger")!);
     fireEvent.click(screen.getByText("Copy Annotation ID"));
     expect(mockToastShow).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Annotation ID copied to clipboard", type: "info" }),
+      expect.objectContaining({ message: "标注ID已复制", type: "info" }),
     );
   });
 
@@ -484,7 +484,7 @@ describe("AnnotationButton", () => {
     fireEvent.click(container.querySelector(".ls-annotation-button__trigger")!);
     fireEvent.click(screen.getByText("Copy Annotation Link"));
     expect(mockToastShow).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Annotation link copied to clipboard", type: "info" }),
+      expect.objectContaining({ message: "标注连接已复制", type: "info" }),
     );
   });
 
