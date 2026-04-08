@@ -16,7 +16,12 @@ export interface AudioControlProps {
   onSetModal?: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
-export const AudioControl: FC<AudioControlProps> = ({ volume, onVolumeChange, onSetModal, audioModal }) => {
+export const AudioControl: FC<AudioControlProps> = ({
+  volume,
+  onVolumeChange,
+  onSetModal,
+  audioModal,
+}) => {
   const [isMuted, setMute] = useState(false);
 
   useEffect(() => {
@@ -59,8 +64,8 @@ export const AudioControl: FC<AudioControlProps> = ({ volume, onVolumeChange, on
           max={MAX_VOL}
           value={Math.round(volume * MAX_VOL)}
           onChange={handleSetVolume}
-          description={"Volume"}
-          info={"Increase or decrease the volume of the audio"}
+          description={"音量"}
+          info={"增加或减少音频的音量"}
         />
         {renderMuteButton()}
       </div>
@@ -70,8 +75,11 @@ export const AudioControl: FC<AudioControlProps> = ({ volume, onVolumeChange, on
   const renderMuteButton = () => {
     return (
       <div className={cn("audio-control").elem("mute").toClassName()}>
-        <div className={cn("audio-control").elem("mute-button").toClassName()} onClick={handleSetMute}>
-          {isMuted ? "Unmute" : "Mute"}
+        <div
+          className={cn("audio-control").elem("mute-button").toClassName()}
+          onClick={handleSetMute}
+        >
+          {isMuted ? "取消静音" : "静音"}
         </div>
       </div>
     );
@@ -82,7 +90,10 @@ export const AudioControl: FC<AudioControlProps> = ({ volume, onVolumeChange, on
       className={cn("audio-control").toClassName()}
       onClick={(e: MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
     >
-      <ControlButton look={audioModal ? "filled" : undefined} onClick={onSetModal}>
+      <ControlButton
+        look={audioModal ? "filled" : undefined}
+        onClick={onSetModal}
+      >
         {isMuted ? <IconSoundMutedConfig /> : <IconSoundConfig />}
       </ControlButton>
       {audioModal && renderModal()}

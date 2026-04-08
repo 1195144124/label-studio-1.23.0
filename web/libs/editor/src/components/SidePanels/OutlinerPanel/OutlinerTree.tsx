@@ -182,7 +182,6 @@ const OutlinerInnerTreeComponent: FC<OutlinerInnerTreeProps> = observer(
         collapsedPos.includes(pos) ? expand(pos) : collapse(pos);
       };
     }
-    console.log(regionsTree);
     return (
       <div className={cn("outliner-tree").toClassName()} ref={setRef}>
         {!!height && (
@@ -454,7 +453,7 @@ const RootTitle: FC<any> = observer(
                 className={cn("outliner-item").elem("incomplete").toClassName()}
               >
                 <Tooltip
-                  title={`Incomplete ${item.type?.replace("region", "") ?? "region"}`}
+                  title={`未完成的 ${item.type?.replace("region", "") ?? "区域"}`}
                 >
                   <IconWarning />
                 </Tooltip>

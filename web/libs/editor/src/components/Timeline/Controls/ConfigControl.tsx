@@ -1,5 +1,12 @@
 import type React from "react";
-import { type FC, type MouseEvent, useContext, useEffect, useRef, useState } from "react";
+import {
+  type FC,
+  type MouseEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 import { Toggle } from "@humansignal/ui";
 import { cn } from "../../../utils/bem";
@@ -157,15 +164,24 @@ export const ConfigControl: FC<ConfigControlProps> = ({
   const renderLayerToggles = () => {
     return (
       <div className={cn("audio-config").elem("buttons").toClassName()}>
-        <div className={cn("audio-config").elem("menu-button").toClassName()} onClick={handleSetTimeline}>
-          {isTimeline ? "Hide" : "Show"} timeline
+        <div
+          className={cn("audio-config").elem("menu-button").toClassName()}
+          onClick={handleSetTimeline}
+        >
+          {isTimeline ? "隐藏" : "显示"}时间轴
         </div>
-        <div className={cn("audio-config").elem("menu-button").toClassName()} onClick={handleSetAudioWave}>
-          {isAudioWave ? "Hide" : "Show"} audio wave
+        <div
+          className={cn("audio-config").elem("menu-button").toClassName()}
+          onClick={handleSetAudioWave}
+        >
+          {isAudioWave ? "隐藏" : "显示"}音频波形
         </div>
         {isFF(FF_AUDIO_SPECTROGRAMS) && (
-          <div className={cn("audio-config").elem("menu-button").toClassName()} onClick={handleSetSpectrogram}>
-            {isSpectrogram ? "Hide" : "Show"} spectrogram
+          <div
+            className={cn("audio-config").elem("menu-button").toClassName()}
+            onClick={handleSetSpectrogram}
+          >
+            {isSpectrogram ? "隐藏" : "显示"}频谱图
           </div>
         )}
       </div>
@@ -180,15 +196,21 @@ export const ConfigControl: FC<ConfigControlProps> = ({
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         style={{ opacity: 0, position: "fixed" }}
       >
-        <div className={cn("audio-config").elem("scroll-content").toClassName()}>
-          <div className={cn("audio-config").elem("section-header").toClassName()}>Playback Settings</div>
+        <div
+          className={cn("audio-config").elem("scroll-content").toClassName()}
+        >
+          <div
+            className={cn("audio-config").elem("section-header").toClassName()}
+          >
+            播放配置
+          </div>
           <Slider
             min={MIN_SPEED}
             max={MAX_SPEED}
             step={0.1}
             value={speed}
-            description={"Playback speed"}
-            info={"Increase or decrease the playback speed"}
+            description={"播放速度"}
+            info={"增加或减少播放速度"}
             onChange={handleChangePlaybackSpeed}
           />
           <Slider
@@ -196,30 +218,38 @@ export const ConfigControl: FC<ConfigControlProps> = ({
             max={MAX_ZOOM}
             step={0.1}
             value={amp}
-            description={"Audio zoom y-axis"}
-            info={"Increase or decrease the appearance of amplitude"}
+            description={"音频缩放Y轴"}
+            info={"增加或减少振幅显示"}
             onChange={handleChangeAmp}
           />
           <div className={cn("audio-config").elem("toggle").toClassName()}>
             <Toggle
               checked={settings?.loopRegion}
               onChange={(e) => changeSetting?.("loopRegion", e.target.checked)}
-              label="Loop Regions"
+              label="循环区域"
               labelProps={{ size: "small" }}
             />
           </div>
           <div className={cn("audio-config").elem("toggle").toClassName()}>
             <Toggle
               checked={settings?.autoPlayNewSegments}
-              onChange={(e) => changeSetting?.("autoPlayNewSegments", e.target.checked)}
-              label="Auto-play New Regions"
+              onChange={(e) =>
+                changeSetting?.("autoPlayNewSegments", e.target.checked)
+              }
+              label="自动播放新区域"
               labelProps={{ size: "small" }}
             />
           </div>
 
           {isFF(FF_AUDIO_SPECTROGRAMS) && (
             <>
-              <div className={cn("audio-config").elem("section-header").toClassName()}>Spectrogram Settings</div>
+              <div
+                className={cn("audio-config")
+                  .elem("section-header")
+                  .toClassName()}
+              >
+                频谱图配置
+              </div>
               <SpectrogramControl waveform={waveform} />
             </>
           )}
@@ -228,7 +258,9 @@ export const ConfigControl: FC<ConfigControlProps> = ({
       </div>
     );
 
-    return typeof document !== "undefined" ? createPortal(modalJSX, document.body) : null;
+    return typeof document !== "undefined"
+      ? createPortal(modalJSX, document.body)
+      : null;
   };
 
   return (
@@ -237,7 +269,11 @@ export const ConfigControl: FC<ConfigControlProps> = ({
       ref={buttonRef as any}
       onClick={(e: MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
     >
-      <ControlButton look={configModal ? "filled" : undefined} onClick={onSetModal} aria-label="Audio settings">
+      <ControlButton
+        look={configModal ? "filled" : undefined}
+        onClick={onSetModal}
+        aria-label="Audio settings"
+      >
         {<IconConfig />}
       </ControlButton>
       {configModal && renderModal()}
