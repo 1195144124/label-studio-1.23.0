@@ -86,7 +86,6 @@ const SmartTools = observer(({ tools }) => {
 
   const hasSelected = tools.some((t) => t.selected);
   console.log(tools);
-  debugger;
   return (
     tools.length > 0 && (
       <div className={cn("toolbar").elem("group").toClassName()}>

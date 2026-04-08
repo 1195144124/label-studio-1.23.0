@@ -56,7 +56,6 @@ export const RegionItem: FC<RegionItemProps> = observer(
       return chroma(bgColor).alpha(1);
     }, [region.background, region.style]);
     console.log(region);
-    debugger;
     return (
       <div
         className={cn("detailed-region").mod({ compact }).toClassName()}
