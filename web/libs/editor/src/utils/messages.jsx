@@ -5,11 +5,11 @@ const URL_TAGS_DOCS = "https://labelstud.io/tags";
 
 export default {
   DONE: "Done!",
-  NO_COMP_LEFT: "No more annotations",
-  NO_NEXT_TASK: "No More Tasks Left in Queue",
-  NO_ACCESS: "You don't have access to this task",
+  NO_COMP_LEFT: "没有更多标注",
+  NO_NEXT_TASK: "队列中无剩余任务",
+  NO_ACCESS: "您无权访问此任务",
 
-  CONFIRM_TO_DELETE_ALL_REGIONS: "Please confirm you want to delete all labeled regions",
+  CONFIRM_TO_DELETE_ALL_REGIONS: "请确认您是否要删除所有已标记的区域",
 
   // Tree validation messages
   ERR_REQUIRED: ({ modelName, field }) => {
@@ -39,7 +39,7 @@ export default {
   },
 
   ERR_INTERNAL: ({ value }) => {
-    return `Internal error. See browser console for more info. Try again or contact developers.<br/>${value}`;
+    return `内部错误。更多信息请查看浏览器控制台。请重试或联系开发者。<br/>${value}`;
   },
 
   ERR_GENERAL: ({ value }) => {
@@ -54,9 +54,9 @@ export default {
     return (
       <div data-testid="error:audio">
         <p>
-          Error while loading audio. Check <code>{attr}</code> field in task.
+          加载音频时出错。请检查 <code>{attr}</code> 任务中的字段。
         </p>
-        <p>Technical description: {error}</p>
+        <p>技术描述: {error}</p>
         <p>URL: {htmlEscape(url)}</p>
       </div>
     );
