@@ -16,6 +16,7 @@ import { cn } from "../../../utils/bem";
 import { NodeIcon } from "../../Node/Node";
 import { LockButton } from "../Components/LockButton";
 import { RegionLabels } from "./RegionLabels";
+import { RegionLabelData } from "../OutlinerPanel/zhLable";
 
 interface RegionItemProps {
   region: any;
@@ -55,7 +56,6 @@ export const RegionItem: FC<RegionItemProps> = observer(
 
       return chroma(bgColor).alpha(1);
     }, [region.background, region.style]);
-    console.log(region);
     return (
       <div
         className={cn("detailed-region").mod({ compact }).toClassName()}
@@ -95,7 +95,8 @@ export const RegionItem: FC<RegionItemProps> = observer(
                 .elem("warning-text")
                 .toClassName()}
             >
-              未完成的 {region.type?.replace("region", "") ?? "区域"}
+              未完成的
+              {RegionLabelData[region.type?.replace("region", "")] ?? "区域"}
             </div>
           </div>
         )}

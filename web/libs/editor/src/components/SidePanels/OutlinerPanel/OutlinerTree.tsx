@@ -35,6 +35,7 @@ import "./TreeView.scss";
 import type { EventDataNode, Key } from "rc-tree/es/interface";
 import ResizeObserver from "../../../utils/resize-observer";
 import { RegionLabel } from "./RegionLabel";
+import { RegionLabelData } from "./zhLable";
 
 const { localStorage } = window;
 const localStoreName = "collapsed-label-pos";
@@ -223,7 +224,6 @@ const useDataTree = ({ regions, rootClass, footer }: any) => {
     const color = chroma(style ?? "#666").alpha(1);
     const mods: Record<string, any> = { hidden, type };
     const label = <RegionLabel item={item} />;
-
     return {
       idx,
       key: id,
@@ -242,9 +242,7 @@ const useDataTree = ({ regions, rootClass, footer }: any) => {
       locked,
     };
   }, []);
-
   const regionsTreeData = regions.getRegionsTree(processor);
-
   if (footer) {
     regionsTreeData.push({
       key: "__footer__",
@@ -432,7 +430,6 @@ const RootTitle: FC<any> = observer(
     );
 
     const incomplete = item?.incomplete;
-
     return (
       <div className={cn("outliner-item").mod({ incomplete }).toClassName()}>
         <div className={cn("outliner-item").elem("content").toClassName()}>
@@ -453,7 +450,7 @@ const RootTitle: FC<any> = observer(
                 className={cn("outliner-item").elem("incomplete").toClassName()}
               >
                 <Tooltip
-                  title={`未完成的 ${item.type?.replace("region", "") ?? "区域"}`}
+                  title={`未完成的 ${RegionLabelData[item.type?.replace("region", "")] ?? "区域"}`}
                 >
                   <IconWarning />
                 </Tooltip>
@@ -623,7 +620,7 @@ const RegionControls: FC<RegionControlsProps> = injector(
                   onClick={onToggleLocked}
                   variant="neutral"
                   look="string"
-                  tooltip={item?.locked ? "Unlock Region" : "Lock Region"}
+                  tooltip={item?.locked ? "解锁区域" : "锁定区域"}
                 />
               </div>
             )}

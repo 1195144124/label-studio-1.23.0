@@ -1,0 +1,18 @@
+export const RegionLabelData: Record<string, string> = {
+  textrange: "文本范围",
+  richtext: "富文本",
+  textarea: "文本标注区",
+  paragraphs: "段落",
+  timeseries: "时间序列",
+  audio: "音频",
+  video: "视频",
+  rectangle: "矩形",
+  ellipse: "椭圆",
+  polygon: "多边形",
+  vector: "矢量路径",
+  keypoint: "关键点",
+  brush: "画笔",
+  bitmask: "位掩码",
+  Timeline: "时间轴",
+  videorectangle: "视频矩形",
+};

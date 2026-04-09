@@ -85,7 +85,6 @@ const SmartTools = observer(({ tools }) => {
   const selected = useMemo(() => tools[selectedIndex], [selectedIndex]);
 
   const hasSelected = tools.some((t) => t.selected);
-  console.log(tools);
   return (
     tools.length > 0 && (
       <div className={cn("toolbar").elem("group").toClassName()}>

@@ -20,7 +20,10 @@ const RegionsMixin = types
     // Dynamic preannotations enabled
     dynamic: false,
 
-    origin: types.optional(types.enumeration(["prediction", "prediction-changed", "manual"]), "manual"),
+    origin: types.optional(
+      types.enumeration(["prediction", "prediction-changed", "manual"]),
+      "manual",
+    ),
 
     item_index: types.maybeNull(types.number),
   })
@@ -80,7 +83,9 @@ const RegionsMixin = types
 
       const result = regions.filter((region) => {
         if (excludeSelf && region === self) return false;
-        const canBePartOfNotification = self.supportSuggestions ? self.dynamic : true;
+        const canBePartOfNotification = self.supportSuggestions
+          ? self.dynamic
+          : true;
 
         return (
           canBePartOfNotification &&
@@ -107,7 +112,9 @@ const RegionsMixin = types
       // There are two modes:
       // If object tag support suggestions - the region should be marked as a dynamic one to make notifications
       // If object tag doesn't support suggestions - every region works as dynamic with auto suggestions
-      const canBeReasonOfNotification = self.supportSuggestions ? self.dynamic && !self.fromSuggestion : true;
+      const canBeReasonOfNotification = self.supportSuggestions
+        ? self.dynamic && !self.fromSuggestion
+        : true;
 
       const isSmartEnabled = self.results.some((r) => r.from_name.smartEnabled);
 
@@ -130,7 +137,8 @@ const RegionsMixin = types
       },
 
       setItemIndex(index) {
-        if (!isDefined(index)) throw new Error("Index must be provided for", self);
+        if (!isDefined(index))
+          throw new Error("Index must be provided for", self);
         self.item_index = index;
       },
 
@@ -182,7 +190,8 @@ const RegionsMixin = types
       onClickRegion(ev) {
         const annotation = self.annotation;
 
-        if (!self.isReadOnly() && (self.isDrawing || annotation.isDrawing)) return;
+        if (!self.isReadOnly() && (self.isDrawing || annotation.isDrawing))
+          return;
 
         if (!self.isReadOnly() && annotation.isLinkingMode) {
           annotation.addLinkedRegion(self);
@@ -262,7 +271,6 @@ const RegionsMixin = types
 
           self.drawingTimeout = setTimeout(() => {
             const connectedRegions = self.getConnectedDynamicRegions(destroy);
-
             env.events.invoke("regionFinishedDrawing", self, connectedRegions);
           }, timeout);
         }
@@ -270,4 +278,8 @@ const RegionsMixin = types
     };
   });
 
-export default types.compose(RegionsMixin, ReadOnlyRegionMixin, AnnotationMixin);
+export default types.compose(
+  RegionsMixin,
+  ReadOnlyRegionMixin,
+  AnnotationMixin,
+);

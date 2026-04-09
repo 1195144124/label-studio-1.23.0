@@ -394,7 +394,6 @@ const SideTabsPanelsComponent: FC<SidePanelsProps> = ({
         const panelsToAdjust = detached
           ? [key]
           : findPanelsOnSameSide(panelData[key]?.alignment);
-
         panelsToAdjust.forEach((panelKey) => {
           updatePanel(panelKey, {
             top,

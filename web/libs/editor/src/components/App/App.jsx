@@ -28,7 +28,12 @@ import { Space } from "../../common/Space/Space";
 import { Button } from "@humansignal/ui";
 import { isStarterCloudPlan } from "@humansignal/core";
 import { cn } from "../../utils/bem";
-import { FF_BULK_ANNOTATION, FF_LSDV_4620_3_ML, FF_SIMPLE_INIT, isFF } from "../../utils/feature-flags";
+import {
+  FF_BULK_ANNOTATION,
+  FF_LSDV_4620_3_ML,
+  FF_SIMPLE_INIT,
+  isFF,
+} from "../../utils/feature-flags";
 import { reactCleaner } from "../../utils/reactCleaner";
 import { guidGenerator } from "../../utils/unique";
 import { isDefined, sortAnnotations } from "../../utils/utilities";
@@ -83,7 +88,10 @@ class App extends Component {
   renderSuccess() {
     return (
       <div className={cn("editor").toClassName()}>
-        <Result status="success" title={getEnv(this.props.store).messages.DONE} />
+        <Result
+          status="success"
+          title={getEnv(this.props.store).messages.DONE}
+        />
       </div>
     );
   }
@@ -91,7 +99,10 @@ class App extends Component {
   renderNoAnnotation() {
     return (
       <div className={cn("editor").toClassName()}>
-        <Result status="success" title={getEnv(this.props.store).messages.NO_COMP_LEFT} />
+        <Result
+          status="success"
+          title={getEnv(this.props.store).messages.NO_COMP_LEFT}
+        />
       </div>
     );
   }
@@ -108,8 +119,13 @@ class App extends Component {
           paddingBottom: "30vh",
         }}
       >
-        <Result status="success" title={getEnv(this.props.store).messages.NO_NEXT_TASK} />
-        <div className={cn("sub__result").toClassName()}>All tasks in the queue have been completed</div>
+        <Result
+          status="success"
+          title={getEnv(this.props.store).messages.NO_NEXT_TASK}
+        />
+        <div className={cn("sub__result").toClassName()}>
+          All tasks in the queue have been completed
+        </div>
         {store.taskHistory.length > 0 && (
           <Button
             onClick={(e) => store.prevTask(e, true)}
@@ -127,7 +143,10 @@ class App extends Component {
   renderNoAccess() {
     return (
       <div className={cn("editor").toClassName()}>
-        <Result status="warning" title={getEnv(this.props.store).messages.NO_ACCESS} />
+        <Result
+          status="warning"
+          title={getEnv(this.props.store).messages.NO_ACCESS}
+        />
       </div>
     );
   }
@@ -136,7 +155,9 @@ class App extends Component {
     return (
       <div className={cn("main-view").toClassName()}>
         <div className={cn("main-view").elem("annotation").toClassName()}>
-          <TreeValidation errors={this.props.store.annotationStore.validation} />
+          <TreeValidation
+            errors={this.props.store.annotationStore.validation}
+          />
         </div>
       </div>
     );
@@ -170,7 +191,10 @@ class App extends Component {
     const { id, queue } = getRoot(as).task;
 
     return (
-      <Space className={cn("main-view").elem("infobar").toClassName()} size="small">
+      <Space
+        className={cn("main-view").elem("infobar").toClassName()}
+        size="small"
+      >
         <span>Task #{id}</span>
 
         {queue && <span>{queue}</span>}
@@ -209,8 +233,17 @@ class App extends Component {
     const { store } = this.props;
     const { commentStore } = store;
 
-    if (!store.hasInterface("annotations:comments") || !commentStore.isCommentable) return null;
-    return <CommentsOverlay commentStore={commentStore} annotation={selectedAnnotation} />;
+    if (
+      !store.hasInterface("annotations:comments") ||
+      !commentStore.isCommentable
+    )
+      return null;
+    return (
+      <CommentsOverlay
+        commentStore={commentStore}
+        annotation={selectedAnnotation}
+      />
+    );
   }
 
   render() {
@@ -244,10 +277,15 @@ class App extends Component {
       </div>
     );
 
-    const isBulkMode = isFF(FF_BULK_ANNOTATION) && !isStarterCloudPlan() && store.hasInterface("annotation:bulk");
+    const isBulkMode =
+      isFF(FF_BULK_ANNOTATION) &&
+      !isStarterCloudPlan() &&
+      store.hasInterface("annotation:bulk");
     return (
       <div
-        className={cn("editor").mod({ fullscreen: settings.fullscreen }).toClassName()}
+        className={cn("editor")
+          .mod({ fullscreen: settings.fullscreen })
+          .toClassName()}
         ref={isFF(FF_LSDV_4620_3_ML) ? reactCleaner(this) : null}
       >
         <QueryClientProvider client={queryClient}>
@@ -262,7 +300,9 @@ class App extends Component {
                 {store.description}
               </InstructionsModal>
 
-              {isDefined(store) && store.hasInterface("topbar") && <TopBar store={store} />}
+              {isDefined(store) && store.hasInterface("topbar") && (
+                <TopBar store={store} />
+              )}
               <div
                 className={cn("wrapper")
                   .mod({
@@ -275,7 +315,9 @@ class App extends Component {
                 {isBulkMode || !store.hasInterface("side-column") ? (
                   <>
                     {mainContent}
-                    {store.hasInterface("topbar") && <BottomBar store={store} />}
+                    {store.hasInterface("topbar") && (
+                      <BottomBar store={store} />
+                    )}
                   </>
                 ) : (
                   <SideTabsPanels
@@ -284,10 +326,14 @@ class App extends Component {
                     regions={as.selected.regionStore}
                     showComments={store.hasInterface("annotations:comments")}
                     showCustomTab={hasTagInSidebar(as.selected)}
-                    focusTab={store.commentStore.tooltipMessage ? "comments" : null}
+                    focusTab={
+                      store.commentStore.tooltipMessage ? "comments" : null
+                    }
                   >
                     {mainContent}
-                    {store.hasInterface("topbar") && <BottomBar store={store} />}
+                    {store.hasInterface("topbar") && (
+                      <BottomBar store={store} />
+                    )}
                   </SideTabsPanels>
                 )}
               </div>

@@ -1,6 +1,6 @@
 import { observer } from "mobx-react";
 import { cn } from "../../../utils/bem";
-
+import { RegionLabelData } from "./zhLable";
 export type RegionLabelProps = {
   item: any;
 };
@@ -55,6 +55,6 @@ export const RegionLabel = observer(({ item }: RegionLabelProps) => {
     );
   }
   if (type.includes("tool")) {
-    return item.value;
+    return RegionLabelData[item.value] || item.value;
   }
 });

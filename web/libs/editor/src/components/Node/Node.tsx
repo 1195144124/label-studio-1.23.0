@@ -171,7 +171,6 @@ const NodeIcon: FC<any> = observer(({ node, ...props }) => {
     console.error(`No ${name} in NodeView`);
     return null;
   }
-
   const { icon: Icon } = NodeViews[name];
 
   return <Icon {...props} />;
