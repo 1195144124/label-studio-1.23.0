@@ -100,6 +100,8 @@ If for any reason you need to format or lint using the same `pre-commit` hooks d
 
 This software is licensed under the [Apache 2.0 LICENSE](../LICENSE) © [HumanSignal](https://www.humansignal.com/). 2020
 
+## 打包
+
 lsf:serve 启动编辑器示例editor
 
 lsf:serve-static 打包editor 通过导入 dist\libs\editor/
