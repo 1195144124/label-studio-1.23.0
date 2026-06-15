@@ -176,7 +176,7 @@ const RelationMeta: FC<any> = observer(({ relation }) => {
       <Select
         multiple={selectionMode}
         style={{ width: "100%" }}
-        placeholder="Select labels"
+        placeholder="请选择"
         value={selectedValues}
         onChange={onChange}
         options={options}

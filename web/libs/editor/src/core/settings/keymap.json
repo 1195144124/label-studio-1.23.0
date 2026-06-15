@@ -130,7 +130,7 @@
     "description": "退出关系模式，取消选择区域"
   },
   "region:delete": {
-    "key": "backspace",
+    "key": "backspace,delete",
     "description": "删除选中区域"
   },
   "region:cycle": {
