@@ -4,6 +4,54 @@ import { Geometry } from "./Geometry";
 import { RelationShape } from "./RelationShape";
 import { createPropertyWatcher, DOMWatcher } from "./watchers";
 
+/**
+ * 预设的关系颜色数组
+ */
+const RELATION_COLORS = [
+  "#1890ff", // 蓝色
+  "#52c41a", // 绿色
+  "#faad14", // 黄色
+  "#f5222d", // 红色
+  "#722ed1", // 紫色
+  "#eb2f96", // 粉色
+  "#13c2c2", // 青色
+  "#fa8c16", // 橙色
+  "#eb3349", // 玫红
+  "#389e0d", // 深绿
+  "#0099ff", // 天蓝
+  "#67be68", // 浅绿
+  "#ffcc00", // 金黄
+  "#ff6666", // 浅红
+  "#9966ff", // 浅紫
+  "#ff66cc", // 浅粉
+  "#00cccc", // 蓝绿
+  "#ff9933", // 深橙
+  "#104399", // 深蓝
+  "#33cc33", // 亮绿
+];
+
+/**
+ * 根据标签值生成颜色
+ * 相同的标签值会生成相同的颜色，不同的标签值会生成不同的颜色
+ */
+const getColorByLabel = (labels) => {
+  if (!labels || labels.length === 0) {
+    // 如果没有标签，使用默认颜色
+    return "#fa541c";
+  }
+
+  // 使用标签字符串生成哈希值
+  const labelStr = wrapArray(labels).join(",");
+  let hash = 0;
+  for (let i = 0; i < labelStr.length; i++) {
+    hash = labelStr.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  // 使用哈希值选择颜色
+  const index = Math.abs(hash) % RELATION_COLORS.length;
+  return RELATION_COLORS[index];
+};
+
 const parentImagePropsWatch = {
   parent: [
     "zoomScale",
@@ -33,19 +81,47 @@ const obtainWatcher = (node) => {
       return createPropertyWatcher(["bboxTriggers"]);
     }
     case "rectangleregion":
-      return createPropertyWatcher(["x", "y", "width", "height", "hidden", parentImagePropsWatch]);
+      return createPropertyWatcher([
+        "x",
+        "y",
+        "width",
+        "height",
+        "hidden",
+        parentImagePropsWatch,
+      ]);
     case "ellipseregion":
-      return createPropertyWatcher(["x", "y", "radiusX", "radiusY", "rotation", "hidden", parentImagePropsWatch]);
+      return createPropertyWatcher([
+        "x",
+        "y",
+        "radiusX",
+        "radiusY",
+        "rotation",
+        "hidden",
+        parentImagePropsWatch,
+      ]);
     case "polygonregion":
-      return createPropertyWatcher(["hidden", { points: ["x", "y"] }, parentImagePropsWatch]);
+      return createPropertyWatcher([
+        "hidden",
+        { points: ["x", "y"] },
+        parentImagePropsWatch,
+      ]);
     case "vectorregion":
       return createPropertyWatcher(["hidden", "bbox", parentImagePropsWatch]);
     case "keypointregion":
       return createPropertyWatcher(["x", "y", "hidden", parentImagePropsWatch]);
     case "brushregion":
-      return createPropertyWatcher(["needsUpdate", "hidden", "touchesLength", parentImagePropsWatch]);
+      return createPropertyWatcher([
+        "needsUpdate",
+        "hidden",
+        "touchesLength",
+        parentImagePropsWatch,
+      ]);
     case "timeseriesregion":
-      return createPropertyWatcher(["start", "end", { parent: ["zoomedRange"] }]);
+      return createPropertyWatcher([
+        "start",
+        "end",
+        { parent: ["zoomedRange"] },
+      ]);
     default:
       return null;
   }
@@ -63,7 +139,9 @@ const connect = (relation, root) => {
   return {
     id: relation.id,
     label: wrapArray(relation.labels ?? []).join(", "),
-    color: "#fa541c",
+    labels: relation.labels, // 保留原始标签数组，用于颜色计算
+    // 根据关系标签动态生成颜色
+    color: getColorByLabel(relation.labels),
     direction: relation.direction,
     start: createShape(relation.startNode, root),
     end: createShape(relation.endNode, root),
@@ -101,7 +179,10 @@ const calculateBBox = (shape, root) => {
 };
 
 const getNodesBBox = ({ start, end, root }) => {
-  const [startBBox, endBBox] = Geometry.closestRects(calculateBBox(start, root), calculateBBox(end, root));
+  const [startBBox, endBBox] = Geometry.closestRects(
+    calculateBBox(start, root),
+    calculateBBox(end, root),
+  );
 
   return {
     start: startBBox,
@@ -170,7 +251,10 @@ const calculateSidePath = ({ x1, y1, w1, h1, x2, y2, w2, h2, limit }) => {
   return { x1: xs1, x2: xs2, y1: ys1, y2: ys2, l1, l2, toEnd, renderingSide };
 };
 
-const buildPathCommand = ({ x1, y1, x2, y2, l1, l2, toEnd, renderingSide }, orientation) => {
+const buildPathCommand = (
+  { x1, y1, x2, y2, l1, l2, toEnd, renderingSide },
+  orientation,
+) => {
   const radius = 5;
   const vertical = orientation === "vertical";
 
@@ -265,7 +349,9 @@ const calculatePath = (start, end) => {
     w2,
   });
 
-  const coordinatesCalculator = intersecting ? calculateSidePath : calculateTopPath;
+  const coordinatesCalculator = intersecting
+    ? calculateSidePath
+    : calculateTopPath;
   const coordinates = coordinatesCalculator({
     x1,
     y1,
@@ -278,7 +364,10 @@ const calculatePath = (start, end) => {
     limit,
   });
 
-  const pathCommand = buildPathCommand(coordinates, intersecting ? "horizontal" : "vertical");
+  const pathCommand = buildPathCommand(
+    coordinates,
+    intersecting ? "horizontal" : "vertical",
+  );
 
   return pathCommand;
 };

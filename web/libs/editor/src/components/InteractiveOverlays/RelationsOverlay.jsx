@@ -59,10 +59,57 @@ const RelationConnector = ({ id, command, color, direction, highlight }) => {
   );
 };
 
-const RelationLabel = ({ label, position }) => {
+/**
+ * 预设的关系颜色数组（与 NodesConnector.js 保持一致）
+ */
+const RELATION_COLORS = [
+  "#1890ff", // 蓝色
+  "#52c41a", // 绿色
+  "#faad14", // 黄色
+  "#f5222d", // 红色
+  "#722ed1", // 紫色
+  "#eb2f96", // 粉色
+  "#13c2c2", // 青色
+  "#fa8c16", // 橙色
+  "#eb3349", // 玫红
+  "#389e0d", // 深绿
+  "#0099ff", // 天蓝
+  "#67be68", // 浅绿
+  "#ffcc00", // 金黄
+  "#ff6666", // 浅红
+  "#9966ff", // 浅紫
+  "#ff66cc", // 浅粉
+  "#00cccc", // 蓝绿
+  "#ff9933", // 深橙
+  "#104399", // 深蓝
+  "#33cc33", // 亮绿
+];
+
+/**
+ * 根据标签值生成颜色
+ */
+const getColorByLabel = (labels) => {
+  if (!labels || labels.length === 0) {
+    return "#fa541c";
+  }
+
+  const labelStr = Array.isArray(labels) ? labels.join(",") : String(labels);
+  let hash = 0;
+  for (let i = 0; i < labelStr.length; i++) {
+    hash = labelStr.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  const index = Math.abs(hash) % RELATION_COLORS.length;
+  return RELATION_COLORS[index];
+};
+
+const RelationLabel = ({ label, position, labels }) => {
   const [x, y] = position;
   const textRef = useRef();
   const [background, setBackground] = useState({ width: 0, height: 0, x: 0, y: 0 });
+
+  // 根据标签动态获取颜色
+  const bgColor = getColorByLabel(labels);
 
   const groupAttributes = {
     transform: `translate(${x}, ${y})`,
@@ -89,7 +136,7 @@ const RelationLabel = ({ label, position }) => {
 
   return (
     <g {...groupAttributes}>
-      <rect {...background} stroke="#fff" strokeWidth={2} fill="#a0a" rx="3" />
+      <rect {...background} stroke={bgColor} strokeWidth={2} fill={bgColor} rx="3" />
       <text ref={textRef} {...textAttributes}>
         {label}
       </text>
@@ -129,7 +176,7 @@ const RelationItem = ({ id, startNode, endNode, direction, rootRef, highlight, d
         direction={relation.direction}
         highlight={highlight}
       />
-      {relation.label && <RelationLabel label={relation.label} position={textPosition} />}
+      {relation.label && <RelationLabel label={relation.label} position={textPosition} labels={relation.labels} />}
     </g>
   );
 };
