@@ -9,6 +9,7 @@ import Constants from "../../core/Constants";
 import { customTypes } from "../../core/CustomTypes";
 import { guidGenerator } from "../../core/Helpers";
 import Registry from "../../core/Registry";
+import Tree from "../../core/Tree";
 import Types from "../../core/Types";
 import { AnnotationMixin } from "../../mixins/AnnotationMixin";
 import ProcessAttrsMixin from "../../mixins/ProcessAttrs";
@@ -72,8 +73,10 @@ const Model = types
     type: "label",
     visible: types.optional(types.boolean, true),
     _value: types.optional(types.string, ""),
+    children: Types.unionArray(["label", "view", "header"]),
     parentTypes: types.late(() =>
       Types.tagsTypes([
+        "Label",
         "Labels",
         "EllipseLabels",
         "RectangleLabels",
@@ -94,6 +97,7 @@ const Model = types
     return {
       initiallySelected: self.selected,
       isEmpty: false,
+      expanded: false,
     };
   })
   .views((self) => ({
@@ -113,8 +117,17 @@ const Model = types
       if (!self.maxUsages) return true;
       return self.usedAlready() + count <= self.maxUsages;
     },
+
+    get hasChildren() {
+      return self.children && self.children.length > 0;
+    },
   }))
   .actions((self) => ({
+    toggleExpanded(e) {
+      if (e && e.stopPropagation) e.stopPropagation();
+      self.expanded = !self.expanded;
+    },
+
     setEmpty() {
       self.isEmpty = true;
     },
@@ -122,6 +135,33 @@ const Model = types
      * Select label
      */
     toggleSelected() {
+      const labels = self.parent;
+
+      // 如果父级是另一个 Label（嵌套标签），需要向上查找根 Labels 父级来判断单选/多选模式
+      if (labels.type === "label") {
+        let rootLabels = labels;
+
+        while (rootLabels.parent && rootLabels.parent.type === "label") {
+          rootLabels = rootLabels.parent;
+        }
+        rootLabels = rootLabels.parent;
+
+        if (rootLabels && rootLabels.shouldBeUnselected) {
+          const unselectRecursive = (items) => {
+            items.forEach((item) => {
+              item.setSelected(false);
+              if (item.children && item.children.length > 0) {
+                unselectRecursive(item.children);
+              }
+            });
+          };
+
+          unselectRecursive(rootLabels.tiedChildren);
+        }
+        self.setSelected(!self.selected);
+        return;
+      }
+
       let sameObjectSelectedRegions = [];
 
       // here we check if you click on label from labels group
@@ -160,8 +200,6 @@ const Model = types
         InfoModal.warning(`You can't use ${self.value} more than ${self.maxUsages} time(s)`);
         return;
       }
-
-      const labels = self.parent;
 
       // check if there is a region selected and if it is and user
       // is changing the label we need to make sure that region is
@@ -305,16 +343,8 @@ const HtxLabelView = inject("store")(
       store.settings.enableHotkeys &&
       item.hotkey;
 
-    const label = (
-      <Label
-        color={item.background}
-        margins
-        empty={item.isEmpty}
-        hotkey={hotkey}
-        hidden={!item.visible}
-        selected={item.selected}
-        onClick={item.onClick}
-      >
+    const labelContent = (
+      <>
         {item.html ? (
           <div title={item._value} dangerouslySetInnerHTML={{ __html: sanitizeHtml(item.html) }} />
         ) : (
@@ -323,7 +353,35 @@ const HtxLabelView = inject("store")(
         {item.showalias === true && item.alias && (
           <span style={Utils.styleToProp(item.aliasstyle)}>&nbsp;{item.alias}</span>
         )}
-      </Label>
+      </>
+    );
+
+    const label = (
+      <span className="label__nested-wrapper">
+        <Label
+          color={item.background}
+          empty={item.isEmpty}
+          hotkey={hotkey}
+          hidden={!item.visible}
+          selected={item.selected}
+          onClick={item.onClick}
+        >
+          {item.hasChildren && (
+            <span
+              className={`label__toggle ${item.expanded ? "label__toggle--expanded" : ""}`}
+              onClick={item.toggleExpanded}
+            >
+              {item.expanded ? "▼" : "▶"}
+            </span>
+          )}
+          {labelContent}
+        </Label>
+        {item.hasChildren && item.expanded && (
+          <div className="label__children">
+            {Tree.renderChildren(item, item.annotation)}
+          </div>
+        )}
+      </span>
     );
 
     return item.hint ? <Tooltip title={item.hint}>{label}</Tooltip> : label;

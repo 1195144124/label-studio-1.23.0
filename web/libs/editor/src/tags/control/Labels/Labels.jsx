@@ -64,6 +64,7 @@ import "./Labels.scss";
  * @param {string=} [strokeColor=#f48a42]    - Stroke color in hexadecimal
  * @param {number=} [strokeWidth=1]          - Width of the stroke
  * @param {string} [value]                   - Task data field containing a list of dynamically loaded labels (see example below)
+ * @param {boolean} [treeStyle=false]        - Whether to display labels in a tree structure with connecting lines (supports nested labels)
  */
 const TagAttrs = types.model({
   toname: types.maybeNull(types.string),
@@ -71,6 +72,7 @@ const TagAttrs = types.model({
   choice: types.optional(types.enumeration(["single", "multiple"]), "single"),
   maxusages: types.maybeNull(types.string),
   showinline: types.optional(types.boolean, true),
+  treestyle: types.optional(types.boolean, false),
 
   // TODO this will move away from here
   groupdepth: types.maybeNull(types.string),
@@ -146,7 +148,11 @@ const LabelsModel = types.compose(
 
 const HtxLabels = observer(({ item }) => {
   return (
-    <div className={cn("labels").mod({ hidden: !item.visible, inline: item.showinline }).toClassName()}>
+    <div
+      className={cn("labels")
+        .mod({ hidden: !item.visible, inline: item.showinline, tree: item.treestyle })
+        .toClassName()}
+    >
       {Tree.renderChildren(item, item.annotation)}
     </div>
   );

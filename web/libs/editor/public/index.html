@@ -274,69 +274,82 @@
           },
         },
       };
-
+//choice="multiple" 多选
       var ls = new LabelStudio("label-studio", {
-        config: `
-         <View>
-  <TimeSeriesLabels name="label" toName="ts">
-    <Label value="Run" background="red"/>
-    <Label value="Walk" background="green"/>
-  </TimeSeriesLabels>
+    config: `<View style="display:flex;gap:20px">
+<View>
+<Labels name="labels" toName="text" fillOpacity="0.5" strokeWidth="5"  treeStyle="true" >
+    <Label value="建筑" background="green">
+      <Label value="住宅" background="lightgreen">
+        <Label value="独栋" background="#a8e6a8" />
+        <Label value="联排" background="#90d890" />
+        <Label value="公寓" background="#78ca78" />
+      </Label>
+      <Label value="商业楼" background="darkgreen">
+        <Label value="写字楼" background="#5a9e5a" />
+        <Label value="商场" background="#4a8e4a" />
+      </Label>
+      <Label value="工厂" background="olive" />
+    </Label>
+    <Label value="车辆" background="blue">
+      <Label value="汽车" background="lightblue">
+        <Label value="轿车" background="#a8c8f0" />
+        <Label value="SUV" background="#90b8e0" />
+        <Label value="卡车" background="#78a8d0" />
+      </Label>
+      <Label value="摩托车" background="royalblue" />
+    </Label>
+    <Label value="行人" background="orange" />
+  </Labels>
+  </View>
+  <View>
+  <Text name="text" value="$text"/>
+  </View>
+</View>`,
+    interfaces: [
+      'panel',
+      'update',
+      'submit',
+      'skip',
+      'controls',
+      'review',
+      'infobar',
+      'topbar',
+      'instruction',
+      'side-column',
+      'ground-truth',
+      'annotations:tabs',
+      'annotations:menu',
+      'annotations:current',
+      'annotations:add-new',
+      'annotations:delete',
+      'annotations:view-all',
+      'predictions:tabs',
+      'predictions:menu',
+      'auto-annotation',
+      'edit-history',
+      'topbar:prevnext',
+    ],
+    task: {
+      data: {
+        "text": "中国建筑行业近年来发展迅速，各类建筑项目遍布全国。从北方的住宅小区到南方的商业中心，建筑风格多样。独栋别墅通常位于城市郊区，环境优美，适合家庭居住。联排别墅则多建于城市中心，交通便利。高层公寓是现代都市中最常见的住宅形式，尤其是在人口密集的大城市。商业楼宇包括写字楼、商场和酒店等，为城市经济活动提供重要场所。工厂建筑则分布在工业园区，支持制造业发展。车辆是现代交通的重要组成部分。汽车包括轿车、运动型多功能车和卡车等多种类型。轿车适合城市通勤，SUV则更适合长途旅行和越野。卡车在物流运输中扮演关键角色。摩托车以其灵活性和经济性受到许多人的喜爱。行人是城市交通中不可忽视的群体，城市规划中需要考虑行人安全。建筑设计与城市规划相互关联，好的设计能提升城市品质。绿色建筑理念逐渐普及，节能环保成为新趋势。建筑材料不断创新，钢结构、玻璃幕墙广泛应用。智能化建筑系统提高了居住舒适度。交通基础设施包括道路、桥梁和隧道，连接城市各个区域。公共交通系统如地铁和公交减少了私家车使用。共享单车解决了最后一公里问题。城市人口增长带来住房需求，房地产行业持续繁荣。建筑工人用汗水筑起高楼大厦。建筑师通过创意设计改变城市面貌。室内设计关注空间利用和美观。园林景观为城市增添自然气息。历史建筑保护与文化传承密切相关。现代科技如建筑信息模型提高了工程效率。建筑业带动了相关产业链发展。未来建筑将更加智能化和可持续化。城市交通管理需要科技创新。自动驾驶技术可能改变出行方式。新能源汽车逐渐取代传统燃油车。充电桩等配套设施不断完善。交通安全教育从小抓起。城市规划需要综合考虑多方面因素。社区建设强调邻里关系和谐。公共空间如图书馆和公园丰富市民生活。建筑风格反映时代特征和文化内涵。中国古典建筑如故宫展现传统魅力。现代地标建筑如上海中心大厦彰显技术实力。桥梁如港珠澳大桥连接区域经济。机场和高铁站成为城市门户。地下空间开发拓展城市容量。海绵城市理念应对雨洪挑战。建筑业面临劳动力短缺和成本上升压力。装配式建筑提高施工效率。建筑垃圾资源化利用保护环境。文化遗产保护与城市发展需要平衡。以人为本的设计理念日益重要。住宅舒适度影响生活质量。商业空间设计影响消费体验。办公环境设计影响工作效率。建筑设计需要遵循规范标准。建筑安全始终是第一位的。抗震设计在地震多发区尤为重要。防火设计保护生命财产安全。建筑节能降低运营成本。可再生能源在建筑中的应用增多。建筑行业数字化转型加速。人工智能辅助设计和施工。机器人技术在建筑工地应用。旧城改造提升居住条件。新区开发拓展城市空间。城市更新让老城区焕发活力。建筑不仅是物质空间更是文化载体。城市交通拥堵问题亟待解决。共享出行改变出行习惯。步行友好城市提升幸福感。自行车道建设促进绿色出行。公共交通优先政策减少拥堵。城市规划需要公众参与。建筑评论推动行业发展。建筑教育培养专业人才。国际合作促进技术交流。建筑展览展示最新成果。建筑奖项激励创新设计。建筑类图书和杂志传播知识。建筑旅游成为新热点。城市夜景照明美化环境。建筑摄影记录城市变迁。建筑相关法律保护权益。物业管理服务提升居住品质。社区文化丰富居民生活。建筑行业未来充满机遇与挑战。我们期待更美好的城市和建筑。"
+      },
+    },
 
-  <TimeSeries name="ts" value="$timeseries" valueType="json"
-              timeColumn="time" format="date"
-             >
-    <Channel column="value" legend="Signal" strokeColor="#1f77b4" />
-  </TimeSeries>
-</View>
-                          `,
-        interfaces: [
-          "panel",
-          "update",
-          "submit",
-          // "skip",
-          // "controls",
-          // "review",
-          // "infobar",
-          // "topbar",
-          // "instruction",
-          "side-column",
-          "ground-truth",
-          "annotations:tabs",
-          "annotations:menu",
-          "annotations:current",
-          "annotations:add-new",
-          "annotations:delete",
-          "annotations:view-all",
-          "predictions:tabs",
-          "predictions:menu",
-          "auto-annotation",
-          "edit-history",
-          "topbar:prevnext",
-        ],
-        task: {
-          annotations: [],
-          data: {
-            "timeseries": {
-              "time": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100],
-              "value": [-0.18537944444747936, -0.3340718026959422, 1.488043724321256, -0.5726796863343936, -0.39335865647873414, 0.3139178955136642, 1.352383744799923, -1.8454623564080672, 0.24013382763838015, -1.6912813577326158, 1.3780753509071653, -0.42234355135510854, 1.0599092773848258, -0.24311353560941093, -1.6160238608768667, -1.0277889699138552, 0.321945646000442, 1.4288283031462463, 0.7531022343909071, -1.8675450112261847, -0.2847808632512153, -0.40326296274589485, -0.5200764931569655, -0.6740633210214315, 0.15124208098034284, -1.1921335289623276, -0.4866351272531736, -1.5108756623009465, 1.0009920059406254, 0.2728503966555585, 1.497441478225352, -0.1993779508269728, 1.355352323204209, 1.627746863572145, 0.017456258333489322, 0.945094780929406, 1.2310658916734663, 0.2606684296840414, -1.1442418693586918, 0.1951133906105412, 0.17979840623869195, 0.9853599303291107, -0.09804054875417396, 0.6887859596682665, 0.9734064428042046, 0.07851430203791547, 0.40304354990529245, -1.1185760143680195, -0.0006002633682086792, 0.15742278825712935, 0.16331092781137416, -0.5766162927354598, -1.859426319991908, 0.10688320954219749, -1.0312757853375636, -0.2773073625162237, 0.4123366533784094, 0.5655276808818062, -0.1266763413316688, 1.0649525660160177, 0.6879023309671172, 1.3255148133238748, -1.4094757984643795, 0.8636388793459335, -0.5547242528518336, -1.2467901247134137, -0.7777077755354903, -0.9799664634927471, -0.8995184126869639, -0.6274682658106722, -0.6030555714654419, -0.20235732513049373, 1.1258433354850115, 0.7540002801033662, -0.277722147829284, -0.18404282190175672, 1.9313138723447454, -1.1889243255634165, 1.8340811072838923, 0.8448757312650953, -1.7208483102235566, 2.1334076169260245, 0.6192448247705521, -0.38990196969095436, 1.001740717142648, -0.1664728112665807, -0.26851312369383024, -2.6774608267398206, 0.24938214452084928, -0.20997972293425957, 1.2219147513158253, 0.2000763065984595, -0.346042491514415, -0.4025502101602933, -2.0552261219059567, -1.3746290001275956, -0.4626097331380394, -0.025583227315144955, 1.3297066170226557, -0.18686308290201764]
-            }
-          },
-        },
-        onLabelStudioLoad: (LS) => {
-          var c = LS.annotationStore.addAnnotation({
-            userGenerate: true,
-          });
-          LS.annotationStore.selectAnnotation(c.id);
-        },
-        onSubmitAnnotation: (ls, annotation) => {
-          console.log(
-            annotation.serializeAnnotation(),
-            JSON.stringify(annotation.serializeAnnotation()),
-          );
-          // emit('onSubmitAnnotation', annotation.toJSON());
-        },
+    onLabelStudioLoad: (LS) => {
+      var c = LS.annotationStore.addAnnotation({
+        userGenerate: true,
       });
+      LS.annotationStore.selectAnnotation(c.id);
+    },
+    onSubmitAnnotation: (ls, annotation) => {
+      console.log(
+        annotation.serializeAnnotation(),
+        JSON.stringify(annotation.serializeAnnotation()),
+      );
+      // emit('onSubmitAnnotation', annotation.toJSON());
+    },
+  });
 
       ls.on("storageInitialized", (store) => {
         ls.on("selectAnnotation", (next) => {

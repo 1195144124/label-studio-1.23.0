@@ -141,7 +141,18 @@
       }, {"$ref": "#/definitions/Choice"}]
     },
     "Label": {
-      "$ref": "#/definitions/tag_with_value"
+      "type": "object",
+      "required": ["@value"],
+      "properties": {
+        "@value": {
+          "$ref": "#/definitions/@value"
+        },
+        "$": {
+          "$ref": "#/definitions/$"
+        },
+        "Label": {"$ref": "#/definitions/MaybeMultipleLabel"},
+        "View": {"$ref": "#/definitions/MaybeMultipleView"}
+      }
     },
     "MaybeMultipleLabel": {
       "anyOf": [{
