@@ -91,10 +91,11 @@
 
     .labels-list {
       display: inline;
-      line-height: 1.2; // make it dense for multiline labels
-      padding: 2px 0; // + add a little padding so it won't be too close to the item edges
+      line-height: 1.2;
+      padding: 2px 0;
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 
@@ -171,6 +172,8 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
   }
 
   &__incomplete {

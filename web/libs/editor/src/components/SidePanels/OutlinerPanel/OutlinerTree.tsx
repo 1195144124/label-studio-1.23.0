@@ -441,7 +441,7 @@ const RootTitle: FC<any> = observer(
           <div className={cn("outliner-item").elem("title").toClassName()}>
             {label}
             {item?.text && (
-              <div className={cn("outliner-item").elem("text").toClassName()}>
+              <div className={cn("outliner-item").elem("text").toClassName()} title={item.text.replace(/\\n/g, "\n")}>
                 {item.text.replace(/\\n/g, "\n")}
               </div>
             )}

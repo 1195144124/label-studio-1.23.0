@@ -97,7 +97,7 @@ const Model = types
     return {
       initiallySelected: self.selected,
       isEmpty: false,
-      expanded: false,
+      expanded: true,
     };
   })
   .views((self) => ({
