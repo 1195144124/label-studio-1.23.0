@@ -28,13 +28,13 @@
     .label__nested-wrapper {
       display: flex;
       flex-direction: column;
-      margin: 0 !important;
+      margin: 0 5px 0 0 !important;
     }
 
     .label__children {
       border-left: 1px solid var(--color-neutral-content-subtler, #d0d0d0);
       margin: 0 0 0 10px;
-      padding: 0 0 0 14px;
+      padding: 4px 0 4px 14px;
       background: none;
       border-radius: 0;
       animation: none;
@@ -77,12 +77,13 @@
       border-radius: 0;
       width: 100%;
       box-sizing: border-box;
+      margin: 0;
     }
 
     .label__toggle {
       width: 20px;
       height: 20px;
-      margin-right: 8px;
+      margin-right: 10px;
       font-size: 10px;
       flex-shrink: 0;
     }
