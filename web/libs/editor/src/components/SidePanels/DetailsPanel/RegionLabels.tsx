@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { Fragment, type FC } from "react";
 import { observer } from "mobx-react";
 
 import { cn } from "../../../utils/bem";
@@ -22,12 +22,12 @@ export const RegionLabels: FC<{ region: LSFRegion }> = observer(
         {labels.map((label, index) => {
           const color = label.background || "#000000";
 
-          return [
-            index ? ", " : null,
-            <span key={label.id} style={{ color }}>
-              {label.value}
-            </span>,
-          ];
+          return (
+            <Fragment key={label.id}>
+              {index ? ", " : null}
+              <span style={{ color }}>{label.value}</span>
+            </Fragment>
+          );
         })}
       </div>
     );

@@ -15,6 +15,7 @@ export const Label = React.forwardRef(
       hidden = false,
       selected = false,
       margins = false,
+      rounded = false,
       onClick,
       children,
       hotkey,
@@ -25,12 +26,14 @@ export const Label = React.forwardRef(
     const styles = useMemo(() => {
       if (!color) return null;
       const background = chroma(color).alpha(0.15);
+      const borderColor = chroma(color).alpha(0.4);
 
       return {
         ...(style ?? {}),
         ...asVars({
           color,
           background,
+          borderColor,
         }),
       };
     }, [color]);
@@ -39,7 +42,7 @@ export const Label = React.forwardRef(
       <span
         ref={ref}
         className={cn("label")
-          .mod({ empty, hidden, selected, clickable: !!onClick, margins })
+          .mod({ empty, hidden, selected, clickable: !!onClick, margins, rounded })
           .mix(className)
           .toClassName()}
         style={styles}

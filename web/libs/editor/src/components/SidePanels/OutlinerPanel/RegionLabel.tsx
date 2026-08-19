@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { cn } from "../../../utils/bem";
 import { RegionLabelData } from "./zhLable";
@@ -16,12 +17,14 @@ export const RegionLabel = observer(({ item }: RegionLabelProps) => {
     if (item.values?.length) {
       return (
         <div className={cn("labels-list").toClassName()}>
-          {item.values.map((value: string, index: number) => [
-            index ? ", " : null,
-            <div key={value} className={cn("labels-list").toClassName()}>
-              {value.length > 50 ? `${value.slice(0, 50)}...` : value}
-            </div>,
-          ])}
+          {item.values.map((value: string, index: number) => (
+            <Fragment key={value}>
+              {index ? ", " : null}
+              <div className={cn("labels-list").toClassName()}>
+                {value.length > 50 ? `${value.slice(0, 50)}...` : value}
+              </div>
+            </Fragment>
+          ))}
         </div>
       );
     }
@@ -38,18 +41,17 @@ export const RegionLabel = observer(({ item }: RegionLabelProps) => {
         {labels.map((label, index) => {
           const color = label.background || "#000000";
 
-          return [
-            index ? ", " : null,
-            // This comes from an Elem tag that was set without a name. The CSS was fixed to make it work,
-            // but this is clearly bad CSS usage.
-            <div
-              key={label.id}
-              className={cn("labels-list").toClassName()}
-              style={{ color }}
-            >
-              {label.value || "无标注"}
-            </div>,
-          ];
+          return (
+            <Fragment key={label.id}>
+              {index ? ", " : null}
+              <div
+                className={cn("labels-list").toClassName()}
+                style={{ color }}
+              >
+                {label.value || "无标注"}
+              </div>
+            </Fragment>
+          );
         })}
       </div>
     );

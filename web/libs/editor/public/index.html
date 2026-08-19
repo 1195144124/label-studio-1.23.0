@@ -205,14 +205,37 @@
           ],
         },
       ];
-
+      const treeLabel = `<Labels name="labels" toName="text" fillOpacity="0.5" strokeWidth="5"  treeStyle="true" choice="multiple">
+    <Label value="建筑" background="green">
+      <Label value="住宅" background="lightgreen">
+        <Label value="独栋" background="#a8e6a8" alias="category:building,code:B001"/>
+        <Label value="联排" background="#90d890" />
+        <Label value="公寓" background="#78ca78" />
+      </Label>
+      <Label value="商业楼" background="darkgreen">
+        <Label value="写字楼" background="#5a9e5a" />
+        <Label value="商场" background="#4a8e4a" />
+      </Label>
+      <Label value="工厂" background="olive" />
+    </Label>
+    <Label value="车辆" background="blue">
+      <Label value="汽车" background="lightblue">
+        <Label value="轿车" background="#a8c8f0" />
+        <Label value="SUV" background="#90b8e0" />
+        <Label value="卡车" background="#78a8d0" />
+      </Label>
+      <Label value="摩托车" background="royalblue" />
+    </Label>
+    <Label value="行人" background="orange" />
+  </Labels>`
+  const labelDan =`<RectangleLabels name="labels" toName="image"><Label  value="行人" background="orange" /><Label  value="摩托车" alias="category:building,code:B001" background="royalblue" /><Label rounded value="卡车" background="#78a8d0" /> </RectangleLabels>`
       const lsfConfig = {
         config: `<View>
   <TimeSeriesLabels name="label" toName="ts">
     <Label value="Run" background="red"/>
     <Label value="Walk" background="green"/>
   </TimeSeriesLabels>
-
+  ${treeLabel}
   <TimeSeries name="ts" value="$timeseries" valueType="json"
               timeColumn="time" format="date"
               >
@@ -276,40 +299,19 @@
       };
 //choice="multiple" 多选
       var ls = new LabelStudio("label-studio", {
-    config: `<View style="display:flex;gap:20px">
-<View>
-<Labels name="labels" toName="text" fillOpacity="0.5" strokeWidth="5"  treeStyle="true" >
-    <Label value="建筑" background="green">
-      <Label value="住宅" background="lightgreen">
-        <Label value="独栋" background="#a8e6a8" />
-        <Label value="联排" background="#90d890" />
-        <Label value="公寓" background="#78ca78" />
-      </Label>
-      <Label value="商业楼" background="darkgreen">
-        <Label value="写字楼" background="#5a9e5a" />
-        <Label value="商场" background="#4a8e4a" />
-      </Label>
-      <Label value="工厂" background="olive" />
-    </Label>
-    <Label value="车辆" background="blue">
-      <Label value="汽车" background="lightblue">
-        <Label value="轿车" background="#a8c8f0" />
-        <Label value="SUV" background="#90b8e0" />
-        <Label value="卡车" background="#78a8d0" />
-      </Label>
-      <Label value="摩托车" background="royalblue" />
-    </Label>
-    <Label value="行人" background="orange" />
-  </Labels>
-  </View>
-  <View>
-  <Text name="text" value="$text"/>
-  </View>
+    config: `<View>
+  <Choices name="gender" toName="txt"  >
+    <Choice value="Man" />
+    <Choice value="Woman" />
+    <Choice value="Nonbinary" />
+    <Choice value="Other" />
+  </Choices>
+  <Text name="txt" value="$value"></Text>
 </View>`,
     interfaces: [
       'panel',
       'update',
-      // 'submit',
+      'submit',
       'skip',
       'controls',
       'review',
@@ -323,17 +325,17 @@
       'annotations:current',
       'annotations:add-new',
       'annotations:delete',
-      // 'annotations:view-all',
-      // 'predictions:tabs',
-      // 'predictions:menu',
-      // 'auto-annotation',
-      // 'edit-history',
+      'annotations:view-all',
+      'predictions:tabs',
+      'predictions:menu',
+      'auto-annotation',
+      'edit-history',
       'topbar:prevnext',
     ],
     task: {
       data: {
-        "text": "中国建筑行业近年来发展迅速，各类建筑项目遍布全国。从北方的住宅小区到南方的商业中心，建筑风格多样。独栋别墅通常位于城市郊区，环境优美，适合家庭居住。联排别墅则多建于城市中心，交通便利。高层公寓是现代都市中最常见的住宅形式，尤其是在人口密集的大城市。商业楼宇包括写字楼、商场和酒店等，为城市经济活动提供重要场所。工厂建筑则分布在工业园区，支持制造业发展。车辆是现代交通的重要组成部分。汽车包括轿车、运动型多功能车和卡车等多种类型。轿车适合城市通勤，SUV则更适合长途旅行和越野。卡车在物流运输中扮演关键角色。摩托车以其灵活性和经济性受到许多人的喜爱。行人是城市交通中不可忽视的群体，城市规划中需要考虑行人安全。建筑设计与城市规划相互关联，好的设计能提升城市品质。绿色建筑理念逐渐普及，节能环保成为新趋势。建筑材料不断创新，钢结构、玻璃幕墙广泛应用。智能化建筑系统提高了居住舒适度。交通基础设施包括道路、桥梁和隧道，连接城市各个区域。公共交通系统如地铁和公交减少了私家车使用。共享单车解决了最后一公里问题。城市人口增长带来住房需求，房地产行业持续繁荣。建筑工人用汗水筑起高楼大厦。建筑师通过创意设计改变城市面貌。室内设计关注空间利用和美观。园林景观为城市增添自然气息。历史建筑保护与文化传承密切相关。现代科技如建筑信息模型提高了工程效率。建筑业带动了相关产业链发展。未来建筑将更加智能化和可持续化。城市交通管理需要科技创新。自动驾驶技术可能改变出行方式。新能源汽车逐渐取代传统燃油车。充电桩等配套设施不断完善。交通安全教育从小抓起。城市规划需要综合考虑多方面因素。社区建设强调邻里关系和谐。公共空间如图书馆和公园丰富市民生活。建筑风格反映时代特征和文化内涵。中国古典建筑如故宫展现传统魅力。现代地标建筑如上海中心大厦彰显技术实力。桥梁如港珠澳大桥连接区域经济。机场和高铁站成为城市门户。地下空间开发拓展城市容量。海绵城市理念应对雨洪挑战。建筑业面临劳动力短缺和成本上升压力。装配式建筑提高施工效率。建筑垃圾资源化利用保护环境。文化遗产保护与城市发展需要平衡。以人为本的设计理念日益重要。住宅舒适度影响生活质量。商业空间设计影响消费体验。办公环境设计影响工作效率。建筑设计需要遵循规范标准。建筑安全始终是第一位的。抗震设计在地震多发区尤为重要。防火设计保护生命财产安全。建筑节能降低运营成本。可再生能源在建筑中的应用增多。建筑行业数字化转型加速。人工智能辅助设计和施工。机器人技术在建筑工地应用。旧城改造提升居住条件。新区开发拓展城市空间。城市更新让老城区焕发活力。建筑不仅是物质空间更是文化载体。城市交通拥堵问题亟待解决。共享出行改变出行习惯。步行友好城市提升幸福感。自行车道建设促进绿色出行。公共交通优先政策减少拥堵。城市规划需要公众参与。建筑评论推动行业发展。建筑教育培养专业人才。国际合作促进技术交流。建筑展览展示最新成果。建筑奖项激励创新设计。建筑类图书和杂志传播知识。建筑旅游成为新热点。城市夜景照明美化环境。建筑摄影记录城市变迁。建筑相关法律保护权益。物业管理服务提升居住品质。社区文化丰富居民生活。建筑行业未来充满机遇与挑战。我们期待更美好的城市和建筑。"
-      },
+        value: "Label Studio is an open source data labeling tool. It supports a wide range of annotation tasks including image classification, object detection, text classification, named entity recognition (NER), audio transcription, and time series labeling. With its flexible XML-based configuration, you can design custom labeling interfaces for virtually any machine learning task. The platform supports multiple users, annotation history, and integration with popular ML frameworks.",
+      }
     },
 
     onLabelStudioLoad: (LS) => {
@@ -367,6 +369,71 @@
           console.log("finish drawing", { region, list });
         });
       });
+         ls.on("choiceSelected", (choice, isSelected) => {
+          console.log("Choice 勾选:", choice._value, "选中:", isSelected);
+          console.log("Choice 信息:", {
+            id: choice.id,
+            value: choice._value,
+            alias: choice.alias,
+            selected: choice.sel,
+            resultValue: choice.resultValue,
+          });
+        });
+       ls.on("entityCreate", (region) => {
+      const labels = region.labeling?.selectedLabels;
+  if (labels) {
+    labels.forEach((label) => {
+      console.log("标签值:", label.value);
+      console.log("标签ID:", label.id);
+      console.log("快捷键:", label.hotkey);
+       if (label.alias) {
+      // 解析 alias 中的元信息
+      const meta = {};
+      label.alias.split(",").forEach(pair => {
+        const [k, v] = pair.split(":");
+        meta[k] = v;
+      });
+      console.log("元信息:", meta); // { category: "building", code: "B001" }
+    }
+    });
+  }
+        });
+        ls.on("entityDelete", (region) => {
+      const labels = region.labeling?.selectedLabels;
+  if (labels) {
+    labels.forEach((label) => {
+      console.log("删除标签值:", label.value);
+      console.log("删除标签ID:", label.id);
+      console.log("快捷键:", label.hotkey);
+       if (label.alias) {
+      // 解析 alias 中的元信息
+      const meta = {};
+      label.alias.split(",").forEach(pair => {
+        const [k, v] = pair.split(":");
+        meta[k] = v;
+      });
+      console.log("元信息:", meta); // { category: "building", code: "B001" }
+    }
+    });
+  }
+        });
+        ls.on("regionClicked", (region) => {
+        const labels = region.labeling?.selectedLabels;
+  if (labels) {
+    labels.forEach((label) => {
+      console.log(label)
+       if (label.alias) {
+      // 解析 alias 中的元信息
+      const meta = {};
+      label.alias.split(",").forEach(pair => {
+        const [k, v] = pair.split(":");
+        meta[k] = v;
+      });
+      console.log("元信息:", meta); // { category: "building", code: "B001" }
+    }
+    });
+  }
+});
     });
   </script>
 </body>

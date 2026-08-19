@@ -9,6 +9,7 @@ import {
 import { Tooltip } from "@humansignal/ui";
 import chroma from "chroma-js";
 import { inject, observer } from "mobx-react";
+import { getEnv } from "mobx-state-tree";
 import Tree from "rc-tree";
 import {
   createContext,
@@ -269,6 +270,7 @@ const useEventHandlers = () => {
 
     if (multi) {
       annotation.toggleRegionSelection(self);
+      getEnv(self).events.invoke("regionClicked", self);
       return;
     }
 
@@ -276,6 +278,7 @@ const useEventHandlers = () => {
       annotation.addLinkedRegion(self);
       annotation.stopLinkingMode();
       annotation.regionStore.unselectAll();
+      getEnv(self).events.invoke("regionClicked", self);
       return;
     }
 
@@ -288,6 +291,8 @@ const useEventHandlers = () => {
     } else {
       annotation.unselectAll();
     }
+
+    getEnv(self).events.invoke("regionClicked", self);
   }, []);
 
   // see onScroll for explanation

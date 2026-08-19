@@ -4,7 +4,7 @@
 
   display: inline-flex;
   padding: 2px 8px;
-  margin: 0 5px 0 0;
+  margin: 0 10px 0 0;
   border-radius: 3px;
   font-weight: 400;
   font-size: 14px;
@@ -14,13 +14,34 @@
   border-left: 4px solid var(--color);
   position: relative;
   align-items: center;
-
+box-sizing: border-box;
   &_margins {
     margin: 0 8px 8px 0;
 
     &:last-child {
       margin: 0 0 8px;
     }
+  }
+
+  &_rounded {
+    border-radius: 20px;
+    border: 1px solid var(--borderColor, var(--color));
+    padding: 4px 12px;
+    color: var(--color);
+    height: 29px ;
+    &.label_selected {
+      outline: 2px solid var(--color);
+      color: var(--color);
+      outline-offset: 1px;
+      background-color: var(--background);
+
+      .label__hotkey {
+        color: var(--color);
+      }
+    }
+      .label__hotkey {
+        color: var(--color);
+      }
   }
 
   &_empty {

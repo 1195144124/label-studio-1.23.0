@@ -84,6 +84,7 @@ const TagAttrs = types.model({
   strokecolor: types.optional(customTypes.color, "#f48a42"),
   fillopacity: types.maybeNull(customTypes.range()),
   allowempty: types.optional(types.boolean, false),
+  rounded: types.optional(types.boolean, false),
 
   value: types.optional(types.string, ""),
 });

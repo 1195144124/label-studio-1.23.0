@@ -162,9 +162,10 @@ function attrsToProps(node: Element, replaces?: Record<string, string>): Record<
   for (const attr of node.attributes) {
     const { name, value } = attr;
 
-    if (name !== "value" && ["true", "false"].includes(value)) {
+    if (name !== "value" && (["true", "false"].includes(value) || value === "")) {
       // Convert node of Tree to boolean value
-      props[name.toLowerCase()] = value === "true";
+      // Empty string means the attribute was written without a value (e.g. <Labels rounded>)
+      props[name.toLowerCase()] = value === "" ? true : value === "true";
     } else {
       if (replaces) {
         let finalValue = value;
@@ -188,6 +189,12 @@ function attrsToProps(node: Element, replaces?: Record<string, string>): Record<
  */
 function treeToModel(html: string, store: { task: { dataObj: Record<string, any> } }): ConfigNode {
   const parser = new DOMParser();
+
+  // Preprocess: fix bare boolean attributes (e.g. <Labels rounded> -> <Labels rounded="true">)
+  // XML parser requires all attributes to have values
+  html = html.replace(/\s([a-zA-Z][\w-]*)(?=\s|>|\/)/g, (match, attr) => {
+    return ` ${attr}="true"`;
+  });
 
   const doc = parser.parseFromString(html, "application/xml");
 

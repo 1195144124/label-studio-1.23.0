@@ -1,4 +1,4 @@
-import { types } from "mobx-state-tree";
+import { getEnv, types } from "mobx-state-tree";
 import { FF_ZOOM_OPTIM, isFF } from "../utils/feature-flags";
 import Constants from "../core/Constants";
 
@@ -161,6 +161,8 @@ export const KonvaRegionMixin = types
         } else {
           self._selectArea(additiveMode);
         }
+
+        getEnv(self).events.invoke("regionClicked", self);
       },
       onDoubleClickRegion() {
         self.requestPerRegionFocus();

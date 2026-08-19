@@ -200,6 +200,8 @@ const RegionsMixin = types
         } else {
           self._selectArea(ev?.ctrlKey || ev?.metaKey);
         }
+
+        getEnv(self).events.invoke("regionClicked", self);
       },
 
       _selectArea(additiveMode = false) {

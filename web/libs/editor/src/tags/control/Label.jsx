@@ -65,6 +65,7 @@ const TagAttrs = types.model({
   groupcancontain: types.maybeNull(types.string),
   // childrencheck: types.optional(types.enumeration(["any", "all"]), "any")
   html: types.maybeNull(types.string),
+  rounded: types.optional(types.boolean, false),
 });
 
 const Model = types
@@ -364,6 +365,7 @@ const HtxLabelView = inject("store")(
           hotkey={hotkey}
           hidden={!item.visible}
           selected={item.selected}
+          rounded={item.rounded || item.parent?.rounded}
           onClick={item.onClick}
         >
           {item.hasChildren && (

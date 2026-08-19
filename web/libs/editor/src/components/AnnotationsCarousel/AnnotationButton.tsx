@@ -935,13 +935,13 @@ export const AnnotationButton = observer(
         // Check if we're moving to the tooltip container
         // Only call contains() if relatedTarget is actually a Node
         const isMovingToTooltip =
-          relatedTarget &&
-          tooltipContainerRef.current?.contains(relatedTarget as Node);
+          relatedTarget instanceof Node &&
+          tooltipContainerRef.current?.contains(relatedTarget);
 
         // If not moving to tooltip, check if moving back to button (but not trigger)
         // Only call contains() if relatedTarget is actually a Node
         const isMovingToButton =
-          relatedTarget && buttonRef.current?.contains(relatedTarget as Node);
+          relatedTarget instanceof Node && buttonRef.current?.contains(relatedTarget);
         const isMovingToTrigger = relatedTarget?.closest?.(
           ".annotation-button__trigger",
         );
@@ -964,11 +964,11 @@ export const AnnotationButton = observer(
             );
             // Only call contains() if elementAtPoint is actually a Node
             const isOverTooltip =
-              elementAtPoint &&
-              tooltipContainerRef.current?.contains(elementAtPoint as Node);
+              elementAtPoint instanceof Node &&
+              tooltipContainerRef.current?.contains(elementAtPoint);
             const isOverButton =
-              elementAtPoint &&
-              buttonRef.current?.contains(elementAtPoint as Node);
+              elementAtPoint instanceof Node &&
+              buttonRef.current?.contains(elementAtPoint);
             const isOverTrigger = (elementAtPoint as HTMLElement)?.closest?.(
               ".annotation-button__trigger",
             );

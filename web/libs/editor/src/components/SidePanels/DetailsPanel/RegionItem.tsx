@@ -129,9 +129,8 @@ const RegionAction: FC<any> = observer(
     const entityButtons: JSX.Element[] = [];
 
     entityButtons.push(
-      <WithHotkey binging="region:relation">
+      <WithHotkey key="region:relation" binging="region:relation">
         <RegionActionButton
-          key="relation"
           variant={annotation.isLinkingMode ? "primary" : "neutral"}
           look={annotation.isLinkingMode ? "filled" : "string"}
           onClick={(_e: any, hotkey?: any) => {
@@ -151,9 +150,8 @@ const RegionAction: FC<any> = observer(
     );
 
     entityButtons.push(
-      <WithHotkey binging="region:meta">
+      <WithHotkey key="region:meta" binging="region:meta">
         <RegionActionButton
-          key="meta"
           look={editMode ? "filled" : "string"}
           variant={editMode ? "primary" : "neutral"}
           onClick={() => onEditModeChange(!editMode)}
