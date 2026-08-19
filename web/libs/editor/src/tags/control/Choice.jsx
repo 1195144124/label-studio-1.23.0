@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { Button, Radio, Checkbox } from "antd";
 import { inject, observer } from "mobx-react";
-import { types } from "mobx-state-tree";
+import { getEnv, types } from "mobx-state-tree";
 
 import Hint from "../../components/Hint/Hint";
 import ProcessAttrsMixin from "../../mixins/ProcessAttrs";
@@ -44,7 +44,7 @@ import { sanitizeHtml } from "../../utils/html";
  * @param {string} [color]     - Color for Taxonomy item
  */
 const TagAttrs = types.model({
-  ...(isFF(FF_DEV_3391) ? { id: types.identifier } : {}),
+  ...(isFF(FF_DEV_3391) ? { id: types.identifier } : { id: types.optional(types.string, "") }),
   selected: types.optional(types.boolean, false),
   alias: types.maybeNull(types.string),
   value: types.maybeNull(types.string),
@@ -143,6 +143,8 @@ const Model = types
       self.setSelected(!selected);
 
       choices.updateResult?.();
+
+      getEnv(self).events.invoke("choiceSelected", self, self.sel, self._value);
     },
 
     setVisible(val) {
