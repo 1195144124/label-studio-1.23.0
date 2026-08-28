@@ -54,6 +54,7 @@ const TagAttrs = types.model({
   selected: types.optional(types.boolean, false),
   maxusages: types.maybeNull(types.string),
   alias: types.maybeNull(types.string),
+  meta: types.maybeNull(types.string),
   hint: types.maybeNull(types.string),
   hotkey: types.maybeNull(types.string),
   showalias: types.optional(types.boolean, false),

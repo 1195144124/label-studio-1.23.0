@@ -300,13 +300,13 @@
 //choice="multiple" 多选
       var ls = new LabelStudio("label-studio", {
     config: `<View>
-  <Choices name="gender" toName="txt"  >
-    <Choice value="Man" />
-    <Choice value="Woman" />
-    <Choice value="Nonbinary" />
-    <Choice value="Other" />
-  </Choices>
-  <Text name="txt" value="$value"></Text>
+      <Labels name="videoLabels" toName="video" rounded>
+        <Label value="Person" background="orange" meta="category:person,code:B001" />
+        <Label value="Person2222" background="orange" meta="category:person,code:B002"/>
+
+        </Labels>
+        <Video name="video" value="$video" height="550"/>
+									<VideoRectangle name="box" toName="video" />
 </View>`,
     interfaces: [
       'panel',
@@ -333,9 +333,10 @@
       'topbar:prevnext',
     ],
     task: {
-      data: {
-        value: "Label Studio is an open source data labeling tool. It supports a wide range of annotation tasks including image classification, object detection, text classification, named entity recognition (NER), audio transcription, and time series labeling. With its flexible XML-based configuration, you can design custom labeling interfaces for virtually any machine learning task. The platform supports multiple users, annotation history, and integration with popular ML frameworks.",
-      }
+      data:{
+    "video": "./public/files/opossum_snow.mp4"
+
+}
     },
 
     onLabelStudioLoad: (LS) => {
@@ -352,7 +353,18 @@
       // emit('onSubmitAnnotation', annotation.toJSON());
     },
   });
-
+const parseLabelMeta = (str) => {
+	const meta = {};
+  console.log(str)
+	if (str) {
+		str.split(',').forEach((pair) => {
+      console.log(pair)
+			const [k, v] = pair.split(':');
+			meta[k] = v;
+		});
+	}
+	return meta;
+};
       ls.on("storageInitialized", (store) => {
         ls.on("selectAnnotation", (next) => {
           if (next.type === "annotation") {
@@ -381,21 +393,30 @@
         });
        ls.on("entityCreate", (region) => {
       const labels = region.labeling?.selectedLabels;
+      console.log(labels)
   if (labels) {
     labels.forEach((label) => {
       console.log("标签值:", label.value);
       console.log("标签ID:", label.id);
       console.log("快捷键:", label.hotkey);
-       if (label.alias) {
-      // 解析 alias 中的元信息
-      const meta = {};
-      label.alias.split(",").forEach(pair => {
-        const [k, v] = pair.split(":");
-        meta[k] = v;
-      });
-      console.log("元信息:", meta); // { category: "building", code: "B001" }
-    }
+      if (label.meta) {
+        console.log("元信息:", label.meta);
+      }
     });
+  }else{
+    setTimeout(() => {
+        const labels = region.labeling?.selectedLabels;
+        if (labels) {
+          labels.forEach((label) => {
+            console.log("标签值:", label.value);
+            console.log("标签ID:", label.id);
+            if (label.meta) {
+              console.log("元信息:", label.meta);
+            }
+          });
+        }
+        console.log(labels);
+      });
   }
         });
         ls.on("entityDelete", (region) => {
@@ -405,15 +426,9 @@
       console.log("删除标签值:", label.value);
       console.log("删除标签ID:", label.id);
       console.log("快捷键:", label.hotkey);
-       if (label.alias) {
-      // 解析 alias 中的元信息
-      const meta = {};
-      label.alias.split(",").forEach(pair => {
-        const [k, v] = pair.split(":");
-        meta[k] = v;
-      });
-      console.log("元信息:", meta); // { category: "building", code: "B001" }
-    }
+      if (label.meta) {
+        console.log("元信息:", label.meta);
+      }
     });
   }
         });
@@ -422,15 +437,9 @@
   if (labels) {
     labels.forEach((label) => {
       console.log(label)
-       if (label.alias) {
-      // 解析 alias 中的元信息
-      const meta = {};
-      label.alias.split(",").forEach(pair => {
-        const [k, v] = pair.split(":");
-        meta[k] = v;
-      });
-      console.log("元信息:", meta); // { category: "building", code: "B001" }
-    }
+      if (label.meta) {
+        console.log("元信息:", label.meta);
+      }
     });
   }
 });
