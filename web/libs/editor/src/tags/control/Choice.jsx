@@ -53,6 +53,7 @@ const TagAttrs = types.model({
   html: types.maybeNull(types.string),
   color: types.maybeNull(types.string),
   hint: types.maybeNull(types.string),
+  meta: types.maybeNull(types.string),
 });
 
 const Model = types
