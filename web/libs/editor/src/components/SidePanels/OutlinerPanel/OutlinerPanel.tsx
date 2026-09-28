@@ -72,9 +72,12 @@ const OutlinerPanelComponent: FC<OutlinerPanelProps> = ({
 };
 
 const OutlinerStandAlone: FC<OutlinerPanelProps> = ({ regions }) => {
+  console.log("[OutlinerStandAlone] rendering, sort:", regions.sort, "sortOrder:", regions.sortOrder);
   const onOrderingChange = useCallback(
     (value: OrderingOptions) => {
+      console.log("[OutlinerStandAlone] onOrderingChange called, value:", value);
       regions.setSort(value);
+      console.log("[OutlinerStandAlone] after setSort, sort:", regions.sort, "sortOrder:", regions.sortOrder);
     },
     [regions],
   );

@@ -99,7 +99,7 @@ const DropdownComponent = forwardRef<DropdownRef, DropdownProps>(
     const anchorName = `--dropdown-trigger-${dropdownId.replace(/:/g, "-")}`;
 
     // Generate stable z-index for stacking
-    const dropdownZIndex = useRef(1000 + zIndexCounter++).current;
+    const dropdownZIndex = useRef(50000 + zIndexCounter++).current;
 
     // Determine if anchor positioning should be used
     // Only enable when browser supports it AND there's a trigger element to anchor to
@@ -246,12 +246,16 @@ const DropdownComponent = forwardRef<DropdownRef, DropdownProps>(
     const toggle = useCallback(
       async (updatedState?: boolean, disableAnimation?: boolean) => {
         const newState = updatedState ?? !currentVisible;
+        console.log("[Dropdown] toggle called, currentVisible:", currentVisible, "newState:", newState);
 
         if (currentVisible !== newState) {
+          console.log("[Dropdown] toggling to:", newState);
           props.onToggle?.(newState);
           await performAnimation(newState, disableAnimation);
           setVisible(newState);
           props.onVisibilityChanged?.(newState);
+        } else {
+          console.log("[Dropdown] skipping toggle, already in state:", currentVisible);
         }
       },
       [currentVisible, performAnimation, props],

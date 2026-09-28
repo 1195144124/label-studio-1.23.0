@@ -68,7 +68,7 @@ export const DropdownTrigger = forwardRef<DropdownRef, DropdownTriggerProps>(
     const [cursorPosition, setCursorPosition] = useState<{ x: number; y: number } | null>(null);
 
     // Assign a unique z-index for this dropdown
-    const minIndex = useMemo(() => 1000 + zIndexCounter++, []);
+    const minIndex = useMemo(() => 50000 + zIndexCounter++, []);
 
     const triggerRef = useRef<HTMLElement>((triggerEL as any)?.props?.ref?.current);
     const parentDropdown = useContext(DropdownContext);
@@ -116,16 +116,20 @@ export const DropdownTrigger = forwardRef<DropdownRef, DropdownTriggerProps>(
 
     const handleToggle = useCallback(
       (e: any) => {
+        console.log("[DropdownTrigger] handleToggle called, disabled:", disabled, "dropdownRef:", dropdownRef.current);
         if (disabled) return;
 
         const inDropdown = dropdownRef.current?.dropdown?.contains?.(e.target);
+        console.log("[DropdownTrigger] inDropdown:", inDropdown, "toggle:", toggle);
 
         if (inDropdown) return e.stopPropagation();
 
         if (toggle === false) {
+          console.log("[DropdownTrigger] calling open()");
           return dropdownRef?.current?.open();
         }
 
+        console.log("[DropdownTrigger] calling toggle(), current visible:", dropdownRef.current?.visible);
         dropdownRef?.current?.toggle();
       },
       [dropdownRef, disabled, toggle],

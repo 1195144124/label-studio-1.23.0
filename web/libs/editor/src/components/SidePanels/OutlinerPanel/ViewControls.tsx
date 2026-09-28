@@ -118,26 +118,26 @@ export const ViewControls: FC<ViewControlsProps> = observer(
     const getOrderingLabels = useCallback(
       (value: OrderingOptions): LabelInfo => {
         switch (value) {
-          case "date":
-            return {
-              label: (
-                <>
-                  <IconClockTimeFourOutline /> 按时间排序
-                </>
-              ),
-              selectedLabel: "按时间",
-              icon: <IconClockTimeFourOutline width={16} height={16} />,
-            };
-          case "score":
-            return {
-              label: (
-                <>
-                  <IconPredictions /> 按分数排序
-                </>
-              ),
-              selectedLabel: "按分数",
-              icon: <IconPredictions width={16} height={16} />,
-            };
+          // case "date":
+          //   return {
+          //     label: (
+          //       <>
+          //         <IconClockTimeFourOutline /> 按时间排序
+          //       </>
+          //     ),
+          //     selectedLabel: "按时间",
+          //     icon: <IconClockTimeFourOutline width={16} height={16} />,
+          //   };
+          // case "score":
+          //   return {
+          //     label: (
+          //       <>
+          //         <IconPredictions /> 按分数排序
+          //       </>
+          //     ),
+          //     selectedLabel: "按分数",
+          //     icon: <IconPredictions width={16} height={16} />,
+          //   };
           case "mediaStartTime":
             return {
               label: (
@@ -153,43 +153,62 @@ export const ViewControls: FC<ViewControlsProps> = observer(
       [],
     );
 
-    const renderOrderingDirectionIcon =
-      orderingDirection === "asc" ? <IconSortUp /> : <IconSortDown />;
+    const renderOrderingDirectionIcon = useMemo(
+    () => (orderingDirection === "asc" ? <IconSortUp /> : <IconSortDown />),
+    [orderingDirection],
+  );
 
-    return (
-      <div
-        className={cn("view-controls")
-          .mod({ collapsed: context.locked })
-          .toClassName()}
-      >
-        <Grouping
-          value={grouping}
-          options={["manual", "type", "label"]}
-          onChange={(value) => onGroupingChange(value)}
-          readableValueForKey={getGroupingLabels}
-        />
-        {grouping === "manual" && (
-          <div className={cn("view-controls").elem("sort").toClassName()}>
-            <Grouping
-              value={ordering}
-              direction={orderingDirection}
-              options={
-                mediaTimeSupport
-                  ? ["score", "date", "mediaStartTime"]
-                  : ["score", "date"]
-              }
-              onChange={(value) => onOrderingChange(value)}
-              readableValueForKey={getOrderingLabels}
-              allowClickSelected
-              extraIcon={renderOrderingDirectionIcon}
-              width={230}
-            />
-          </div>
-        )}
-        <ToggleRegionsVisibilityButton regions={regions} />
-      </div>
-    );
-  },
+  const handleGroupingChange = useCallback(
+    (value: GroupingOptions) => onGroupingChange(value),
+    [onGroupingChange],
+  );
+
+  const handleOrderingChange = useCallback(
+    (value: OrderingOptions) => {
+      console.log("[ViewControls] handleOrderingChange called, value:", value);
+      onOrderingChange(value);
+    },
+    [onOrderingChange],
+  );
+
+  const orderingOptions = useMemo(
+    () =>
+      mediaTimeSupport
+        ? (["date", "mediaStartTime"] as OrderingOptions[])
+        : (["date"] as OrderingOptions[]),
+    [mediaTimeSupport],
+  );
+
+  return (
+    <div
+      className={cn("view-controls")
+        .mod({ collapsed: context.locked })
+        .toClassName()}
+    >
+      <Grouping
+        value={grouping}
+        options={["manual", "type", "label"]}
+        onChange={handleGroupingChange}
+        readableValueForKey={getGroupingLabels}
+      />
+      {/* {grouping === "manual" && (
+        <div className={cn("view-controls").elem("sort").toClassName()}>
+          <Grouping
+            value={ordering}
+            direction={orderingDirection}
+            options={orderingOptions}
+            onChange={handleOrderingChange}
+            readableValueForKey={getOrderingLabels}
+            allowClickSelected
+            extraIcon={renderOrderingDirectionIcon}
+            width={230}
+          />
+        </div>
+      )} */}
+      <ToggleRegionsVisibilityButton regions={regions} />
+    </div>
+  );
+},
 );
 
 interface LabelInfo {
@@ -228,6 +247,14 @@ const Grouping = <T extends string>({
     return options.map((key) => [key, readableValueForKey(key)]);
   }, [options, readableValueForKey]);
 
+  const handleChange = useCallback(
+    (key: T) => {
+      console.log("[Grouping] handleChange called, key:", key);
+      onChange(key);
+    },
+    [onChange],
+  );
+
   const dropdownContent = useMemo(() => {
     return (
       <Menu
@@ -247,12 +274,12 @@ const Grouping = <T extends string>({
             value={value}
             direction={direction}
             label={label}
-            onChange={(value) => onChange(value)}
+            onChange={handleChange}
           />
         ))}
       </Menu>
     );
-  }, [value, optionsList, readableValue, direction, onChange]);
+  }, [value, optionsList, direction, onChange, allowClickSelected, width, handleChange]);
 
   return (
     <Dropdown.Trigger content={dropdownContent} style={{ width }}>

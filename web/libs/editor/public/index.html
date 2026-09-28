@@ -301,10 +301,13 @@
 //choice="multiple" 多选
       var ls = new LabelStudio("label-studio", {
     config: `<View>
-      <Choices name="videoLabels" toName="text" choice="multiple">
-        <Choice value="Person" background="orange" alias="category:building,code:B001">Person</Choice>
-        <Choice value="Person2222" background="orange" mate="category:building,code:B001">Person2222</Choice>
-      </Choices>
+      <Labels name="videoLabels" toName="text">
+        <Label value="Person" background="orange">人名</Label>
+        <Label value="Location" background="green">地名</Label>
+        <Label value="Organization" background="blue">组织</Label>
+        <Label value="Date" background="purple">日期</Label>
+        <Label value="Event" background="red">事件</Label>
+      </Labels>
       <Text name="text" value="$text" />
 </View>`,
     interfaces: [
@@ -314,10 +317,11 @@
       'skip',
       'controls',
       'topbar',
+      'side-column',
     ],
     task: {
       data:{
-    "text": "这是一段用于分类的示例文本，请选择对应的类别。"
+    "text": "2024年3月15日，张三从北京出发前往上海参加全球人工智能峰会。\n\n阿里巴巴集团副总裁李四在大会上发表了关于大语言模型的重要演讲，引起与会者广泛关注。\n\n华为技术有限公司宣布将在深圳建立新的研发中心，预计2025年底投入运营。\n\n联合国教科文组织于巴黎总部举办了文化遗产保护研讨会，来自世界各国的专家学者齐聚一堂。\n\n中秋节前夕，杭州西湖景区迎来了大量游客，当地政府采取了多项措施确保游览秩序。"
 
 }
     },

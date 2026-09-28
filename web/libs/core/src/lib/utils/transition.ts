@@ -14,6 +14,19 @@ export const aroundTransition = (
   { init, transition, onStart, beforeTransition, afterTransition }: TransitionOptions,
 ) => {
   return new Promise<void>(async (resolve) => {
+    let resolved = false;
+    let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const cleanUp = () => {
+      if (fallbackTimer) {
+        clearTimeout(fallbackTimer);
+        fallbackTimer = null;
+      }
+      element.removeEventListener("transitionstart", onTransitionStarted);
+      element.removeEventListener("transitionend", onTransitionEnded);
+      element.removeEventListener("transitioncancel", onTransitionEnded);
+    };
+
     init?.(element);
 
     const onTransitionStarted = () => {
@@ -21,11 +34,10 @@ export const aroundTransition = (
     };
 
     const onTransitionEnded = async () => {
+      if (resolved) return;
+      resolved = true;
+      cleanUp();
       await afterTransition?.(element);
-
-      element.removeEventListener("transitionstart", onTransitionStarted);
-      element.removeEventListener("transitionend", onTransitionEnded);
-      element.removeEventListener("transitioncancel", onTransitionEnded);
       resolve();
     };
 
@@ -38,5 +50,12 @@ export const aroundTransition = (
     await beforeTransition?.(element);
 
     setTimeout(() => transition(element), 30);
+
+    // Fallback timeout: if transitionend never fires, resolve after 500ms
+    fallbackTimer = setTimeout(() => {
+      if (!resolved) {
+        onTransitionEnded();
+      }
+    }, 500);
   });
 };
