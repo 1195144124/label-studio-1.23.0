@@ -350,6 +350,7 @@ const useEventHandlers = () => {
 
     if (treeDepth === 2 && dropToGap && dropPosition === -1) {
       dragReg.setParentID("");
+      regions.incrementTreeVersion();
     } else if (dropPosition !== -1) {
       // check if the dragReg can be a child of dropReg
       const selDrop: any[] = dropReg.labeling?.selectedLabels || [];
@@ -387,6 +388,7 @@ const useEventHandlers = () => {
       }
 
       dragReg.setParentID(dropReg.id);
+      regions.incrementTreeVersion();
     }
   }, []);
 

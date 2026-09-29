@@ -170,6 +170,8 @@ export default types
       () => window.localStorage.getItem(localStorageKeys.group) ?? "manual",
     ),
 
+    _treeVersion: types.optional(types.number, 0),
+
     filter: types.maybeNull(
       types.array(types.safeReference(AllRegionsType)),
       null,
@@ -684,6 +686,27 @@ export default types
           area.toggleHidden();
         }
       });
+    },
+
+    splitGroups(selectedRegions) {
+      console.log("[RegionStore.splitGroups] called, selected count:", selectedRegions?.length, "all count:", self.regions?.length);
+      const targets = selectedRegions && selectedRegions.length > 0
+        ? selectedRegions
+        : self.regions;
+
+      targets.forEach((region) => {
+        region.setParentID("");
+        self.filterByParentID(region.id).forEach((child) => {
+          console.log("[RegionStore.splitGroups] ungrouping child:", child.id, "from parent:", region.id);
+          child.setParentID("");
+        });
+      });
+      self._treeVersion += 1;
+      console.log("[RegionStore.splitGroups] _treeVersion now:", self._treeVersion);
+    },
+
+    incrementTreeVersion() {
+      self._treeVersion += 1;
     },
 
     selectRegionByID(regionId) {

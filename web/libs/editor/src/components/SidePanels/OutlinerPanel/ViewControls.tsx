@@ -1,6 +1,7 @@
 import {
   IconBoundingBox,
   IconClockTimeFourOutline,
+  IconCross,
   IconCursor,
   IconList,
   IconOutlinerEyeClosed,
@@ -206,6 +207,7 @@ export const ViewControls: FC<ViewControlsProps> = observer(
         </div>
       )} */}
       <ToggleRegionsVisibilityButton regions={regions} />
+      <SplitAllGroupsButton regions={regions} />
     </div>
   );
 },
@@ -380,3 +382,43 @@ const ToggleRegionsVisibilityButton = observer<
     </Button>
   );
 });
+
+interface SplitAllGroupsButtonProps {
+  regions: any;
+}
+
+const SplitAllGroupsButton: FC<SplitAllGroupsButtonProps> = observer(
+  ({ regions }) => {
+    const hasSelection = regions?.selection?.size > 0;
+
+    const handleSplit = useCallback(
+      (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const list = regions.selection.list;
+        console.log("[SplitAllGroupsButton] handleSplit called, selected count:", list.length, "all regions count:", regions.regions?.length);
+        list.forEach((r: any) => console.log("  region:", r.id, "parentID:", r.parentID));
+        regions.splitGroups(list);
+      },
+      [regions],
+    );
+
+    const isDisabled = !regions?.regions?.length || regions.group !== "manual";
+
+    const tooltip = hasSelection ? "拆分选中分组" : "拆分所有分组";
+
+    return (
+      <Button
+        variant="neutral"
+        size="smaller"
+        look="string"
+        disabled={isDisabled}
+        onClick={handleSplit}
+        aria-label={tooltip}
+        tooltip={tooltip}
+      >
+        <IconCross width={16} height={16} />
+      </Button>
+    );
+  },
+);

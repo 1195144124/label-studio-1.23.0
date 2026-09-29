@@ -126,6 +126,7 @@ const OutlinerEmptyState = () => (
 const OutlinerTreeComponent: FC<OutlinerTreeComponentProps> = observer(
   ({ regions }) => {
     console.log("Rendering OutlinerTreeComponent with regions:", regions);
+    const _tv = regions._treeVersion;
     const allRegionsHidden =
       regions?.regions?.length > 0 && regions?.filter?.length === 0;
 
