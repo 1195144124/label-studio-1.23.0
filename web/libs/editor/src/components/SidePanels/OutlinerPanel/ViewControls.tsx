@@ -207,7 +207,7 @@ export const ViewControls: FC<ViewControlsProps> = observer(
         </div>
       )} */}
       <ToggleRegionsVisibilityButton regions={regions} />
-      <SplitAllGroupsButton regions={regions} />
+      {grouping === "manual" && <SplitAllGroupsButton regions={regions} />}
     </div>
   );
 },
@@ -389,6 +389,8 @@ interface SplitAllGroupsButtonProps {
 
 const SplitAllGroupsButton: FC<SplitAllGroupsButtonProps> = observer(
   ({ regions }) => {
+    if (regions.group !== "manual") return null;
+
     const hasSelection = regions?.selection?.size > 0;
 
     const handleSplit = useCallback(
@@ -403,8 +405,6 @@ const SplitAllGroupsButton: FC<SplitAllGroupsButtonProps> = observer(
       [regions],
     );
 
-    const isDisabled = !regions?.regions?.length || regions.group !== "manual";
-
     const tooltip = hasSelection ? "拆分选中分组" : "拆分所有分组";
 
     return (
@@ -412,7 +412,6 @@ const SplitAllGroupsButton: FC<SplitAllGroupsButtonProps> = observer(
         variant="neutral"
         size="smaller"
         look="string"
-        disabled={isDisabled}
         onClick={handleSplit}
         aria-label={tooltip}
         tooltip={tooltip}

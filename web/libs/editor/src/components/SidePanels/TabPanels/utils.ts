@@ -226,12 +226,12 @@ const panelViews = [
     component: panelComponents.regions as FC<PanelProps>,
     active: true,
   },
-  {
-    name: "history",
-    title: "历史",
-    component: panelComponents.history as FC<PanelProps>,
-    active: false,
-  },
+  // {
+  //   name: "history",
+  //   title: "历史",
+  //   component: panelComponents.history as FC<PanelProps>,
+  //   active: false,
+  // },
 
   {
     name: "relations",
@@ -260,10 +260,10 @@ const panelViews = [
 ];
 
 // Custom tab for special tags; will be placed in "regions-relations" panel by default
-const customPanelView = panelViews[5];
+const customPanelView = panelViews[4];
 
 export const enterprisePanelDefault: Record<string, PanelBBox> = {
-  "info-comments-history": {
+  "info-comments": {
     order: 1,
     top: 0,
     left: 0,
@@ -276,7 +276,7 @@ export const enterprisePanelDefault: Record<string, PanelBBox> = {
     detached: false,
     alignment: Side.right,
     maxHeight: DEFAULT_PANEL_MAX_HEIGHT,
-    panelViews: [panelViews[3], panelViews[4], panelViews[1]],
+    panelViews: [panelViews[2], panelViews[3]],
   },
   "regions-relations": {
     order: 2,
@@ -291,12 +291,12 @@ export const enterprisePanelDefault: Record<string, PanelBBox> = {
     detached: false,
     alignment: Side.right,
     maxHeight: DEFAULT_PANEL_MAX_HEIGHT,
-    panelViews: [panelViews[0], panelViews[2]],
+    panelViews: [panelViews[0], panelViews[1]],
   },
 };
 
 export const openSourcePanelDefault: Record<string, PanelBBox> = {
-  "info-history": {
+  "info": {
     order: 1,
     top: 0,
     left: 0,
@@ -309,7 +309,7 @@ export const openSourcePanelDefault: Record<string, PanelBBox> = {
     detached: false,
     alignment: Side.right,
     maxHeight: DEFAULT_PANEL_MAX_HEIGHT,
-    panelViews: [panelViews[3], panelViews[1]],
+    panelViews: [panelViews[2]],
   },
   "regions-relations": {
     order: 2,
@@ -324,7 +324,7 @@ export const openSourcePanelDefault: Record<string, PanelBBox> = {
     detached: false,
     alignment: Side.right,
     maxHeight: DEFAULT_PANEL_MAX_HEIGHT,
-    panelViews: [panelViews[0], panelViews[2]],
+    panelViews: [panelViews[0], panelViews[1]],
   },
 };
 
@@ -351,7 +351,6 @@ export const partialEmptyBaseProps = {
     panelViews[1],
     panelViews[2],
     panelViews[3],
-    panelViews[4],
   ],
 };
 

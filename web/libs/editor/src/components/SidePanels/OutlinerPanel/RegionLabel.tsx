@@ -2,16 +2,17 @@ import { Fragment } from "react";
 import { observer } from "mobx-react";
 import { cn } from "../../../utils/bem";
 import { RegionLabelData } from "./zhLable";
+import "./RegionLabel.scss";
 export type RegionLabelProps = {
   item: any;
 };
 export const RegionLabel = observer(({ item }: RegionLabelProps) => {
   const { type } = item ?? {};
   if (!type) {
-    return "无标注";
+    return <span className={cn("region-label").elem("text").toClassName()}>无标注</span>;
   }
   if (type.includes("label")) {
-    return item.value;
+    return <span className={cn("region-label").elem("text").toClassName()}>{item.value}</span>;
   }
   if (type === "reactcode") {
     if (item.values?.length) {
@@ -57,6 +58,6 @@ export const RegionLabel = observer(({ item }: RegionLabelProps) => {
     );
   }
   if (type.includes("tool")) {
-    return RegionLabelData[item.value] || item.value;
+    return <span className={cn("region-label").elem("text").toClassName()}>{RegionLabelData[item.value] || item.value}</span>;
   }
 });
