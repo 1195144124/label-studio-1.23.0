@@ -302,11 +302,11 @@
       var ls = new LabelStudio("label-studio", {
     config: `<View>
       <Labels name="videoLabels" toName="text">
-        <Label value="Person" background="orange">人名</Label>
-        <Label value="Location" background="green">地名</Label>
-        <Label value="Organization" background="blue">组织</Label>
-        <Label value="Date" background="purple">日期</Label>
-        <Label value="Event" background="red">事件</Label>
+        <Label value="Person" background="orange" meta="PER">人名</Label>
+        <Label value="Location" background="green" meta="LOC">地名</Label>
+        <Label value="Organization" background="blue" meta="ORG">组织</Label>
+        <Label value="Date" background="purple" meta="DATE">日期</Label>
+        <Label value="Event" background="red" meta="EVENT">事件</Label>
       </Labels>
       <Text name="text" value="$text" />
 </View>`,
@@ -421,29 +421,26 @@ const parseLabelMeta = (str) => {
   }
         });
         ls.on("regionClicked", (region) => {
+          console.log(region)
         const labels = region.labeling?.selectedLabels;
   if (labels) {
     labels.forEach((label) => {
-      console.log(label)
       if (label.meta) {
         console.log("元信息:", label.meta);
       }
     });
   }
 });
-ls.on("regionLabelChanged", (region, label, isSelected) => {
-  // region      - 标签发生变化的区域对象
-  // label       - 被点击的标签对象 (Label model)
-  // isSelected  - 标签是否被选中 (true=选中, false=取消)
-
-  console.log("区域标签已变更:", {
-    regionId: region.id,
-    regionType: region.type,
-    labelValue: label.value,
-    labelAlias: label.alias,
-    isSelected: isSelected,
-    currentLabels: region.labeling?.mainValue, // 当前区域的所有标签
-  });
+ls.on("regionLabelChanged", (region) => {
+        const labels = region.labeling?.selectedLabels;
+   console.log(labels)
+  if (labels) {
+    labels.forEach((label) => {
+      if (label.meta) {
+        console.log("元信息:", label.meta);
+      }
+    });
+  }
 });
     });
   </script>

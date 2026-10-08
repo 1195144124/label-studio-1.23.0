@@ -294,7 +294,7 @@ const Model = types
           region.notifyDrawingFinished();
           // hack to trigger RichText re-render the region
           region.updateSpans?.();
-          getEnv(self).events.invoke("regionLabelChanged", region, self, self.selected);
+          getEnv(self).events.invoke("regionLabelChanged", region);
         }
       });
     },
