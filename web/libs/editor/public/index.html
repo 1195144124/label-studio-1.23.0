@@ -431,6 +431,20 @@ const parseLabelMeta = (str) => {
     });
   }
 });
+ls.on("regionLabelChanged", (region, label, isSelected) => {
+  // region      - 标签发生变化的区域对象
+  // label       - 被点击的标签对象 (Label model)
+  // isSelected  - 标签是否被选中 (true=选中, false=取消)
+
+  console.log("区域标签已变更:", {
+    regionId: region.id,
+    regionType: region.type,
+    labelValue: label.value,
+    labelAlias: label.alias,
+    isSelected: isSelected,
+    currentLabels: region.labeling?.mainValue, // 当前区域的所有标签
+  });
+});
     });
   </script>
 </body>

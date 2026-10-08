@@ -1,5 +1,5 @@
 import { inject, observer } from "mobx-react";
-import { getType, types } from "mobx-state-tree";
+import { getEnv, getType, types } from "mobx-state-tree";
 import ColorScheme from "pleasejs";
 
 import { Tooltip } from "@humansignal/ui";
@@ -294,6 +294,7 @@ const Model = types
           region.notifyDrawingFinished();
           // hack to trigger RichText re-render the region
           region.updateSpans?.();
+          getEnv(self).events.invoke("regionLabelChanged", region, self, self.selected);
         }
       });
     },
