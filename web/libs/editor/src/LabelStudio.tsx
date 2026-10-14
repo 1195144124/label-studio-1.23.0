@@ -46,6 +46,7 @@ type LSFOptions = Record<string, any> & {
   instanceOptions?: {
     reactVersion?: "v18" | "v17";
   };
+  readOnlyFields?: boolean;
 };
 
 export class LabelStudio {

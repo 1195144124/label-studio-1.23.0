@@ -144,6 +144,13 @@ export default types
     labeledSuccess: types.optional(types.boolean, false),
 
     /**
+     * Whether the region properties (X/Y/W/H/angle) in the details panel should be locked
+     * When true, all annotations are created as readonly,
+     * region properties fields are disabled and labels cannot be selected
+     */
+    readOnlyFields: types.optional(types.boolean, false),
+
+    /**
      * Show or hide comments section
      */
     showComments: false,

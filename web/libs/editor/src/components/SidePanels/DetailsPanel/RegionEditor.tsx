@@ -1,6 +1,6 @@
 import { observe } from "mobx";
 import { observer } from "mobx-react";
-import { type IAnyType, isLiteralType, isOptionalType, isPrimitiveType, isUnionType, types } from "mobx-state-tree";
+import { type IAnyType, getRoot, isLiteralType, isOptionalType, isPrimitiveType, isUnionType, types } from "mobx-state-tree";
 import {
   type ChangeEvent,
   type FC,
@@ -65,6 +65,7 @@ const RegionEditorComponent: FC<RegionEditorProps> = ({ region }) => {
 
 const RegionProperties = ({ region }: RegionEditorProps) => {
   const fields = region.editableFields ?? [];
+  const isFieldsLocked = getRoot(region)?.readOnlyFields;
 
   return (
     <div className={cn("region-editor").elem("wrapper").toClassName()}>
@@ -76,6 +77,7 @@ const RegionProperties = ({ region }: RegionEditorProps) => {
               property={field.property}
               label={field.label}
               region={region}
+              disabled={field.disabled || isFieldsLocked}
             />
           );
         })}
@@ -113,9 +115,10 @@ interface RegionPropertyProps {
   property: string;
   label: string;
   region: MSTRegion;
+  disabled?: boolean;
 }
 
-const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) => {
+const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region, disabled }) => {
   const [value, setValue] = useState(region.getProperty(property));
 
   const propertyType = useMemo(() => {
@@ -187,15 +190,17 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
           className={cn("region-editor").elem("input").toClassName()}
           checked={value}
           onChange={(e) => onChangeHandler(e.target.checked)}
+          disabled={disabled}
         />
       ) : isString ? (
-        <RegionInput type="text" value={value} onChange={(v) => onChangeHandler(v)} />
+        <RegionInput type="text" value={value} onChange={(v) => onChangeHandler(v)} disabled={disabled} />
       ) : isPrimitive ? (
         <RegionInput
           type={getInputType(propertyType)}
           step="0.01"
           value={value}
           onChange={(v) => onChangeHandler(Number(v))}
+          disabled={disabled}
         />
       ) : options ? (
         <Select
@@ -203,6 +208,7 @@ const RegionProperty: FC<RegionPropertyProps> = ({ property, label, region }) =>
           onChange={(val) => onChangeHandler(val)}
           triggerClassName={cn("region-editor").elem("select").toClassName()}
           options={options}
+          disabled={disabled}
         />
       ) : null}
       <PropertyLabel label={label} />

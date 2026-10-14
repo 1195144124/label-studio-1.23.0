@@ -321,6 +321,9 @@ const Model = types
     },
 
     onLabelInteract() {
+      // label click event - invoked before toggle to ensure it always fires
+      getEnv(self).events.invoke("labelClick", self, self.selected);
+
       return self.toggleSelected();
     },
 

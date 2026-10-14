@@ -46,6 +46,11 @@ function onEntityCreate() {}
 function onEntityDelete() {}
 
 /**
+ * Callback when label gets clicked (or hotkey pressed) in the labeling interface
+ */
+function onLabelClick(label, selected) {}
+
+/**
  * Callback when ground truth button gets pressed
  */
 function onGroundTruth() {}
@@ -81,6 +86,7 @@ export default {
   onEntityCreate,
   onEntityDelete,
   onGroundTruth,
+  onLabelClick,
   onLabelStudioLoad,
   onSkipTask,
   onUnskipTask,

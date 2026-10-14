@@ -300,16 +300,11 @@
       };
 //choice="multiple" 多选
       var ls = new LabelStudio("label-studio", {
-    config: `<View>
-      <Labels name="videoLabels" toName="text">
-        <Label value="Person" background="orange" meta="PER">人名</Label>
-        <Label value="Location" background="green" meta="LOC">地名</Label>
-        <Label value="Organization" background="blue" meta="ORG">组织</Label>
-        <Label value="Date" background="purple" meta="DATE">日期</Label>
-        <Label value="Event" background="red" meta="EVENT">事件</Label>
-      </Labels>
-      <Text name="text" value="$text" />
-</View>`,
+         readOnlyFields: true,
+    config: `<View><Labels name="label" toName="image"><Label value="症状" background="#d41384" meta="id:2095696943120699394,tagSetId:2109565834179633154,name:症状,color:#d41384"/><Label value="帽子" background="#1a43d9" meta="id:2095699930887016449,tagSetId:2109565834179633154,name:帽子,color:#1a43d9"/><Label value="测试标注方式矩形" background="#e60d0d" meta="id:2109565416632475649,tagSetId:2109565834179633154,name:测试标注方式矩形,color:#e60d0d"/><Label value="测试标注方式" background="#0a3df5" meta="id:2109565734548135937,tagSetId:2109565834179633154,name:测试标注方式,color:#0a3df5"/></Labels>
+								<Rectangle name="bbox" toName="image" strokeWidth="3"/>
+								<Polygon name="poly" toName="image" strokeWidth="3"/>
+								<Image name="image" value="$image" zoom="true" /></View>`,
     interfaces: [
       'panel',
       'update',
@@ -321,7 +316,7 @@
     ],
     task: {
       data:{
-    "text": "2024年3月15日，张三从北京出发前往上海参加全球人工智能峰会。\n\n阿里巴巴集团副总裁李四在大会上发表了关于大语言模型的重要演讲，引起与会者广泛关注。\n\n华为技术有限公司宣布将在深圳建立新的研发中心，预计2025年底投入运营。\n\n联合国教科文组织于巴黎总部举办了文化遗产保护研讨会，来自世界各国的专家学者齐聚一堂。\n\n中秋节前夕，杭州西湖景区迎来了大量游客，当地政府采取了多项措施确保游览秩序。"
+    "image": "./public/images/astro-visuals.jpg"
 
 }
     },
@@ -441,6 +436,10 @@ ls.on("regionLabelChanged", (region) => {
       }
     });
   }
+});
+ls.on("labelClick", (label, selected) => {
+  console.log("标签被点击了:", label._value || label.value);
+  console.log("是否选中:", selected);
 });
     });
   </script>

@@ -60,14 +60,6 @@ const Model = types
     _supportsTransform: true,
     // depends on region and object tag; they both should correctly handle the `hidden` flag
     hideable: true,
-
-    editableFields: [
-      { property: "x", label: "X" },
-      { property: "y", label: "Y" },
-      { property: "width", label: "W" },
-      { property: "height", label: "H" },
-      { property: "rotation", label: "icon:angle" },
-    ],
   }))
   .volatile(() => {
     return {
@@ -78,6 +70,17 @@ const Model = types
     };
   })
   .views((self) => ({
+    get editableFields() {
+      const isDisabled = self.control?.readonly === true;
+      const fields = [
+        { property: "x", label: "X", disabled: isDisabled },
+        { property: "y", label: "Y", disabled: isDisabled },
+        { property: "width", label: "W", disabled: isDisabled },
+        { property: "height", label: "H", disabled: isDisabled },
+        { property: "rotation", label: "icon:angle", disabled: isDisabled || self.control?.canrotate === false },
+      ];
+      return fields;
+    },
     get store() {
       return getRoot(self);
     },

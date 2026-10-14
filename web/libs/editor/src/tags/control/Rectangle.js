@@ -32,6 +32,7 @@ import { ToolManagerMixin } from "../../mixins/ToolManagerMixin";
  * @param {boolean} [smart]               - Show smart tool for interactive pre-annotations
  * @param {boolean} [smartOnly]           - Only show smart tool for interactive pre-annotations
  * @param {pixel|none} [snap=none]        - Snap rectangle to image pixels
+ * @param {boolean=} [readOnly=true]    - Whether to show XYWH and rotation fields in the details panel as read-only (disabled)
  */
 const TagAttrs = types.model({
   toname: types.maybeNull(types.string),
@@ -44,6 +45,7 @@ const TagAttrs = types.model({
   fillopacity: types.maybeNull(customTypes.range()),
 
   canrotate: types.optional(types.boolean, true),
+  readonly: types.optional(types.boolean, false),
   snap: types.optional(types.string, "none"),
 });
 
