@@ -49,6 +49,7 @@ const TagAttrs = types.model({
 
   pointsize: types.optional(types.string, "small"),
   pointstyle: types.optional(types.string, "circle"),
+  showtoolbar: types.optional(types.boolean, true),
 });
 
 const Validation = types.model({

@@ -298,13 +298,23 @@
           },
         },
       };
-//choice="multiple" 多选
+// choice="multiple" 多选
+      // showToolbar="false" → 隐藏工具栏中的工具图标，工具通过点击标签激活
+      // meta="tool:RectangleTool" → 点击此标签自动激活两点矩形工具
+      // 可用工具名: RectangleTool, Rectangle3PointTool, PolygonTool
       var ls = new LabelStudio("label-studio", {
-         readOnlyFields: true,
-    config: `<View><Labels name="label" toName="image"><Label value="症状" background="#d41384" meta="id:2095696943120699394,tagSetId:2109565834179633154,name:症状,color:#d41384"/><Label value="帽子" background="#1a43d9" meta="id:2095699930887016449,tagSetId:2109565834179633154,name:帽子,color:#1a43d9"/><Label value="测试标注方式矩形" background="#e60d0d" meta="id:2109565416632475649,tagSetId:2109565834179633154,name:测试标注方式矩形,color:#e60d0d"/><Label value="测试标注方式" background="#0a3df5" meta="id:2109565734548135937,tagSetId:2109565834179633154,name:测试标注方式,color:#0a3df5"/></Labels>
-								<Rectangle name="bbox" toName="image" strokeWidth="3"/>
-								<Polygon name="poly" toName="image" strokeWidth="3"/>
-								<Image name="image" value="$image" zoom="true" /></View>`,
+         readOnlyFields: true, //xywh 角度只读
+    config: `<View>
+  <Labels name="label" toName="image">
+    <Label value="症状" background="#d41384" meta="id:2095696943120699394,tagSetId:2109565834179633154,name:症状,color:#d41384,tool:RectangleTool"/>
+    <Label value="帽子" background="#1a43d9" meta="id:2095699930887016449,tagSetId:2109565834179633154,name:帽子,color:#d41384,tool:Rectangle3PointTool"/>
+    <Label value="测试标注方式矩形" background="#e60d0d" meta="id:2109565416632475649,tagSetId:2109565834179633154,name:测试标注方式矩形,color:#e60d0d,tool:RectangleTool"/>
+    <Label value="测试标注方式" background="#0a3df5" meta="id:2109565734548135937,tagSetId:2109565834179633154,name:测试标注方式,color:#0a3df5,tool:PolygonTool"/>
+  </Labels>
+  <Rectangle name="bbox" toName="image" strokeWidth="3" showToolbar="false"/>
+  <Polygon name="poly" toName="image" strokeWidth="3" showToolbar="false"/>
+  <Image name="image" value="$image" zoom="true"/>
+</View>`,
     interfaces: [
       'panel',
       'update',
@@ -438,8 +448,20 @@ ls.on("regionLabelChanged", (region) => {
   }
 });
 ls.on("labelClick", (label, selected) => {
-  console.log("标签被点击了:", label._value || label.value);
-  console.log("是否选中:", selected);
+  console.log("标签被点击:", label.value, "选中:", selected);
+
+  // 方式一：动态指定工具（推荐，简洁）
+  // 可用工具名: RectangleTool, Rectangle3PointTool, PolygonTool
+  const toolMap = {
+    "症状": "RectangleTool",
+    "帽子": "Rectangle3PointTool",
+    "测试标注方式矩形": "RectangleTool",
+    "测试标注方式": "PolygonTool",
+  };
+  const toolName = toolMap[label.value];
+  if (toolName) {
+    ls.selectTool(toolName);
+  }
 });
     });
   </script>

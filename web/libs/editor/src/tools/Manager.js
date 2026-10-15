@@ -93,7 +93,9 @@ class ToolsManager {
 
     this.tools[key] = tool;
 
-    if (tool.default && !this._default_tool) this._default_tool = tool;
+    if (tool.default && !this._default_tool && tool.control?.showtoolbar !== false) {
+      this._default_tool = tool;
+    }
 
     if (this.preservedTool && tool.shouldPreserveSelectedState) {
       if (tool.fullName === this.preservedTool && tool.setSelected) {

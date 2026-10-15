@@ -14,6 +14,7 @@ import { EventInvoker } from "./utils/events";
 import { FF_LSDV_4620_3_ML, isFF } from "./utils/feature-flags";
 import { cleanDomAfterReact, findReactKey } from "./utils/reactCleaner";
 import { isDefined } from "./utils/utilities";
+import ToolsManager from "./tools/Manager";
 
 // Extend window interface for TypeScript
 declare global {
@@ -263,5 +264,27 @@ export class LabelStudio {
         this.events.on(eventName, callback);
       }
     });
+  }
+
+  selectTool(toolName: string) {
+    console.log("[selectTool] 查找工具:", toolName);
+    const instances = ToolsManager.allInstances();
+    console.log("[selectTool] 管理器实例数:", instances.length);
+
+    let found = false;
+    for (const manager of instances) {
+      const matches = Object.values(manager.tools).filter((t: any) => t.toolName === toolName);
+      if (matches.length > 0) {
+        console.log("[selectTool] 找到", matches.length, "个同名工具:", toolName);
+        manager.unselectAll();
+        matches.forEach((tool: any) => {
+          console.log("[selectTool] 选中:", (tool as any).toolName, "selected:", (tool as any).selected);
+          tool.setSelected(true);
+        });
+        found = true;
+      }
+    }
+    if (!found) console.log("[selectTool] 未找到工具:", toolName);
+    return found;
   }
 }

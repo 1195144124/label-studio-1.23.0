@@ -40,7 +40,23 @@ const BaseTool = types
         return self.control.isSeparated;
       },
       get viewClass() {
-        return () => (self.shouldRenderView ? <ToolView item={self} /> : null);
+        const selected = self.selected;
+        const showtoolbar = self.control?.showtoolbar;
+        const ctrlType = self.control?.type;
+
+        let shouldShow;
+        if (selected) {
+          shouldShow = true;
+        } else if (showtoolbar === true) {
+          shouldShow = true;
+        } else if (showtoolbar === false) {
+          shouldShow = false;
+        } else {
+          shouldShow = !(ctrlType === "label" || ctrlType === "labels" || ctrlType?.endsWith?.("labels"));
+        }
+
+        if (!shouldShow) return null;
+        return () => <ToolView item={self} />;
       },
       get viewTooltip() {
         return null;

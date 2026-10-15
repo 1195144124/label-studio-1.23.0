@@ -47,6 +47,7 @@ const TagAttrs = types.model({
   canrotate: types.optional(types.boolean, true),
   readonly: types.optional(types.boolean, false),
   snap: types.optional(types.string, "none"),
+  showtoolbar: types.optional(types.boolean, true),
 });
 
 const Model = types
