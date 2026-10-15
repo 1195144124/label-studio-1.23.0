@@ -448,17 +448,13 @@ ls.on("regionLabelChanged", (region) => {
   }
 });
 ls.on("labelClick", (label, selected) => {
-  console.log("标签被点击:", label.value, "选中:", selected);
+  // label 现在是包含所有字段的普通对象
+  console.log("完整标签信息:", label.selected, 1111);
+  // label 包含: value, id, meta, alias, background, hotkey, hint, type, size, granularity 等
 
-  // 方式一：动态指定工具（推荐，简洁）
-  // 可用工具名: RectangleTool, Rectangle3PointTool, PolygonTool
-  const toolMap = {
-    "症状": "RectangleTool",
-    "帽子": "Rectangle3PointTool",
-    "测试标注方式矩形": "RectangleTool",
-    "测试标注方式": "PolygonTool",
-  };
-  const toolName = toolMap[label.value];
+  // 从 meta 中自动提取工具名，无需手动维护 toolMap
+  const toolMatch = String(label.meta || "").match(/tool:(\w+)/);
+  const toolName = toolMatch ? toolMatch[1] : null;
   if (toolName) {
     ls.selectTool(toolName);
   }

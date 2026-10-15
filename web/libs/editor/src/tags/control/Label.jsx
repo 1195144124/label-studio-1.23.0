@@ -349,7 +349,29 @@ const Model = types
 
     onLabelInteract() {
       // label click event - invoked before toggle to ensure it always fires
-      getEnv(self).events.invoke("labelClick", self, self.selected);
+      // pass all label info as a plain object
+      const labelInfo = {
+        value: self.value,
+        _value: self._value,
+        id: self.id,
+        meta: self.meta,
+        alias: self.alias,
+        selected: !self.selected,
+        background: self.background,
+        hotkey: self.hotkey,
+        hint: self.hint,
+        type: self.type,
+        showalias: self.showalias,
+        aliasstyle: self.aliasstyle,
+        size: self.size,
+        selectedcolor: self.selectedcolor,
+        granularity: self.granularity,
+        html: self.html,
+        rounded: self.rounded,
+        maxusages: self.maxusages || self.maxUsages,
+        hasChildren: self.hasChildren,
+      };
+      getEnv(self).events.invoke("labelClick", labelInfo, !self.selected);
 
       return self.toggleSelected();
     },
