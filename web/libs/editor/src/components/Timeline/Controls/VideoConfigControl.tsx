@@ -156,7 +156,7 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
         className={styles.modal}
         ref={modalRef}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-        style={{ opacity: 0, position: "fixed" }}
+        style={{ opacity: 0, position: "fixed", zIndex: 9999 }}
       >
         <div className={styles.scrollContent}>
           <div className={styles.sectionHeader}>播放设置</div>
