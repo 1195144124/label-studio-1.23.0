@@ -1,4 +1,5 @@
 import { ff } from "@humansignal/core";
+import { extendObservable } from "mobx";
 import { destroy } from "mobx-state-tree";
 import { FF_DEV_3391 } from "../utils/feature-flags";
 import { guidGenerator } from "../utils/unique";
@@ -49,6 +50,10 @@ class ToolsManager {
     this.tools = {};
     this._default_tool = null;
     this._prefix = guidGenerator();
+
+    extendObservable(this, {
+      showAllSegmentation: false,
+    });
   }
 
   get preservedTool() {

@@ -1,4 +1,4 @@
-import { configure } from "mobx";
+import { configure, runInAction } from "mobx";
 import { destroy } from "mobx-state-tree";
 import { render, unmountComponentAtNode } from "react-dom";
 import { createRoot } from "react-dom/client";
@@ -266,25 +266,41 @@ export class LabelStudio {
     });
   }
 
-  selectTool(toolName: string) {
-    console.log("[selectTool] 查找工具:", toolName);
+  singleTool(toolName: string) {
+    console.log("[singleTool] 查找工具:", toolName);
     const instances = ToolsManager.allInstances();
-    console.log("[selectTool] 管理器实例数:", instances.length);
+    console.log("[singleTool] 管理器实例数:", instances.length);
 
     let found = false;
     for (const manager of instances) {
+      runInAction(() => {
+        manager.showAllSegmentation = false;
+      });
       const matches = Object.values(manager.tools).filter((t: any) => t.toolName === toolName);
       if (matches.length > 0) {
-        console.log("[selectTool] 找到", matches.length, "个同名工具:", toolName);
+        console.log("[singleTool] 找到", matches.length, "个同名工具:", toolName);
         manager.unselectAll();
         matches.forEach((tool: any) => {
-          console.log("[selectTool] 选中:", (tool as any).toolName, "selected:", (tool as any).selected);
+          console.log("[singleTool] 选中:", (tool as any).toolName, "selected:", (tool as any).selected);
           tool.setSelected(true);
         });
         found = true;
       }
     }
-    if (!found) console.log("[selectTool] 未找到工具:", toolName);
+    if (!found) console.log("[singleTool] 未找到工具:", toolName);
     return found;
+  }
+
+  allTool() {
+    const instances = ToolsManager.allInstances();
+    for (const manager of instances) {
+      runInAction(() => {
+        manager.showAllSegmentation = true;
+      });
+      const firstTool = Object.values(manager.tools).find((t: any) => t.group === "segmentation");
+      if (firstTool) {
+        (firstTool as any).setSelected(true);
+      }
+    }
   }
 }

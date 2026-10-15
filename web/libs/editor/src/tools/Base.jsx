@@ -50,7 +50,7 @@ const BaseTool = types
         } else if (showtoolbar === true) {
           shouldShow = true;
         } else if (showtoolbar === false) {
-          shouldShow = false;
+          shouldShow = self.group === "segmentation" && self.manager?.showAllSegmentation;
         } else {
           shouldShow = !(ctrlType === "label" || ctrlType === "labels" || ctrlType?.endsWith?.("labels"));
         }

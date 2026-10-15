@@ -306,7 +306,7 @@
          readOnlyFields: true, //xywh 角度只读
     config: `<View>
   <Labels name="label" toName="image">
-    <Label value="症状" background="#d41384" meta="id:2095696943120699394,tagSetId:2109565834179633154,name:症状,color:#d41384,tool:RectangleTool"/>
+    <Label value="症状" background="#d41384" meta="id:2095696943120699394,tagSetId:2109565834179633154,name:症状,color:#d41384,tool:''"/>
     <Label value="帽子" background="#1a43d9" meta="id:2095699930887016449,tagSetId:2109565834179633154,name:帽子,color:#d41384,tool:Rectangle3PointTool"/>
     <Label value="测试标注方式矩形" background="#e60d0d" meta="id:2109565416632475649,tagSetId:2109565834179633154,name:测试标注方式矩形,color:#e60d0d,tool:RectangleTool"/>
     <Label value="测试标注方式" background="#0a3df5" meta="id:2109565734548135937,tagSetId:2109565834179633154,name:测试标注方式,color:#0a3df5,tool:PolygonTool"/>
@@ -456,7 +456,9 @@ ls.on("labelClick", (label, selected) => {
   const toolMatch = String(label.meta || "").match(/tool:(\w+)/);
   const toolName = toolMatch ? toolMatch[1] : null;
   if (toolName) {
-    ls.selectTool(toolName);
+    ls.singleTool(toolName);
+  } else {
+    ls.allTool();
   }
 });
     });
