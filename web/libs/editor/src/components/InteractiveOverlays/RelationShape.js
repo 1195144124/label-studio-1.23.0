@@ -28,5 +28,6 @@ export class RelationShape {
 
   destroy() {
     this.onUpdated = null;
+    this._watcher?.destroy?.();
   }
 }

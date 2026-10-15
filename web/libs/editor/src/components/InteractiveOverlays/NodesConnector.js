@@ -1,6 +1,7 @@
 import { debounce } from "@humansignal/core/lib/utils/debounce";
 import { wrapArray } from "../../utils/utilities";
 import { Geometry } from "./Geometry";
+import { BoundingBox } from "./BoundingBox";
 import { RelationShape } from "./RelationShape";
 import { createPropertyWatcher, DOMWatcher } from "./watchers";
 
@@ -334,11 +335,42 @@ const buildPathCommand = (
   return [pathCommand.join(" "), [ex, ey]];
 };
 
-const calculatePath = (start, end) => {
+/**
+ * 关系连线在每一侧（上/左/右）的基础偏移量（像素）
+ */
+const BASE_LIMIT = 15;
+
+/**
+ * 当同一侧存在多条关系时，每条关系额外增加的偏移量（像素），
+ * 用于把重叠的关系错开，避免相互挤压遮挡
+ */
+const LANE_STEP = 24;
+
+/**
+ * 根据起止 BBox 计算连线应当走的「侧别」，用于为多条关系分配不同的通道
+ * @returns {"top" | "left" | "right"}
+ */
+const getSideKey = ({ x: x1, y: y1, width: w1 }, { x: x2, y: y2, width: w2 }) => {
+  const intersecting = shapesIntersect({
+    x1,
+    y1,
+    w1,
+    x2,
+    y2,
+    w2,
+  });
+
+  if (!intersecting) return "top";
+
+  // 与 calculateSidePath 中保持一致：贴近左边缘时绕到右侧，否则绕到左侧
+  return Math.min(x1, x2) - BASE_LIMIT < 0 ? "right" : "left";
+};
+
+const calculatePath = (start, end, offset = 0) => {
   const { x: x1, y: y1, width: w1, height: h1 } = start;
   const { x: x2, y: y2, width: w2, height: h2 } = end;
 
-  const limit = 15;
+  const limit = BASE_LIMIT + offset * LANE_STEP;
 
   const intersecting = shapesIntersect({
     x1,
@@ -372,11 +404,27 @@ const calculatePath = (start, end) => {
   return pathCommand;
 };
 
+/**
+ * 仅为计算 BBox / 侧别而临时获取起止节点的 BBox。
+ * 直接基于 DOM 计算，不创建 RelationShape / watcher，避免遗留 MutationObserver 等监听。
+ */
+const getNodesBBoxForRelation = (relation, root) => {
+  const makeShape = (element) => ({ boundingBox: () => BoundingBox.bbox(element) });
+
+  return getNodesBBox({
+    root,
+    start: makeShape(relation.startNode),
+    end: makeShape(relation.endNode),
+  });
+};
+
 export default {
   obtainWatcher,
   createShape,
   connect,
   getNodesBBox,
+  getNodesBBoxForRelation,
   calculatePath,
+  getSideKey,
   calculateBBox,
 };
