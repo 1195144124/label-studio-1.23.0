@@ -657,7 +657,7 @@ const HtxVideoView = ({ item, store }) => {
                           </Menu>
                         }
                       >
-                        <Button size="small" variant="neutral" look="string">
+                        <Button size="small" variant="neutral" look="string" tooltip="缩放">
                           <IconZoomIn />
                         </Button>
                       </Dropdown.Trigger>

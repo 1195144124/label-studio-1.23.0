@@ -318,12 +318,12 @@ export const Controls: FC<TimelineControlsProps> = memo(
           </Space>
           <Space className={cn("timeline-controls").elem("group").toClassName()} collapsed>
             {!disableFrames && allowViewCollapse && (
-              <ControlButton tooltip="Toggle Timeline" onClick={() => onToggleCollapsed?.(!collapsed)}>
+              <ControlButton tooltip="显/隐时间轴" onClick={() => onToggleCollapsed?.(!collapsed)}>
                 {collapsed ? <IconExpand /> : <IconCollapse />}
               </ControlButton>
             )}
             {allowFullscreen && (
-              <ControlButton tooltip="Fullscreen" onClick={() => onFullScreenToggle?.(false)}>
+              <ControlButton tooltip="全屏/退出全屏" onClick={() => onFullScreenToggle?.(false)}>
                 {fullscreen ? <IconFullscreenExit /> : <IconFullscreen />}
               </ControlButton>
             )}

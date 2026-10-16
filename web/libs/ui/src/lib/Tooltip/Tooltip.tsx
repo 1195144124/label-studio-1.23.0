@@ -160,6 +160,10 @@ const TooltipInner = forwardRef(
 
     const child = Children.only(children) as DetailedReactHTMLElement<any, HTMLElement>;
 
+    // 记录子元素原本的 ref（注意 ref 在 React 中不是 props 的一部分，需从元素本身读取），
+    // 包裹时转发，避免吞掉外部需要的 ref（如 Dropdown 的触发 ref）
+    const originalChildRef = (child as any).ref;
+
     const needFallback = !!child.props.disabled;
 
     const onMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -185,6 +189,8 @@ const TooltipInner = forwardRef(
       ref(el: any) {
         setRef(triggerElement, el);
         setRef(ref, el);
+        // 转发子元素原本的 ref，避免包裹时丢失（如 Button 内部的 Dropdown 触发 ref）
+        setRef(originalChildRef, el);
       },
       ...(!needFallback ? { onMouseEnter, onMouseLeave } : {}),
     });

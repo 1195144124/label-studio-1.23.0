@@ -186,7 +186,12 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
 
   return (
     <div className={styles.videoConfig} ref={buttonRef} onClick={handleContainerClick}>
-      <ControlButton look={configModal ? "filled" : undefined} onClick={handleButtonClick} aria-label="Video settings">
+      <ControlButton
+        look={configModal ? "filled" : undefined}
+        onClick={handleButtonClick}
+        aria-label="Video settings"
+        tooltip="设置"
+      >
         {<IconConfig />}
       </ControlButton>
       {configModal && renderModal()}

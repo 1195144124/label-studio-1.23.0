@@ -1,6 +1,6 @@
 import { Children, cloneElement, forwardRef, type ReactElement } from "react";
 import { Hotkey } from "../../core/Hotkey";
-import type { ButtonProps } from "@humansignal/ui";
+import { Tooltip, type ButtonProps } from "@humansignal/ui";
 import type Keymaster from "keymaster";
 import { useHotkey } from "../../hooks/useHotkey";
 import { isDefined } from "../../utils/utilities";
@@ -29,6 +29,11 @@ export const WithHotkey = forwardRef<HTMLElement, HotkeyProps>(
           {clone}
         </Hotkey.Tooltip>
       );
+    }
+
+    // 没有快捷键绑定时，仍保留普通的鼠标移入提示
+    if (isDefined(tooltip)) {
+      return <Tooltip title={tooltip}>{clone}</Tooltip>;
     }
 
     return clone;
