@@ -151,6 +151,11 @@ export default types
     readOnlyFields: types.optional(types.boolean, false),
 
     /**
+     * Disable relations functionality (hide relations panel and create relation button)
+     */
+    disableRelations: types.optional(types.boolean, false),
+
+    /**
      * Show or hide comments section
      */
     showComments: false,
@@ -426,13 +431,15 @@ export default types
       });
 
       // create relation
-      hotkeys.addNamed("region:relation", () => {
-        const c = self.annotationStore.selected;
+      if (!self.disableRelations) {
+        hotkeys.addNamed("region:relation", () => {
+          const c = self.annotationStore.selected;
 
-        if (c && c.highlightedNode && !c.isLinkingMode) {
-          c.startLinkingMode(CREATE_RELATION_MODE, c.highlightedNode);
-        }
-      });
+          if (c && c.highlightedNode && !c.isLinkingMode) {
+            c.startLinkingMode(CREATE_RELATION_MODE, c.highlightedNode);
+          }
+        });
+      }
 
       // Focus fist focusable perregion when region is selected
       hotkeys.addNamed("region:focus", (e) => {

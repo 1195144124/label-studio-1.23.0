@@ -329,6 +329,7 @@ class App extends Component {
                     focusTab={
                       store.commentStore.tooltipMessage ? "comments" : null
                     }
+                    disableRelations={store.disableRelations}
                   >
                     {mainContent}
                     {store.hasInterface("topbar") && (

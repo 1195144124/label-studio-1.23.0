@@ -9,6 +9,7 @@ import {
 import { Button, type ButtonProps } from "@humansignal/ui";
 import chroma from "chroma-js";
 import { observer } from "mobx-react";
+import { getRoot } from "mobx-state-tree";
 import { type FC, forwardRef, useMemo, useState } from "react";
 import { WithHotkey } from "../../../common/Hotkey/WithHotkey";
 import { CREATE_RELATION_MODE } from "../../../stores/Annotation/LinkingModes";
@@ -127,27 +128,30 @@ export const RegionItem: FC<RegionItemProps> = observer(
 const RegionAction: FC<any> = observer(
   ({ region, annotation, editMode, onEditModeChange }) => {
     const entityButtons: JSX.Element[] = [];
+    const disableRelations = getRoot(region).disableRelations;
 
-    entityButtons.push(
-      <WithHotkey key="region:relation" binging="region:relation">
-        <RegionActionButton
-          variant={annotation.isLinkingMode ? "primary" : "neutral"}
-          look={annotation.isLinkingMode ? "filled" : "string"}
-          onClick={(_e: any, hotkey?: any) => {
-            // If this is triggered by a hotkey, defer to the global bound handler for relations to avoid contention.
-            if (hotkey) return;
-            if (annotation.isLinkingMode) {
-              annotation.stopLinkingMode();
-            } else {
-              annotation.startLinkingMode(CREATE_RELATION_MODE, region);
-            }
-          }}
-          aria-label="Create Relation"
-        >
-          <IconRelationLink />
-        </RegionActionButton>
-      </WithHotkey>,
-    );
+    if (!disableRelations) {
+      entityButtons.push(
+        <WithHotkey key="region:relation" binging="region:relation">
+          <RegionActionButton
+            variant={annotation.isLinkingMode ? "primary" : "neutral"}
+            look={annotation.isLinkingMode ? "filled" : "string"}
+            onClick={(_e: any, hotkey?: any) => {
+              // If this is triggered by a hotkey, defer to the global bound handler for relations to avoid contention.
+              if (hotkey) return;
+              if (annotation.isLinkingMode) {
+                annotation.stopLinkingMode();
+              } else {
+                annotation.startLinkingMode(CREATE_RELATION_MODE, region);
+              }
+            }}
+            aria-label="Create Relation"
+          >
+            <IconRelationLink />
+          </RegionActionButton>
+        </WithHotkey>,
+      );
+    }
 
     entityButtons.push(
       <WithHotkey key="region:meta" binging="region:meta">

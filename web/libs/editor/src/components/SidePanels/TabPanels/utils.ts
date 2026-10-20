@@ -385,9 +385,30 @@ export const checkCollapsedPanelsHaveData = (
   return collapsedCopy;
 };
 
+const removeRelationsTab = (state: Record<string, PanelBBox>) => {
+  const newState: Record<string, PanelBBox> = {};
+
+  Object.keys(state).forEach((panelName) => {
+    const filteredViews = state[panelName].panelViews.filter(
+      (view) => view.name !== "relations",
+    );
+
+    // only keep panels that still have views
+    if (filteredViews.length > 0) {
+      newState[panelName] = {
+        ...state[panelName],
+        panelViews: filteredViews,
+      };
+    }
+  });
+
+  return newState;
+};
+
 export const restorePanel = (
   showComments: boolean,
   showCustomTab: ShowCustomTab = false,
+  disableRelations = false,
 ): StoredPanelState => {
   const previousState = window.localStorage.getItem("panelState");
   const parsed: StoredPanelState | null =
@@ -397,9 +418,9 @@ export const restorePanel = (
   const collapsedSide = parsed?.collapsedSide ?? defaultCollapsedSide;
   const allTabs =
     panelData && Object.values(panelData).flatMap((panel) => panel.panelViews);
-  // don't use comments and custom tabs anywhere if it's disabled
+  // don't use comments, custom tabs and relations if disabled
   const countOfAllAvailableTabs =
-    panelViews.length - (showComments ? 0 : 1) - (showCustomTab ? 0 : 1);
+    panelViews.length - (showComments ? 0 : 1) - (showCustomTab ? 0 : 1) - (disableRelations ? 1 : 0);
 
   // stored state can have less tabs than available, for example if it was stored on old version
   // or if comments were enabled; then return default state
@@ -413,6 +434,11 @@ export const restorePanel = (
         "regions-relations",
         showCustomTab,
       );
+    }
+
+    // filter out relations tab if disabled
+    if (disableRelations) {
+      defaultPanel = removeRelationsTab(defaultPanel);
     }
 
     return { panelData: defaultPanel, collapsedSide: defaultCollapsedSide };

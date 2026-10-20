@@ -33,6 +33,7 @@ export interface SidePanelsProps {
   showComments: boolean;
   showCustomTab: ShowCustomTab;
   focusTab: string;
+  disableRelations?: boolean;
 }
 
 export interface ViewportSize {

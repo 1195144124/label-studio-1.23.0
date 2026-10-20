@@ -48,6 +48,8 @@ type LSFOptions = Record<string, any> & {
     reactVersion?: "v18" | "v17";
   };
   readOnlyFields?: boolean;
+  /** 禁用关系功能，隐藏关系面板和创建关系按钮 */
+  disableRelations?: boolean;
 };
 
 export class LabelStudio {

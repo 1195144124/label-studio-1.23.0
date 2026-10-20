@@ -66,6 +66,7 @@ const SideTabsPanelsComponent: FC<SidePanelsProps> = ({
   showComments,
   showCustomTab,
   focusTab,
+  disableRelations,
 }) => {
   const snapThreshold = 5;
   const regions = currentEntity.regionStore;
@@ -81,8 +82,8 @@ const SideTabsPanelsComponent: FC<SidePanelsProps> = ({
   const rootRef = useRef<HTMLDivElement>();
   const [snap, setSnap] = useState<DropSide | Side | undefined>();
   const initialState = useMemo(
-    () => restorePanel(showComments, showCustomTab),
-    [showComments, showCustomTab],
+    () => restorePanel(showComments, showCustomTab, disableRelations),
+    [showComments, showCustomTab, disableRelations],
   );
   const [panelData, setPanelData] = useState<Record<string, PanelBBox>>(
     initialState.panelData,
