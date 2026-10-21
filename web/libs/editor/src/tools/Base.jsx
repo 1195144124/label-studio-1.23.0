@@ -50,7 +50,24 @@ const BaseTool = types
         } else if (showtoolbar === true) {
           shouldShow = true;
         } else if (showtoolbar === false) {
-          shouldShow = self.group === "segmentation" && self.manager?.showAllSegmentation;
+          shouldShow = self.group === "segmentation" && (
+            self.manager?.showAllSegmentation ||
+            (() => {
+              try {
+                const activeStates = self.obj?.activeStates?.() || [];
+                const toolName = self.toolName;
+                return activeStates.some((control) => {
+                  const labels = control.selectedLabels || [];
+                  return labels.some((label) => {
+                    const meta = String(label.meta || "");
+                    return meta.includes(`tool:${toolName}`);
+                  });
+                });
+              } catch (e) {
+                return false;
+              }
+            })()
+          );
         } else {
           shouldShow = !(ctrlType === "label" || ctrlType === "labels" || ctrlType?.endsWith?.("labels"));
         }
