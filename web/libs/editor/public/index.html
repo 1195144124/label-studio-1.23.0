@@ -301,12 +301,16 @@
 // choice="multiple" 多选
       // showToolbar="false" → 隐藏工具栏中的工具图标，工具通过点击标签激活
       // meta="tool:RectangleTool" → 点击此标签自动激活两点矩形工具
-      // 可用工具名: RectangleTool, Rectangle3PointTool, PolygonTool
+      // meta="tool:KeyPointTool" → 点击此标签自动激活关键点工具
+      // 可用工具名: RectangleTool, Rectangle3PointTool, PolygonTool, KeyPointTool
       localStorage.removeItem('panelState');
       var ls = new LabelStudio("label-studio", {
          readOnlyFields: true, //xywh 角度只读
-    config: `<View><Labels name="label" toName="text" rounded><Label value="中性" background="#891a1a" meta="id:2097951980181884930,tagSetId:2110971923233583105,name:中性,color:#891a1a" /><Label value="时间" background="#aa1e1e" meta="id:2098251379121115137,tagSetId:2110971923233583105,name:时间,color:#aa1e1e" /><Label value="乐观" background="#1e6abb" meta="id:2099668038087766018,tagSetId:2110971923233583105,name:乐观,color:#1e6abb" /><Label value="悲观" background="#78ba23" meta="id:2099668131763351553,tagSetId:2110971923233583105,name:悲观,color:#78ba23" /><Label value="人" background="#32d4a3" meta="id:2099738090566410242,tagSetId:2110971923233583105,name:人,color:#32d4a3" /><Label value="年龄" background="#cbdc16" meta="id:2095696786945789953,tagSetId:2109818325416787969,name:年龄,color:#cbdc16" /><Label value="症状" background="#d41384" meta="id:2095696943120699394,tagSetId:2109818325416787969,name:症状,color:#d41384" /><Label value="自我介绍" background="#f40505" meta="id:2109817010015899650,tagSetId:2109818325416787969,name:自我介绍,color:#f40505" /><Label value="日程" background="#0059ff" meta="id:2109817422274039809,tagSetId:2109818325416787969,name:日程,color:#0059ff" /><Label value="时刻" background="#d21313" meta="id:2099456968951554050,tagSetId:2109816569467179010,name:时刻,color:#d21313" /><Label value="地址" background="#28c848" meta="id:2099457064866897922,tagSetId:2109816569467179010,name:地址,color:#28c848" /></Labels>
-									<Text name="text" value="$text"/></View>`,
+    config: `<View><Labels name="label" toName="image"><Label value="手指" background="#f40d0d" meta="id:2112717923821355010,tagSetId:2112718507563614210,name:手指,color:#f40d0d,tool:RectangleTool"/><Label value="手" background="#90e81b" meta="id:2112718319038038017,tagSetId:2112718507563614210,name:手,color:#90e81b,tool:KeyPointTool"/></Labels>
+								<Rectangle name="rect-1" toName="image" showToolbar="false"/>
+								<KeyPoint name="kp-1" toName="image" strokeWidth="5" showToolbar="false"/>
+								<Polygon name="poly" toName="image" strokeWidth="3"  showToolbar="false"/>
+								<Image name="image" value="$image" zoom="true" /></View>`,
     interfaces: [
       'panel',
       'update',
@@ -317,10 +321,10 @@
       'side-column',
     ],
     disableRelations:true,
-    task: {
+      task: {
       data:{
-          "text": "1111111111111111111111111111111111111111111111111111111111111111111111111111112222222222222222222222222222222222222222222222222222222222222222222222222222223333333333333333333333333333333333333333333333333333333333333"
-        }
+    "image": "./public/images/astro-visuals.jpg"
+}
     },
     onLabelStudioLoad: (LS) => {
       var c = LS.annotationStore.addAnnotation({

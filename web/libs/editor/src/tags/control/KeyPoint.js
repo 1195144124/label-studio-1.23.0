@@ -39,6 +39,8 @@ const TagAttrs = types.model({
 
   snap: types.optional(types.string, "none"),
 
+  showtoolbar: types.optional(types.boolean, true),
+
   strokecolor: types.optional(customTypes.color, "#8bad00"),
   strokewidth: types.optional(types.string, "2"),
 });

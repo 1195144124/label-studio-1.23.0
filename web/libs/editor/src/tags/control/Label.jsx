@@ -234,13 +234,11 @@ const Model = types
 
       if (sameObjectSelectedRegions.length > 0 && applicableRegions.length === 0) return;
 
-      // if we are going to select label and it would be the first in this labels group
-      if (!labels.selectedLabels.length && !self.selected) {
-        // unselect other tools if they exist and selected
+      // if we are going to select label, check for preferred tool
+      if (!self.selected) {
         const manager = ToolsManager.getInstance({ name: self.parent.toname });
         const parentTools = self.parent?.tools || {};
 
-        // Build a lookup of available tools.
         let toolsLookup = parentTools;
 
         if (Object.keys(toolsLookup).length === 0) {
@@ -252,28 +250,30 @@ const Model = types
           });
         }
 
-        // If a tool is already selected (e.g., by ls.selectTool in labelClick),
-        // skip tool selection but still apply label visual selection below
         const selectedTool = manager.findSelectedTool();
-        const alreadySelected = selectedTool && toolsLookup[selectedTool.toolName];
 
-        if (!alreadySelected) {
-          // support per-label preferred tool: check label meta for tool:xxx
-          if (!self._preferredToolName) {
-            const toolFromMeta = String(self.meta || "").match(/tool:(\w+)/);
-            if (toolFromMeta) {
-              self._preferredToolName = toolFromMeta[1];
+        // check label meta for tool:xxx to switch to preferred tool
+        const toolFromMeta = String(self.meta || "").match(/tool:(\w+)/);
+
+        if (toolFromMeta) {
+          const preferredToolName = toolFromMeta[1];
+          const preferredTool = toolsLookup[preferredToolName];
+
+          if (preferredTool && selectedTool !== preferredTool) {
+            manager.selectTool(preferredTool, true);
+          }
+        } else if (!labels.selectedLabels.length) {
+          // first label being selected with no preferred tool, select first available
+          const alreadySelected = selectedTool && toolsLookup[selectedTool.toolName];
+
+          if (!alreadySelected) {
+            const tool = Object.values(toolsLookup)[0];
+
+            if (tool && selectedTool !== tool) {
+              manager.selectTool(tool, true);
             }
           }
-          const preferredTool = self._preferredToolName ? toolsLookup[self._preferredToolName] : null;
-          const tool = preferredTool || Object.values(toolsLookup)[0];
-
-          if (tool && selectedTool !== tool) {
-            manager.selectTool(tool, true);
-          }
         }
-
-        self._preferredToolName = null;
       }
 
       if (self.isEmpty) {
