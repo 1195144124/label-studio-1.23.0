@@ -87,6 +87,30 @@ const DrawingTool = types
     };
 
     return {
+      handleToolSwitch() {
+        if (!self.isDrawing) return;
+
+        try {
+          self.deleteRegion();
+        } catch (e) {
+          self.currentArea = null;
+        }
+
+        try {
+          self.annotation.history.unfreeze();
+        } catch (e) {
+          /* ignore */
+        }
+
+        try {
+          self.annotation.setIsDrawing(false);
+        } catch (e) {
+          /* ignore */
+        }
+
+        self.mode = "viewing";
+      },
+
       event(name, ev, [x, y, canvasX, canvasY]) {
         // filter right clicks and middle clicks and shift pressed
         if (ev.button > 0 || ev.shiftKey) return;
@@ -268,6 +292,34 @@ const TwoPointsDrawingTool = DrawingTool.named("TwoPointsDrawingTool")
     };
 
     return {
+      handleToolSwitch() {
+        currentMode = DEFAULT_MODE;
+        modeAfterMouseMove = DEFAULT_MODE;
+        startPoint = null;
+        endPoint = { x: 0, y: 0 };
+        if (!self.isDrawing) return;
+
+        try {
+          self.deleteRegion();
+        } catch (e) {
+          self.currentArea = null;
+        }
+
+        try {
+          self.annotation.history.unfreeze();
+        } catch (e) {
+          /* ignore */
+        }
+
+        try {
+          self.annotation.setIsDrawing(false);
+        } catch (e) {
+          /* ignore */
+        }
+
+        self.mode = "viewing";
+      },
+
       updateDraw: throttle((x, y) => {
         if (currentMode === DEFAULT_MODE) return;
         self.draw(x, y);
@@ -527,6 +579,34 @@ const ThreePointsDrawingTool = DrawingTool.named("ThreePointsDrawingTool")
       canStartDrawing() {
         return !self.isIncorrectControl();
       },
+
+      handleToolSwitch() {
+        points = [];
+        startPoint = null;
+        currentMode = DEFAULT_MODE;
+        if (!self.isDrawing) return;
+
+        try {
+          self.deleteRegion();
+        } catch (e) {
+          self.currentArea = null;
+        }
+
+        try {
+          self.annotation.history.unfreeze();
+        } catch (e) {
+          /* ignore */
+        }
+
+        try {
+          self.annotation.setIsDrawing(false);
+        } catch (e) {
+          /* ignore */
+        }
+
+        self.mode = "viewing";
+      },
+
       updateDraw: (x, y) => {
         if (currentMode === DEFAULT_MODE) self.getCurrentArea()?.draw(x, y, points);
         else if (currentMode === DRAG_MODE) self.draw(x, y);

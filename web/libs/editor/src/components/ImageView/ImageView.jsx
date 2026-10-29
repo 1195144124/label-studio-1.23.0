@@ -727,8 +727,7 @@ export default observer(
      * Mouse up outside the canvas
      */
     handleGlobalMouseUp = (e) => {
-      window.removeEventListener("mousemove", this.handleGlobalMouseMove);
-      window.removeEventListener("mouseup", this.handleGlobalMouseUp);
+      this.cleanupGlobalListeners();
 
       if (e.target && e.target.tagName === "CANVAS") return;
 
@@ -738,6 +737,11 @@ export default observer(
       item.freezeHistory();
 
       return this.triggerMouseUp(e, x - this.canvasX, y - this.canvasY);
+    };
+
+    cleanupGlobalListeners = () => {
+      window.removeEventListener("mousemove", this.handleGlobalMouseMove);
+      window.removeEventListener("mouseup", this.handleGlobalMouseUp);
     };
 
     handleGlobalMouseMove = (e) => {
@@ -965,6 +969,8 @@ export default observer(
       this.attachObserver(item.containerRef);
       this.updateReadyStatus();
 
+      item._cleanupGlobalListeners = this.cleanupGlobalListeners;
+
       hotkeys.addDescription("shift", "Pan image");
     }
 
@@ -986,6 +992,7 @@ export default observer(
 
     componentWillUnmount() {
       this.detachObserver();
+      this.cleanupGlobalListeners();
       window.removeEventListener("resize", this.onResize);
 
       hotkeys.removeDescription("shift");

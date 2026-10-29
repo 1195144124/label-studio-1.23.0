@@ -127,6 +127,8 @@ class ToolsManager {
     if (stage) {
       stage.container().style.cursor = "default";
     }
+
+    this.obj?._cleanupGlobalListeners?.();
   }
 
   selectTool(tool, selected, isInitial = false) {
@@ -150,8 +152,17 @@ class ToolsManager {
       unrelatedLabels.forEach((tag) => tag.unselectAll());
     }
 
-    currentTool?.handleToolSwitch?.(tool);
-    currentTool?.complete?.();
+    try {
+      currentTool?.handleToolSwitch?.(tool);
+    } catch (e) {
+      /* ignore errors during tool switch cleanup */
+    }
+
+    try {
+      currentTool?.complete?.();
+    } catch (e) {
+      /* ignore errors during tool completion */
+    }
 
     if (selected) {
       this.unselectAll();

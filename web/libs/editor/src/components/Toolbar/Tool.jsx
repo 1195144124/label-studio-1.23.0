@@ -75,11 +75,17 @@ export const Tool = ({
 
     if (shortcut && !hotkeys.hasKeyByName(shortcut)) {
       hotkeys.addNamed(shortcut, () => {
-        if (!tool?.disabled && !tool?.annotation?.isDrawing) {
-          if (tool?.unselectRegionOnToolChange) {
-            tool.annotation.unselectAreas();
+        try {
+          if (!tool?.disabled) {
+            if (tool?.unselectRegionOnToolChange) {
+              tool?.annotation?.unselectAreas?.();
+            }
+            requestAnimationFrame(() => {
+              onClick?.();
+            });
           }
-          onClick?.();
+        } catch (e) {
+          /* ignore errors in hotkey callback */
         }
       });
     }
@@ -87,7 +93,7 @@ export const Tool = ({
     return () => {
       removeShortcut();
     };
-  }, [shortcut, tool?.annotation]);
+  }, [shortcut]);
 
   useEffect(() => {
     const removeShortcuts = () => {
@@ -119,8 +125,7 @@ export const Tool = ({
     dynamic === false &&
     controls?.length &&
     (active || (controlsOnHover && hovered));
-  const isAnnotationDrawing = tool?.annotation?.isDrawing;
-  const isDisabled = disabled || isAnnotationDrawing;
+  const isDisabled = disabled;
 
   return (
     <button
@@ -136,7 +141,7 @@ export const Tool = ({
         })
         .toClassName()}
       onClick={(e) => {
-        if (!disabled && !isAnnotationDrawing) {
+        if (!disabled) {
           e.preventDefault();
           if (tool?.unselectRegionOnToolChange) {
             tool?.annotation?.unselectAreas?.();
