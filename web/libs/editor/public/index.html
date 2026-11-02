@@ -60,11 +60,11 @@
     (function (d, o) {
       d.domReady = function (n, a) {
         (o.addEventListener &&
-          o.addEventListener("DOMContentLoaded", function e (t) {
+          o.addEventListener("DOMContentLoaded", function e(t) {
             (o.removeEventListener("DOMContentLoaded", e), n.call(a || d, t));
           })) ||
           (o.attachEvent &&
-            o.attachEvent("onreadystatechange", function e (t) {
+            o.attachEvent("onreadystatechange", function e(t) {
               "complete" === o.readyState &&
                 (o.detachEvent("onreadystatechange", e), n.call(a || d, t));
             }));
@@ -228,7 +228,7 @@
     </Label>
     <Label value="行人" background="orange" />
   </Labels>`
-  const labelDan =`<RectangleLabels name="labels" toName="image"><Label  value="行人" background="orange" /><Label  value="摩托车" alias="category:building,code:B001" background="royalblue" /><Label rounded value="卡车" background="#78a8d0" /> </RectangleLabels>`
+      const labelDan = `<RectangleLabels name="labels" toName="image"><Label  value="行人" background="orange" /><Label  value="摩托车" alias="category:building,code:B001" background="royalblue" /><Label rounded value="卡车" background="#78a8d0" /> </RectangleLabels>`
       const lsfConfig = {
         config: `<View>
   <TimeSeriesLabels name="label" toName="ts">
@@ -298,60 +298,56 @@
           },
         },
       };
-// choice="multiple" 多选
+      // choice="multiple" 多选
       // showToolbar="false" → 隐藏工具栏中的工具图标，工具通过点击标签激活
       // meta="tool:RectangleTool" → 点击此标签自动激活两点矩形工具
       // meta="tool:KeyPointTool" → 点击此标签自动激活关键点工具
       // 可用工具名: RectangleTool, Rectangle3PointTool, PolygonTool, KeyPointTool
       localStorage.removeItem('panelState');
       var ls = new LabelStudio("label-studio", {
-         readOnlyFields: true, //xywh 角度只读
-    config: `<View><Labels name="label" toName="image"><Label value="手指" background="#f40d0d" meta="id:2112717923821355010,tagSetId:2112718507563614210,name:手指,color:#f40d0d,tool:RectangleTool"/><Label value="手" background="#90e81b" meta="id:2112718319038038017,tagSetId:2112718507563614210,name:手,color:#90e81b,tool:KeyPointTool"/></Labels>
-								<Rectangle name="rect-1" toName="image" showToolbar="false"/>
-								<KeyPoint name="kp-1" toName="image" strokeWidth="5" showToolbar="false"/>
-								<Polygon name="poly" toName="image" strokeWidth="3"  showToolbar="false"/>
-								<Image name="image" value="$image" zoom="true" /></View>`,
-    interfaces: [
-      'panel',
-      'update',
-      'submit',
-      'skip',
-      'controls',
-      'topbar',
-      'side-column',
-    ],
-    disableRelations:true,
-      task: {
-      data:{
-    "image": "./public/images/astro-visuals.jpg"
-}
-    },
-    onLabelStudioLoad: (LS) => {
-      var c = LS.annotationStore.addAnnotation({
-        userGenerate: true,
+        readOnlyFields: true, //xywh 角度只读
+        config: "<View><BrushLabels name=\"tag\" toName=\"image\"><Label value=\"55\" background=\"#963f3f\" rounded meta=\"id:2101474083470966785,tagSetId:2101596138816897026,name:55,color:#963f3f\"/></BrushLabels ><Image name=\"image\" value=\"$image\" zoom=\"true\" /></View>",
+        interfaces: [
+          'panel',
+          'update',
+          'submit',
+          'skip',
+          'controls',
+          'topbar',
+          'side-column',
+        ],
+        disableRelations: true,
+        task: {
+          data: {
+            "image": "./public/images/astro-visuals.jpg"
+          }
+        },
+        onLabelStudioLoad: (LS) => {
+          var c = LS.annotationStore.addAnnotation({
+            userGenerate: true,
+          });
+          LS.annotationStore.selectAnnotation(c.id);
+        },
+        onSubmitAnnotation: (ls, annotation) => {
+          console.log(
+            annotation.serializeAnnotation(),
+            JSON.stringify(annotation.serializeAnnotation()),
+          );
+          // emit('onSubmitAnnotation', annotation.toJSON());
+        },
       });
-      LS.annotationStore.selectAnnotation(c.id);
-    },
-    onSubmitAnnotation: (ls, annotation) => {
-      console.log(
-        annotation.serializeAnnotation(),
-        JSON.stringify(annotation.serializeAnnotation()),
-      );
-      // emit('onSubmitAnnotation', annotation.toJSON());
-    },
-  });
-const parseLabelMeta = (str) => {
-	const meta = {};
-  console.log(str)
-	if (str) {
-		str.split(',').forEach((pair) => {
-      console.log(pair)
-			const [k, v] = pair.split(':');
-			meta[k] = v;
-		});
-	}
-	return meta;
-};
+      const parseLabelMeta = (str) => {
+        const meta = {};
+        console.log(str)
+        if (str) {
+          str.split(',').forEach((pair) => {
+            console.log(pair)
+            const [k, v] = pair.split(':');
+            meta[k] = v;
+          });
+        }
+        return meta;
+      };
       ls.on("storageInitialized", (store) => {
         ls.on("selectAnnotation", (next) => {
           if (next.type === "annotation") {
@@ -368,94 +364,94 @@ const parseLabelMeta = (str) => {
           console.log("finish drawing", { region, list });
         });
       });
-         ls.on("choiceSelected", (choice, isSelected) => {
-          console.log("Choice 勾选:", choice._value, "选中:", isSelected, choice);
-          console.log("Choice 信息:", {
-            id: choice.id,
-            value: choice._value,
-            alias: choice.alias,
-            selected: choice.sel,
-            resultValue: choice.resultValue,
-            meta: choice.meta,
-          });
+      ls.on("choiceSelected", (choice, isSelected) => {
+        console.log("Choice 勾选:", choice._value, "选中:", isSelected, choice);
+        console.log("Choice 信息:", {
+          id: choice.id,
+          value: choice._value,
+          alias: choice.alias,
+          selected: choice.sel,
+          resultValue: choice.resultValue,
+          meta: choice.meta,
         });
-       ls.on("entityCreate", (region) => {
-      const labels = region.labeling?.selectedLabels;
-      console.log(labels)
-  if (labels) {
-    labels.forEach((label) => {
-      console.log("标签值:", label.value);
-      console.log("标签ID:", label.id);
-      console.log("快捷键:", label.hotkey);
-      if (label.meta) {
-        console.log("元信息:", label.meta);
-      }
-    });
-  }else{
-    setTimeout(() => {
+      });
+      ls.on("entityCreate", (region) => {
         const labels = region.labeling?.selectedLabels;
+        console.log(labels)
         if (labels) {
           labels.forEach((label) => {
             console.log("标签值:", label.value);
             console.log("标签ID:", label.id);
+            console.log("快捷键:", label.hotkey);
+            if (label.meta) {
+              console.log("元信息:", label.meta);
+            }
+          });
+        } else {
+          setTimeout(() => {
+            const labels = region.labeling?.selectedLabels;
+            if (labels) {
+              labels.forEach((label) => {
+                console.log("标签值:", label.value);
+                console.log("标签ID:", label.id);
+                if (label.meta) {
+                  console.log("元信息:", label.meta);
+                }
+              });
+            }
+            console.log(labels);
+          });
+        }
+      });
+      ls.on("entityDelete", (region) => {
+        const labels = region.labeling?.selectedLabels;
+        if (labels) {
+          labels.forEach((label) => {
+            console.log("删除标签值:", label.value);
+            console.log("删除标签ID:", label.id);
+            console.log("快捷键:", label.hotkey);
             if (label.meta) {
               console.log("元信息:", label.meta);
             }
           });
         }
-        console.log(labels);
       });
-  }
-        });
-        ls.on("entityDelete", (region) => {
-      const labels = region.labeling?.selectedLabels;
-  if (labels) {
-    labels.forEach((label) => {
-      console.log("删除标签值:", label.value);
-      console.log("删除标签ID:", label.id);
-      console.log("快捷键:", label.hotkey);
-      if (label.meta) {
-        console.log("元信息:", label.meta);
-      }
-    });
-  }
-        });
-        ls.on("regionClicked", (region) => {
-          console.log(region)
+      ls.on("regionClicked", (region) => {
+        console.log(region)
         const labels = region.labeling?.selectedLabels;
-  if (labels) {
-    labels.forEach((label) => {
-      if (label.meta) {
-        console.log("元信息:", label.meta);
-      }
-    });
-  }
-});
-ls.on("regionLabelChanged", (region) => {
+        if (labels) {
+          labels.forEach((label) => {
+            if (label.meta) {
+              console.log("元信息:", label.meta);
+            }
+          });
+        }
+      });
+      ls.on("regionLabelChanged", (region) => {
         const labels = region.labeling?.selectedLabels;
-   console.log(labels)
-  if (labels) {
-    labels.forEach((label) => {
-      if (label.meta) {
-        console.log("元信息:", label.meta);
-      }
-    });
-  }
-});
-ls.on("labelClick", (label, selected) => {
-  // label 现在是包含所有字段的普通对象
-  console.log("完整标签信息:", label.selected, 1111);
-  // label 包含: value, id, meta, alias, background, hotkey, hint, type, size, granularity 等
+        console.log(labels)
+        if (labels) {
+          labels.forEach((label) => {
+            if (label.meta) {
+              console.log("元信息:", label.meta);
+            }
+          });
+        }
+      });
+      ls.on("labelClick", (label, selected) => {
+        // label 现在是包含所有字段的普通对象
+        console.log("完整标签信息:", label.selected, 1111);
+        // label 包含: value, id, meta, alias, background, hotkey, hint, type, size, granularity 等
 
-  // 从 meta 中自动提取工具名，无需手动维护 toolMap
-  const toolMatch = String(label.meta || "").match(/tool:(\w+)/);
-  const toolName = toolMatch ? toolMatch[1] : null;
-  if (toolName) {
-    ls.singleTool(toolName);
-  } else {
-    ls.allTool();
-  }
-});
+        // 从 meta 中自动提取工具名，无需手动维护 toolMap
+        const toolMatch = String(label.meta || "").match(/tool:(\w+)/);
+        const toolName = toolMatch ? toolMatch[1] : null;
+        if (toolName) {
+          ls.singleTool(toolName);
+        } else {
+          ls.allTool();
+        }
+      });
     });
   </script>
 </body>

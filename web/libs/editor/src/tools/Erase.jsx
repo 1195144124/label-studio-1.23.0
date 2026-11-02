@@ -36,7 +36,7 @@ const ToolView = observer(({ item }) => {
       active={item.selected}
       extraShortcuts={item.extraShortcuts}
       tool={item}
-      disabled={!item.getSelectedShape}
+      disabled={!item.getSelectedShape || item.getSelectedShape?.isReadOnly()}
       onClick={() => {
         if (item.selected) return;
 
@@ -60,6 +60,7 @@ const _Tool = types
   }))
   .views((self) => ({
     get viewClass() {
+      if (!self.getSelectedShape || self.getSelectedShape.isReadOnly()) return null;
       return () => <ToolView item={self} />;
     },
     get iconComponent() {
@@ -150,7 +151,7 @@ const _Tool = types
           return;
 
         brush = self.getSelectedShape;
-        if (!brush) return;
+        if (!brush || brush.isReadOnly()) return;
 
         if (brush && brush.type === "brushregion") {
           self.mode = "drawing";

@@ -60,6 +60,7 @@ const _Tool = types
   }))
   .views((self) => ({
     get viewClass() {
+      if (self.getSelectedShape?.isReadOnly()) return null;
       return () => <ToolView item={self} />;
     },
     get iconComponent() {
@@ -190,6 +191,9 @@ const _Tool = types
         // prevent drawing when current image is
         // different from image where the brush was started
         if (o && brush && o.multiImage && o.currentImage !== brush.item_index) return;
+
+        // Don't allow drawing on locked regions
+        if (brush && brush.isReadOnly()) return;
 
         // Reset the timer if a user started drawing again
         if (brush && brush.type === "brushregion") {
