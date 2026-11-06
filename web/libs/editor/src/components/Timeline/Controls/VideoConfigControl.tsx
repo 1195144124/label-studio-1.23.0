@@ -170,12 +170,12 @@ export const VideoConfigControl: FC<VideoConfigControlProps> = ({
             onChange={handleChangePlaybackSpeed}
           />
           <div className={styles.toggle}>
-            <Toggle
+            {/* <Toggle
               checked={loopTimelineRegion}
               onChange={(e) => onLoopTimelineRegionChange(e.target.checked)}
               label="循环时间轴区域"
               labelProps={{ size: "small" }}
-            />
+            /> */}
           </div>
         </div>
       </div>
