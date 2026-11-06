@@ -32,6 +32,7 @@ const _Tool = types
   .views((self) => {
     return {
       get viewClass() {
+        if (self.control?.showtoolbar === false || self.manager?.root?.hideTools?.includes("move")) return null;
         return () => <ToolView item={self} />;
       },
       get useTransformer() {

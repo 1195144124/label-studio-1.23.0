@@ -39,6 +39,7 @@ const _Tool = types
   })
   .views((self) => ({
     get viewClass() {
+      if (self.control?.showtoolbar === false || self.manager?.root?.hideTools?.includes("rotate")) return null;
       return () => <ToolView item={self} />;
     },
   }))

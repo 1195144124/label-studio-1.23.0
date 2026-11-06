@@ -156,6 +156,13 @@ export default types
     disableRelations: types.optional(types.boolean, false),
 
     /**
+     * Hide specific toolbar tools: "move", "zoom", "rotate", "brightness", "contrast"
+     * @example hideTools: ["move"]  → 隐藏移动工具
+     * @example hideTools: ["move", "zoom"]  → 隐藏移动和缩放
+     */
+    hideTools: types.optional(types.array(types.string), []),
+
+    /**
      * Show or hide comments section
      */
     showComments: false,

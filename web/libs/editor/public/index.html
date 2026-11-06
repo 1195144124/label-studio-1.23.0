@@ -306,6 +306,8 @@
       localStorage.removeItem('panelState');
       var ls = new LabelStudio("label-studio", {
         readOnlyFields: true, //xywh 角度只读
+        // hideTools: ["move", "zoom", "rotate", "brightness", "contrast"] → 隐藏工具栏指定工具
+        hideTools: ["move"],
         config: "<View><BrushLabels name=\"tag\" toName=\"image\"><Label value=\"55\" background=\"#963f3f\" rounded meta=\"id:2101474083470966785,tagSetId:2101596138816897026,name:55,color:#963f3f\"/></BrushLabels ><Image name=\"image\" value=\"$image\" zoom=\"true\" /></View>",
         interfaces: [
           'panel',
@@ -316,6 +318,7 @@
           'topbar',
           'side-column',
         ],
+         hideTools: ["move"],  // 可选值: "move", "zoom", "rotate", "brightness", "contrast"   
         disableRelations: true,
         task: {
           data: {

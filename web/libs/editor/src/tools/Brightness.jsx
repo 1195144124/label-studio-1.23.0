@@ -42,6 +42,7 @@ const _Tool = types
   })
   .views((self) => ({
     get viewClass() {
+      if (self.control?.showtoolbar === false || self.manager?.root?.hideTools?.includes("brightness")) return null;
       return () => <ToolView item={self} />;
     },
   }))

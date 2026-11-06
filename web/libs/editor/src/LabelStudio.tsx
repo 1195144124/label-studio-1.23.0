@@ -50,6 +50,8 @@ type LSFOptions = Record<string, any> & {
   readOnlyFields?: boolean;
   /** 禁用关系功能，隐藏关系面板和创建关系按钮 */
   disableRelations?: boolean;
+  /** 隐藏工具栏中的指定工具，可选值: "move", "zoom", "rotate", "brightness", "contrast" */
+  hideTools?: string[];
 };
 
 export class LabelStudio {
