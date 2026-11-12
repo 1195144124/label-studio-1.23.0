@@ -17,6 +17,7 @@ import { TagParentMixin } from "../../mixins/TagParentMixin";
 import ToolsManager from "../../tools/Manager";
 import Utils from "../../utils";
 import { parseValue } from "../../utils/data";
+import { cn } from "../../utils/bem";
 import { sanitizeHtml } from "../../utils/html";
 
 /**
@@ -412,7 +413,7 @@ const HtxLabelView = inject("store")(
     );
 
     const label = (
-      <span className="label__nested-wrapper">
+      <span className={cn("label").elem("nested-wrapper").toClassName()}>
         <Label
           color={item.background}
           empty={item.isEmpty}
@@ -424,7 +425,10 @@ const HtxLabelView = inject("store")(
         >
           {item.hasChildren && (
             <span
-              className={`label__toggle ${item.expanded ? "label__toggle--expanded" : ""}`}
+              className={cn("label")
+                .elem("toggle")
+                .mix(item.expanded ? "label__toggle--expanded" : undefined)
+                .toClassName()}
               onClick={item.toggleExpanded}
             >
               {item.expanded ? "▼" : "▶"}
@@ -433,7 +437,7 @@ const HtxLabelView = inject("store")(
           {labelContent}
         </Label>
         {item.hasChildren && item.expanded && (
-          <div className="label__children">
+          <div className={cn("label").elem("children").toClassName()}>
             {Tree.renderChildren(item, item.annotation)}
           </div>
         )}

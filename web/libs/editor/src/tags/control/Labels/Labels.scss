@@ -16,6 +16,15 @@
     align-items: flex-start;
   }
 
+  // 非树形结构：用 row-gap 控制行间距，避免最后一行多出下边距
+  &:not(.labels_tree) {
+    row-gap: 16px;
+
+    > .label__nested-wrapper {
+      margin-bottom: 0;
+    }
+  }
+
   &_tree {
     flex-direction: column !important;
     align-items: stretch !important;
